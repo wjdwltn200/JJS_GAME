@@ -1,0 +1,13 @@
+﻿  gameScene.cpp
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\gamescene.cpp(44): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\gamescene.cpp(51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  mainGame.cpp
+  tileMap.cpp
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\tilemap.cpp(56): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\tilemap.cpp(107): warning C4244: '인수': 'LONG'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\tilemap.cpp(106): warning C4244: '인수': 'LONG'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\tilemap.cpp(144): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\tilemap.cpp(143): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\dungeon_in_the_hero\tilemap.cpp(196): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+  dungeon_in_the_hero.vcxproj -> C:\Users\5_KGA_1\Desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\Debug\dungeon_in_the_hero.exe

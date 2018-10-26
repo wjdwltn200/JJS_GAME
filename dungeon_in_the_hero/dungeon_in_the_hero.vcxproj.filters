@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="animation.cpp">
+      <Filter>2DGameFramework\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="effectManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="image.cpp">
+      <Filter>2DGameFramework\image</Filter>
+    </ClCompile>
+    <ClCompile Include="txtData.cpp">
+      <Filter>2DGameFramework\txtData</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>2DGameFramework\timer</Filter>
+    </ClCompile>
+    <ClCompile Include="dungeon_in_the_hero.cpp">
+      <Filter>MainGame\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>MainGame\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="effect.cpp">
+      <Filter>MainGame\mainClass</Filter>
+    </ClCompile>
+    <ClCompile Include="imageManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="keyManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="soundManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="timeManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="uiManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>MainGame\mainClass</Filter>
+    </ClCompile>
+    <ClCompile Include="uiTxt.cpp">
+      <Filter>MainGame\subClass</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>MainGame\mainClass</Filter>
+    </ClCompile>
+    <ClCompile Include="gameNode.cpp">
+      <Filter>MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="mainGame.cpp">
+      <Filter>MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="gameScene.cpp">
+      <Filter>MainGame\subClass\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="loadingScene.cpp">
+      <Filter>MainGame\subClass\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="titleScene.cpp">
+      <Filter>MainGame\subClass\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="tileMap.cpp">
+      <Filter>MainGame\subClass</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="subObject.cpp">
+      <Filter>MainGame\subClass</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="animation.h">
+      <Filter>2DGameFramework\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="effectManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="image.h">
+      <Filter>2DGameFramework\image</Filter>
+    </ClInclude>
+    <ClInclude Include="txtData.h">
+      <Filter>2DGameFramework\txtData</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>2DGameFramework\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="dungeon_in_the_hero.h">
+      <Filter>MainGame\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="commonMacroFunction.h">
+      <Filter>MainGame\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="randomFunction.h">
+      <Filter>MainGame\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>MainGame\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>MainGame\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>MainGame\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="effect.h">
+      <Filter>MainGame\mainClass</Filter>
+    </ClInclude>
+    <ClInclude Include="imageManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="keyManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="sceneManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="singletonBase.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="soundManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="timeManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="uiManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>MainGame\mainClass</Filter>
+    </ClInclude>
+    <ClInclude Include="uiTxt.h">
+      <Filter>MainGame\subClass</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>MainGame\mainClass</Filter>
+    </ClInclude>
+    <ClInclude Include="mainGame.h">
+      <Filter>MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="gameNode.h">
+      <Filter>MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="gameScene.h">
+      <Filter>MainGame\subClass\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="loadingScene.h">
+      <Filter>MainGame\subClass\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="titleScene.h">
+      <Filter>MainGame\subClass\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="tileMap.h">
+      <Filter>MainGame\subClass</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="subObject.h">
+      <Filter>MainGame\subClass</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="dungeon_in_the_hero.ico">
+      <Filter>MainGame\windowsSys</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>MainGame\windowsSys</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="2DGameFramework">
+      <UniqueIdentifier>{b18db6f6-6a84-4822-9cf2-7acf4c6fa3ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2DGameFramework\animation">
+      <UniqueIdentifier>{5b902047-3165-4088-a31f-593c3027db94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2DGameFramework\image">
+      <UniqueIdentifier>{8c380642-d805-404d-b1a6-8c6c5cb38c18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2DGameFramework\manager">
+      <UniqueIdentifier>{5b857eef-6577-47d3-b0b2-ca615e300441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2DGameFramework\timer">
+      <UniqueIdentifier>{3650c7a5-fb01-405c-954c-35c7eb87287d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2DGameFramework\txtData">
+      <UniqueIdentifier>{fd5bcce8-94cb-4ce1-8568-230048aaa954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame">
+      <UniqueIdentifier>{4b06b0ad-7baa-424c-acfa-7e72d31c7acf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\mainClass">
+      <UniqueIdentifier>{8d7ee2a4-ab26-4ecd-a7b7-c7837c5d6a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\subClass">
+      <UniqueIdentifier>{398ccefd-e36a-4643-bc92-d979ecd64dfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\헤더 파일">
+      <UniqueIdentifier>{4563eebd-997e-4df2-b074-49f364a37959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\소스 파일">
+      <UniqueIdentifier>{212a8ff9-dd6e-45c2-ab76-513f0c2d0674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\windowsSys">
+      <UniqueIdentifier>{2539e3e0-6d48-4637-b8a3-683833bf7c50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\subClass\Scene">
+      <UniqueIdentifier>{ea9fada5-0fb5-4296-a243-45a3dbc48e98}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="dungeon_in_the_hero.rc">
+      <Filter>MainGame\windowsSys</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
