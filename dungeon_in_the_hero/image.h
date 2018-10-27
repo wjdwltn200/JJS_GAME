@@ -92,7 +92,7 @@ public:
 
 	// ÇÁ·¹ÀÓ ·»´õ
 	void frameRender(HDC hdc, int destX, int destY,	int currFrameX, int currFrameY, float Scale = 1.0f, bool Center = true);
-	void frameAlphaRender(HDC hdc, int destX, int destY, int currFrameX, int currFrameY, float scale, BYTE alpha);
+	void frameAlphaRender(HDC hdc, int destX, int destY, int currFrameX, int currFrameY, float scale, bool center, BYTE alpha);
 
 	// Á×Ã´µµ Àû¿ë ·»´õ
 	void RatioRender(HDC hdc, int destX, int destY,

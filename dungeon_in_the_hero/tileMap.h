@@ -5,6 +5,7 @@
 
 #define TILE_ALPHA_VALUE 155
 #define TILE_SHAKING_COUNT 20
+#define TILE_DES_DALEY 10
 
 #define TILE_POPUP_COUNT 120
 #define TILE_POPUP_Y_SIZE 64.0f
@@ -35,10 +36,11 @@ private:
 	int m_tileSizeY;
 
 	bool m_isTilePopup;
-	int m_TilePopupCount;
+	int m_tileDesDaley;
 	PlayerInfo * m_pPlayer;
 	uiManager * m_pUiMag;
 	uiPopup * m_pTilePopup;
+	tagItemData m_tItemInfo;
 
 public:
 	HRESULT init(int tileX, int tileY, PlayerInfo * playerData, uiManager * uiMagData);
@@ -48,6 +50,7 @@ public:
 
 	void keyInput();
 	void tileSetTxt(int tileType);
+	tagItemData dropItemSet(int itemType);
 
 	tileMap();
 	~tileMap();

@@ -9,6 +9,7 @@ HRESULT tileMap::init(int tileX, int tileY, PlayerInfo * playerData, uiManager *
 	//// UI 매니저 주소 초기화
 	m_pUiMag = uiMagData;
 	m_pTilePopup = m_pUiMag->addPopup(NULL, NULL, NULL, NULL);
+
 	//// 플레이어 데이터 주소 저장
 	m_pPlayer = playerData;
 
@@ -16,16 +17,14 @@ HRESULT tileMap::init(int tileX, int tileY, PlayerInfo * playerData, uiManager *
 	m_isTileClick = false;
 	
 	//// 타일 초기화 셋팅
+	m_tileDesDaley = 0;
 	m_isTilePopup = false;
-	m_TilePopupCount = 0;
 	m_tileSizeX = tileX;
 	m_tileSizeY = tileY;
 	m_tileSizeMaxX = tileX * TILE_SIZE;
 	m_tileSizeMaxY = tileY * TILE_SIZE;
 	IMAGEMANAGER->addImage("TileSet", "image/inGameImg/TILE/TileSet_Terrain.bmp", 160, 128, 5, 4, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TileShadow", "image/inGameImg/TILE/TileSet_Terrain_Shadow.bmp", 6, 32);
-
-
 
 	//// 타일 초기화
 	for (int x = 0; x < m_tileSizeX; x++)
@@ -97,6 +96,14 @@ void tileMap::update()
 {
 	keyInput();
 
+	if (m_tileDesDaley <= 0)
+	{
+		m_isTileClick = false;
+	}
+	else
+	{
+		m_tileDesDaley--;
+	}
 	for (int x = 0; x < m_tileSizeX; x++)
 	{
 		for (int y = 0; y < m_tileSizeY; y++)
@@ -134,9 +141,10 @@ void tileMap::update()
 			}
 
 			//// 타일 파괴
-			if (!m_tileset[x * m_tileSizeY + y].t_isNetDes &&
+			if (m_tileDesDaley <= 0 &&
+				!m_tileset[x * m_tileSizeY + y].t_isNetDes &&
 				m_pPlayer->t_TileDesEne > 0 &&
-				!m_isTileClick && (y > 0) &&
+				!m_isTileClick &&
 				m_tileset[x * m_tileSizeY + y].t_isAlive &&
 				(!m_tileset[(x * m_tileSizeY + y) - 1].t_isAlive ||
 					!m_tileset[(x * m_tileSizeY + y) + 1].t_isAlive ||
@@ -154,10 +162,18 @@ void tileMap::update()
 				{
 					OBJECTMANAGER->addTileDesObj(tagObjectType::TILE_DIS,
 						m_tileset[x * m_tileSizeY + y].t_rc.left + (TILE_SIZE / 2),
-						m_tileset[x * m_tileSizeY + y].t_rc.top + (TILE_SIZE / 2));
+						m_tileset[x * m_tileSizeY + y].t_rc.top + (TILE_SIZE / 2), m_tItemInfo);
+				}
+
+				if (RANDOM->getInt(100) <= 10)
+				{
+					OBJECTMANAGER->addTileDesObj(tagObjectType::ITEM_JEWEL,
+						m_tileset[x * m_tileSizeY + y].t_rc.left + (TILE_SIZE / 2),
+						m_tileset[x * m_tileSizeY + y].t_rc.top + (TILE_SIZE / 2), dropItemSet(tagItemType::JEWEL));
+					m_pPlayer->t_TileDesEne += m_tItemInfo.t_frameY + 1;
 				}
 				EFFMANAGER->play("MousePointEFF", m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)));
-
+				m_tileDesDaley = TILE_DES_DALEY;
 			}
 			//// 에너지 부족 타일 흔들기
 			else if ((
@@ -177,6 +193,7 @@ void tileMap::update()
 			else if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON))
 			{
 				m_isTileClick = false;
+				m_tileDesDaley = 0;
 			}
 
 
@@ -307,8 +324,8 @@ void tileMap::tileSetTxt(int tileType)
 		setTxt.t_txtInfo = "건방진 용사는 이쪽에서 등장합니다!";
 		break;
 	case tagTileType::TOP:
-		setTxt.t_txtName = "던전 돌벽";
-		setTxt.t_txtInfo = "인간들은 절대 뚫을 수 없는 마법의 벽";
+		setTxt.t_txtName = "던전 외벽";
+		setTxt.t_txtInfo = "인간들은 절대 뚫을 수 없는 마법의 벽입니다 아참, 마왕님도 불가능합니다.";
 		break;
 	case tagTileType::BLOCK:
 		setTxt.t_txtName = "흙 블럭";
@@ -325,6 +342,18 @@ void tileMap::tileSetTxt(int tileType)
 	}
 	
 	m_pTilePopup->setTxtInfo(setTxt);
+}
+
+tagItemData tileMap::dropItemSet(int itemType)
+{
+	switch (itemType)
+	{
+	case tagItemType::JEWEL:
+		m_tItemInfo.t_frameX = RANDOM->getFromIntTo(0, 4);
+		m_tItemInfo.t_frameY = RANDOM->getFromIntTo(0, 6);
+		return m_tItemInfo;
+		break;
+	}
 }
 
 tileMap::tileMap()

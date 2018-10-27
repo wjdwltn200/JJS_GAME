@@ -15,7 +15,7 @@ HRESULT gameScene::init()
 
 	//// 플레이어 셋팅
 	m_tPlayer = new PlayerInfo;
-	m_tPlayer->t_TileDesEne = 30;
+	m_tPlayer->t_TileDesEne = 100;
 
 	m_MapTile = new tileMap;
 	m_MapTile->init(32, 42, m_tPlayer, m_pUiMag);
@@ -32,6 +32,7 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("TileSet_Terrain_DesSet_0", "image/inGameImg/EFF/TileSet_Terrain_DesSet0.bmp", 12, 11, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TileSet_Terrain_DesSet_1", "image/inGameImg/EFF/TileSet_Terrain_DesSet1.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TileSet_Terrain_DesSet_2", "image/inGameImg/EFF/TileSet_Terrain_DesSet2.bmp", 23, 22, 1, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Item_Jewel", "image/inGameImg/EFF/Item_JewelSet.bmp", 75, 105, 5, 7, true, RGB(255, 0, 255));
 
 	m_imgTopBg = IMAGEMANAGER->addImage("inGameTopBG", "image/inGameImg/BG/InGame_Top_Bg.bmp", m_MapTile->gettileMaxValueX(), TOP_IMG_SIZE_Y);
 
@@ -83,13 +84,13 @@ void gameScene::render(HDC hdc)
 void gameScene::screenUi(HDC hdc)
 {
 	//// 채굴 파워 UI
-	if (m_tPlayer->t_TileDesEne <= 10)
+	if (m_tPlayer->t_TileDesEne <= MOUSE_FOINT_CANG_VALUE)
 	{
-		MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, MOUSE_FOINT_SET_NUMSIZE, g_ptMouse.x + MOUSE_FOINT_SET_XY, g_ptMouse.y - MOUSE_FOINT_SET_XY, 1, 2.0f);
+		MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, MOUSE_FOINT_SET_NUMSIZE, g_ptMouse.x + MOUSE_FOINT_SET_X, g_ptMouse.y - MOUSE_FOINT_SET_Y, 1, 2.0f);
 	}
 	else
 	{
-		MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, MOUSE_FOINT_SET_NUMSIZE, g_ptMouse.x + MOUSE_FOINT_SET_XY, g_ptMouse.y - MOUSE_FOINT_SET_XY, 2, 2.0f);
+		MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, MOUSE_FOINT_SET_NUMSIZE, g_ptMouse.x + MOUSE_FOINT_SET_X, g_ptMouse.y - MOUSE_FOINT_SET_Y, 2, 2.0f);
 	}
 
 	//// 마우스 커서

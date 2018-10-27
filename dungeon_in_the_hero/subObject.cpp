@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "subObject.h"
 
-HRESULT subObject::init(int typeNum, float posX, float posY)
+HRESULT subObject::init(int typeNum, float posX, float posY, tagItemData itemData)
 {
 	m_isAlive = true;
-
+	m_type = typeNum;
+	m_tItemData = itemData;
 	switch (typeNum)
 	{
 	case tagObjectType::TILE_DIS:
-		int temp = RANDOM->getFromIntTo(0, 2);
-		switch (temp)
+		switch (RANDOM->getFromIntTo(0, 2))
 		{
 		case 0:
 			m_imgObj = IMAGEMANAGER->findImage("TileSet_Terrain_DesSet_0");
@@ -28,6 +28,18 @@ HRESULT subObject::init(int typeNum, float posX, float posY)
 		m_fScale = RANDOM->getFromFloatTo(0.5f, 2.0f);
 		m_dieCount = TILE_DIS_DELAY;
 		m_movePower = RANDOM->getFromFloatTo(4.0f, TILE_DIS_MOVE_POWER);
+		m_colPower = 0.0f;
+		break;
+
+	case tagObjectType::ITEM_JEWEL:
+		m_imgObj = IMAGEMANAGER->findImage("Item_Jewel");
+		m_fAngle = PI / 180.0f * RANDOM->getFromFloatTo(70.0f, 110.0f);
+		m_fPosX = posX + CAMERA->getCamPosX();
+		m_fPosY = posY + CAMERA->getCamPosY();
+		m_alpha = 0;
+		m_fScale = 3.0f;
+		m_dieCount = JEWEL_DIS_DELAY;
+		m_movePower =JEWEL_DIS_MOVE_POWER;
 		m_colPower = 0.0f;
 		break;
 	}
@@ -55,6 +67,18 @@ void subObject::update()
 			m_alpha += 50;
 		}
 		break;
+	case tagObjectType::ITEM_JEWEL:
+		m_movePower -= 0.1f;
+		m_colPower += 0.1f;
+		if (m_dieCount >= JEWEL_DIS_DELAY / 2)
+		{
+			m_alpha += 50;
+		}
+		else
+		{
+			m_alpha = 0;
+		}
+		break;
 	}
 
 	movement();
@@ -62,7 +86,17 @@ void subObject::update()
 
 void subObject::render(HDC hdc)
 {
-	m_imgObj->render(hdc, m_fPosX - CAMERA->getCamPosX(), m_fPosY - CAMERA->getCamPosY(), 0, 0, m_imgObj->getFrameWidth(), m_imgObj->getFrameHeight(), m_fScale, m_alpha);
+	switch (m_type)
+	{
+	case tagObjectType::TILE_DIS:
+		m_imgObj->render(hdc, m_fPosX - CAMERA->getCamPosX(), m_fPosY - CAMERA->getCamPosY(), 0, 0, m_imgObj->getFrameWidth(), m_imgObj->getFrameHeight(), m_fScale, m_alpha);
+		break;
+	case tagObjectType::ITEM_JEWEL:
+		m_imgObj->frameAlphaRender(hdc, m_fPosX - CAMERA->getCamPosX(), m_fPosY - CAMERA->getCamPosY(), m_tItemData.t_frameX, m_tItemData.t_frameY, m_fScale, true, m_alpha);
+		if (m_dieCount <= JEWEL_DIS_DELAY / 2)
+			MY_UTIL::NumberPont(hdc, m_tItemData.t_frameY + 1, 1, m_fPosX - CAMERA->getCamPosX() + JEWEL_DIS_SET_X, m_fPosY - CAMERA->getCamPosY(), 2, 4.0f);
+		break;
+	}
 }
 
 void subObject::movement()
@@ -76,6 +110,13 @@ void subObject::movement()
 			m_fPosY += -sinf(m_fAngle) * m_movePower;
 		}
 		m_fPosY += m_colPower;
+		break;
+	case tagObjectType::ITEM_JEWEL:
+		if (m_movePower >= 0.0f)
+		{
+			m_fPosX += cosf(m_fAngle) * m_movePower;
+			m_fPosY += -sinf(m_fAngle) * m_movePower;
+		}
 		break;
 	}
 

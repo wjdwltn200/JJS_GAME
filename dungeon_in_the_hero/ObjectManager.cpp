@@ -37,17 +37,17 @@ void ObjectManager::render(HDC hdc)
 	}
 }
 
-void ObjectManager::addTileDesObj(int typeNum, float posX, float posY)
+void ObjectManager::addTileDesObj(int typeNum, float posX, float posY, tagItemData itemData)
 {
 	for (m_iter = m_vecSubObjects.begin(); m_iter != m_vecSubObjects.end(); m_iter++)
 	{
 		if ((*m_iter)->getisAlive()) continue;
-			(*m_iter)->init(typeNum, posX, posY);
+			(*m_iter)->init(typeNum, posX, posY, itemData);
 			return;
 	}
 
 	subObject * tempObj = new subObject;
-	tempObj->init(typeNum, posX, posY);
+	tempObj->init(typeNum, posX, posY, itemData);
 	m_vecSubObjects.push_back(tempObj);
 }
 

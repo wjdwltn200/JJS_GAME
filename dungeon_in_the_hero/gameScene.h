@@ -4,9 +4,13 @@
 #include "uiManager.h"
 
 #define TOP_IMG_SIZE_Y 300
-#define MOUSE_CURSOR_SET_SIZE 10
-#define MOUSE_FOINT_SET_XY 30
+#define MOUSE_CURSOR_SET_SIZE 12
+
+#define MOUSE_FOINT_SET_X 30
+#define MOUSE_FOINT_SET_Y 20
 #define MOUSE_FOINT_SET_NUMSIZE 4
+#define MOUSE_FOINT_CANG_VALUE 10
+
 
 class gameScene : public scene
 {
