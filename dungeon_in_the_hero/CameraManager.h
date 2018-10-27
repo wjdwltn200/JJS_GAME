@@ -1,4 +1,8 @@
 #pragma once
+
+
+
+
 class CameraManager : public singletonBase<CameraManager>
 {
 private:

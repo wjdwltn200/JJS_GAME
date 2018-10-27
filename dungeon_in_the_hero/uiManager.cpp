@@ -2,57 +2,82 @@
 #include "uiManager.h"
 
 
-HRESULT uiManager::init(int vecMaxSize)
+HRESULT uiManager::init()
 {
-	m_vecUIObjects.reserve(vecMaxSize);
-
-
-
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void uiManager::release()
 {
-	for (m_iter = m_vecUIObjects.begin(); m_iter != m_vecUIObjects.end(); m_iter++)
+	for (m_ObjectsIter = m_vecUiObjects.begin(); m_ObjectsIter != m_vecUiObjects.end(); m_ObjectsIter++)
 	{
-		delete (*m_iter);
+		delete (*m_ObjectsIter);
 	}
-	m_vecUIObjects.clear();
+	m_vecUiObjects.clear();
+
+	for (m_PopupIter = m_vecUiPopup.begin(); m_PopupIter != m_vecUiPopup.end(); m_PopupIter++)
+	{
+		delete (*m_PopupIter);
+	}
+	m_vecUiPopup.clear();
 }
 
 void uiManager::update()
 {
-	for (m_iter = m_vecUIObjects.begin(); m_iter != m_vecUIObjects.end(); m_iter++)
+	for (m_ObjectsIter = m_vecUiObjects.begin(); m_ObjectsIter != m_vecUiObjects.end(); m_ObjectsIter++)
 	{
-		if (!(*m_iter)->getisAlive()) continue;
+		if (!(*m_ObjectsIter)->getisAlive()) continue;
 
-		(*m_iter)->update();
+		(*m_ObjectsIter)->update();
+	}
+
+	for (m_PopupIter = m_vecUiPopup.begin(); m_PopupIter != m_vecUiPopup.end(); m_PopupIter++)
+	{
+		if (!(*m_PopupIter)->getIsAilve()) continue;
+
+		(*m_PopupIter)->update();
 	}
 }
 
 void uiManager::render(HDC hdc)
 {
-	for (m_iter = m_vecUIObjects.begin(); m_iter != m_vecUIObjects.end(); m_iter++)
+	for (m_ObjectsIter = m_vecUiObjects.begin(); m_ObjectsIter != m_vecUiObjects.end(); m_ObjectsIter++)
 	{
-		if (!(*m_iter)->getisAlive()) continue;
+		if (!(*m_ObjectsIter)->getisAlive()) continue;
 
-		(*m_iter)->render(hdc);
+		(*m_ObjectsIter)->render(hdc);
+	}
+
+	for (m_PopupIter = m_vecUiPopup.begin(); m_PopupIter != m_vecUiPopup.end(); m_PopupIter++)
+	{
+		if (!(*m_PopupIter)->getIsAilve()) continue;
+
+		(*m_PopupIter)->render(hdc);
 	}
 }
 
 void uiManager::addHitTxt(float dam, float posX, float posY)
 {
-	for (m_iter = m_vecUIObjects.begin(); m_iter != m_vecUIObjects.end(); m_iter++)
+	for (m_ObjectsIter = m_vecUiObjects.begin(); m_ObjectsIter != m_vecUiObjects.end(); m_ObjectsIter++)
 	{
-		if ((*m_iter)->getisAlive()) continue;
+		if ((*m_ObjectsIter)->getisAlive()) continue;
 
-		(*m_iter)->init(dam, posX, posY);
+		(*m_ObjectsIter)->init(dam, posX, posY);
 		return;
 	}
 
 	uiTxt * tempUiTxt = new uiTxt;
 	tempUiTxt->init(dam, posX, posY);
-	m_vecUIObjects.push_back(tempUiTxt);
+	m_vecUiObjects.push_back(tempUiTxt);
+}
+
+uiPopup * uiManager::addPopup(image * img, float posX, float posY, int DesDaley)
+{
+	uiPopup * tempUiPopup = new uiPopup;
+	tempUiPopup->init(img, posX, posY, DesDaley);
+	m_vecUiPopup.push_back(tempUiPopup);
+
+	return tempUiPopup;
 }
 
 uiManager::uiManager()

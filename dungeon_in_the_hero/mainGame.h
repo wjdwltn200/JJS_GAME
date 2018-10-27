@@ -19,6 +19,8 @@ private:
 	gameScene * m_pinGameScene;
 	titleScene * m_pTitleScene;
 
+	
+
 public:
 	HRESULT init();
 	void release();

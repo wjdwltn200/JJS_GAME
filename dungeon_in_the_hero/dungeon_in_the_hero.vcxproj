@@ -177,6 +177,7 @@
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="txtData.h" />
     <ClInclude Include="uiManager.h" />
+    <ClInclude Include="uiPopup.h" />
     <ClInclude Include="uiTxt.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -210,6 +211,7 @@
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="txtData.cpp" />
     <ClCompile Include="uiManager.cpp" />
+    <ClCompile Include="uiPopup.cpp" />
     <ClCompile Include="uiTxt.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
