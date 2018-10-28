@@ -82,6 +82,7 @@
     <ClCompile Include="uiPopup.cpp">
       <Filter>MainGame\subClass</Filter>
     </ClCompile>
+    <ClCompile Include="aStarNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h">
@@ -180,6 +181,7 @@
     <ClInclude Include="uiPopup.h">
       <Filter>MainGame\subClass</Filter>
     </ClInclude>
+    <ClInclude Include="aStarNode.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="dungeon_in_the_hero.ico">
