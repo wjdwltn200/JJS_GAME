@@ -81,35 +81,5 @@ namespace MY_UTIL
 				tempNumberCheck *= 10;
 			}
 		}
-		//tempNumber = (num % 1000000) / 100000;
-		//IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-		//	tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * 1),
-		//	tempY,
-		//	tempNumber, CorType, scale);
-
-		//tempNumber = (num % 100000) / 10000;
-		//IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-		//	tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * 2),
-		//	tempY, tempNumber, CorType, scale);
-
-		//tempNumber = (num % 10000) / 1000;
-		//IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-		//	tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * 3),
-		//	tempY, tempNumber, CorType, scale);
-
-		//tempNumber = (num % 1000) / 100;
-		//IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-		//	tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * 4),
-		//	tempY, tempNumber, CorType, scale);
-
-		//tempNumber = (num % 100) / 10;
-		//IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-		//	tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * 5),
-		//	tempY, tempNumber, CorType, scale);
-
-		//tempNumber = (num % 10) % 10;
-		//IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-		//	tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * 6),
-		//	tempY, tempNumber, CorType, scale);
 	}
 }

@@ -11,7 +11,6 @@
 #define MOUSE_FOINT_SET_NUMSIZE 4
 #define MOUSE_FOINT_CANG_VALUE 10
 
-
 class gameScene : public scene
 {
 private:
@@ -22,6 +21,7 @@ private:
 	tileMap * m_MapTile;
 	uiManager * m_pUiMag;
 	PlayerInfo * m_tPlayer;
+	enemyManager * m_pEnemyMag;
 
 	char szText[256];
 

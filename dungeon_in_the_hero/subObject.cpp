@@ -49,6 +49,7 @@ HRESULT subObject::init(int typeNum, float posX, float posY, tagItemData itemDat
 
 void subObject::release()
 {
+
 }
 
 void subObject::update()

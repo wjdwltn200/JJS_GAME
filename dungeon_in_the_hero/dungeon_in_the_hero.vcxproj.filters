@@ -83,6 +83,12 @@
       <Filter>MainGame\subClass</Filter>
     </ClCompile>
     <ClCompile Include="aStarNode.cpp" />
+    <ClCompile Include="enemyManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>MainGame\subClass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h">
@@ -182,6 +188,12 @@
       <Filter>MainGame\subClass</Filter>
     </ClInclude>
     <ClInclude Include="aStarNode.h" />
+    <ClInclude Include="enemyManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
+      <Filter>MainGame\subClass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="dungeon_in_the_hero.ico">

@@ -1,6 +1,7 @@
 #pragma once
 
-#define TILE_SIZE 32.0f
+#define TILE_SCALE 1.0f
+#define TILE_SIZE (32.0f * TILE_SCALE) 
 #define TILE_SETNON 4
 
 #define TILE_ALPHA_VALUE 155
@@ -16,6 +17,7 @@
 
 class uiPopup;
 class uiManager;
+class enemyManager;
 
 class tileMap
 {
@@ -38,12 +40,13 @@ private:
 	bool m_isTilePopup;
 	int m_tileDesDaley;
 	PlayerInfo * m_pPlayer;
+	enemyManager * m_pEnemyMag;
 	uiManager * m_pUiMag;
 	uiPopup * m_pTilePopup;
 	tagItemData m_tItemInfo;
-
+	 
 public:
-	HRESULT init(int tileX, int tileY, PlayerInfo * playerData, uiManager * uiMagData);
+	HRESULT init(int tileX, int tileY, PlayerInfo * playerData, uiManager * uiMagData, enemyManager * pEnemyMag);
 	void release();
 	void update();
 	void render(HDC hdc);
@@ -51,6 +54,7 @@ public:
 	void keyInput();
 	void tileSetTxt(int tileType);
 	tagItemData dropItemSet(int itemType);
+	void monsSetDrop(float posX, float posY);
 
 	tileMap();
 	~tileMap();
