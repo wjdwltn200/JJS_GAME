@@ -44,7 +44,7 @@ private:
 	uiManager * m_pUiMag;
 	uiPopup * m_pTilePopup;
 	tagItemData m_tItemInfo;
-	 
+
 public:
 	HRESULT init(int tileX, int tileY, PlayerInfo * playerData, uiManager * uiMagData, enemyManager * pEnemyMag);
 	void release();
@@ -55,6 +55,8 @@ public:
 	void tileSetTxt(int tileType);
 	tagItemData dropItemSet(int itemType);
 	void monsSetDrop(float posX, float posY);
+
+	TileInfo * getTileSetPoint() { return m_tileset; }
 
 	tileMap();
 	~tileMap();

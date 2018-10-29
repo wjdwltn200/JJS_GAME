@@ -315,13 +315,13 @@ void tileMap::keyInput()
 
 	//// 키 입력 기준 카메라 이동
 	if (KEYMANAGER->isStayKeyDown('W'))
-		CAMERA->setCamPosY(CAMERA->getCamPosY() - 10.0f);
+		CAMERA->setCamPosY(CAMERA->getCamPosY() - 3.0f);
 	if (KEYMANAGER->isStayKeyDown('S'))
-		CAMERA->setCamPosY(CAMERA->getCamPosY() + 10.0f);
+		CAMERA->setCamPosY(CAMERA->getCamPosY() + 3.0f);
 	if (KEYMANAGER->isStayKeyDown('A'))
-		CAMERA->setCamPosX(CAMERA->getCamPosX() - 10.0f);
+		CAMERA->setCamPosX(CAMERA->getCamPosX() - 3.0f);
 	if (KEYMANAGER->isStayKeyDown('D'))
-		CAMERA->setCamPosX(CAMERA->getCamPosX() + 10.0f);
+		CAMERA->setCamPosX(CAMERA->getCamPosX() + 3.0f);
 
 
 }
@@ -374,6 +374,8 @@ void tileMap::monsSetDrop(float posX, float posY)
 	tagEnemyData tempEnemy;
 	tempEnemy.t_img = IMAGEMANAGER->findImage("enemy_00");
 	tempEnemy.t_isAilve = true;
+	tempEnemy.t_currHp = 10;
+	tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 	tempEnemy.t_posX = posX;
 	tempEnemy.t_posY = posY;
 	tempEnemy.t_scale = 2.0f;

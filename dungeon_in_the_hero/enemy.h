@@ -1,6 +1,9 @@
 #pragma once
 #include "animation.h"
 
+#define IMG_TILE_SET_Y 5.0f
+#define ENEMY_DIE_DALEY 60
+
 class enemy
 {
 private:
@@ -12,6 +15,8 @@ public:
 	void release();
 	void update();
 	void render(HDC hdc);
+
+	void currHp();
 
 	enemy();
 	~enemy();

@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="aStarNode.h" />
+    <ClInclude Include="aStarPathFinding.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="dungeon_in_the_hero.h" />
     <ClInclude Include="animation.h" />
@@ -186,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aStarNode.cpp" />
+    <ClCompile Include="aStarPathFinding.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="dungeon_in_the_hero.cpp" />
     <ClCompile Include="animation.cpp" />
