@@ -22,7 +22,7 @@ private:
 	uiManager * m_pUiMag;
 	PlayerInfo * m_tPlayer;
 	enemyManager * m_pEnemyMag;
-
+	heroManager * m_pHeroMag;
 	char szText[256];
 
 public:
@@ -32,7 +32,7 @@ public:
 	virtual void render(HDC hdc);
 
 	void screenUi(HDC hdc);
-
+	
 	gameScene();
 	~gameScene();
 };

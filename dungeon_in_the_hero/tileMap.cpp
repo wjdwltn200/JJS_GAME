@@ -3,14 +3,16 @@
 #include "uiPopup.h"
 #include "uiManager.h"
 #include "enemyManager.h"
+#include "heroManager.h"
 
 
 HRESULT tileMap::init(int tileX, int tileY,
-	PlayerInfo * playerData, uiManager * uiMagData, enemyManager * pEnemyMag)
+	PlayerInfo * playerData, uiManager * uiMagData,
+	enemyManager * pEnemyMag, heroManager * pHeroMag)
 {
-	//// Enemy 매니저 주소 초기화
+	//// Enemy & Hero 매니저 주소 초기화
 	m_pEnemyMag = pEnemyMag;
-
+	m_pHeroMag = pHeroMag;
 
 	//// UI 매니저 주소 초기화
 	m_pUiMag = uiMagData;
@@ -49,6 +51,9 @@ HRESULT tileMap::init(int tileX, int tileY,
 				TILE_SIZE
 			);
 
+			m_tileset[x * m_tileSizeY + y].t_setX = x;
+			m_tileset[x * m_tileSizeY + y].t_setY = y;
+
 			int TempRandom = RANDOM->getFromIntTo(1, 100);
 
 			if ((x + 1) == (m_tileSizeX / 2) && y == 0)
@@ -57,6 +62,20 @@ HRESULT tileMap::init(int tileX, int tileY,
 				m_tileset[x * m_tileSizeY + y].t_isStart = true;
 				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::START;
+
+				//// 용사 임시 드롭
+				tagHeroData tempHero;
+				tempHero.t_img = IMAGEMANAGER->findImage("hero_00");
+				tempHero.t_isAilve = true;
+				tempHero.t_currHp = 10;
+				tempHero.t_MaxHp = tempHero.t_currHp;
+				tempHero.t_posX = m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2;
+				tempHero.t_posY = m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2;
+				tempHero.t_scale = 2.0f;
+				tempHero.t_setTileMapNum = (x * m_tileSizeY + y);
+
+				m_pHeroMag->heroDrop(&tempHero);
+
 			}
 			else if (x <= m_tileSizeX && y == (y * m_tileSizeY) || x == 0 || x == m_tileSizeX - 1 || y == m_tileSizeY - 1)
 			{
@@ -90,6 +109,11 @@ HRESULT tileMap::init(int tileX, int tileY,
 
 	//// 카메라 최초 위치 셋팅
 	CAMERA->setCamPosX((m_tileSizeMaxX - WINSIZEX - WINSTARTX) / 2);
+
+
+
+
+
 
 	return S_OK;
 }
@@ -181,7 +205,7 @@ void tileMap::update()
 				}
 				else
 				{
-					monsSetDrop(m_tileset[x * m_tileSizeY + y].t_rc.left + (TILE_SIZE / 2), m_tileset[x * m_tileSizeY + y].t_rc.top + (TILE_SIZE / 2));
+					monsSetDrop(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
 				}
 				EFFMANAGER->play("MousePointEFF", m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)));
 				m_tileDesDaley = TILE_DES_DALEY;
@@ -369,17 +393,22 @@ tagItemData tileMap::dropItemSet(int itemType)
 	}
 }
 
-void tileMap::monsSetDrop(float posX, float posY)
+void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY)
 {
 	tagEnemyData tempEnemy;
-	tempEnemy.t_img = IMAGEMANAGER->findImage("enemy_00");
+	tempEnemy.t_img_L = IMAGEMANAGER->findImage("enemy_00_L");
+	tempEnemy.t_img_R = IMAGEMANAGER->findImage("enemy_00_R");
+	tempEnemy.t_img_D = IMAGEMANAGER->findImage("enemy_00_D");
 	tempEnemy.t_isAilve = true;
 	tempEnemy.t_currHp = 10;
 	tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 	tempEnemy.t_posX = posX;
 	tempEnemy.t_posY = posY;
+	tempEnemy.t_tilePosX = tileX;
+	tempEnemy.t_tilePosY = tileY;
 	tempEnemy.t_scale = 2.0f;
-
+	tempEnemy.t_setTileMapNum = setTileNum;
+	tempEnemy.t_moveSpeed = 1.0f;
 
 	m_pEnemyMag->enemyDrop(&tempEnemy);
 }

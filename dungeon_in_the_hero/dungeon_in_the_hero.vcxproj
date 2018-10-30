@@ -160,6 +160,8 @@
     <ClInclude Include="enemyManager.h" />
     <ClInclude Include="gameNode.h" />
     <ClInclude Include="gameScene.h" />
+    <ClInclude Include="hero.h" />
+    <ClInclude Include="heroManager.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="imageManager.h" />
     <ClInclude Include="keyManager.h" />
@@ -197,6 +199,8 @@
     <ClCompile Include="enemyManager.cpp" />
     <ClCompile Include="gameNode.cpp" />
     <ClCompile Include="gameScene.cpp" />
+    <ClCompile Include="hero.cpp" />
+    <ClCompile Include="heroManager.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="imageManager.cpp" />
     <ClCompile Include="keyManager.cpp" />

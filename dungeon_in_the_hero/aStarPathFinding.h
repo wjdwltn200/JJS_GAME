@@ -1,6 +1,7 @@
 #pragma once
 
 class aStarNode;
+class hero;
 
 class aStarPathFinding
 {
@@ -18,7 +19,7 @@ private:
 	bool FindFromCloseNode(aStarNode * pNode);
 public:
 	void Delete();
-	bool FindPath(aStarNode * pStart, aStarNode * pEnd, list<aStarNode*> vecPath, tagTileData * pNavi);
+	bool FindPath(aStarNode * pStart, aStarNode * pEnd, list<aStarNode*> vecPath, hero * pNavi);
 
 	aStarPathFinding();
 	~aStarPathFinding();

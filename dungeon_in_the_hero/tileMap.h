@@ -18,6 +18,7 @@
 class uiPopup;
 class uiManager;
 class enemyManager;
+class heroManager;
 
 class tileMap
 {
@@ -31,22 +32,23 @@ private:
 	SYNTHESIZE(int, m_tileSizeMaxX, tileMaxValueX);
 	SYNTHESIZE(int, m_tileSizeMaxY, tileMaxValueY);
 	SYNTHESIZE(bool, m_isTileClick, IsTileClivk);
-
+	SYNTHESIZE(int, m_tileSizeX, TileSizeX);
+	SYNTHESIZE(int, m_tileSizeY, TileSizeY);
 	char szText[256];
-
-	int m_tileSizeX;
-	int m_tileSizeY;
 
 	bool m_isTilePopup;
 	int m_tileDesDaley;
 	PlayerInfo * m_pPlayer;
 	enemyManager * m_pEnemyMag;
+	heroManager * m_pHeroMag;
 	uiManager * m_pUiMag;
 	uiPopup * m_pTilePopup;
 	tagItemData m_tItemInfo;
 
 public:
-	HRESULT init(int tileX, int tileY, PlayerInfo * playerData, uiManager * uiMagData, enemyManager * pEnemyMag);
+	HRESULT init(int tileX, int tileY,
+		PlayerInfo * playerData, uiManager * uiMagData,
+		enemyManager * pEnemyMag, heroManager * pHeroMag);
 	void release();
 	void update();
 	void render(HDC hdc);
@@ -54,7 +56,7 @@ public:
 	void keyInput();
 	void tileSetTxt(int tileType);
 	tagItemData dropItemSet(int itemType);
-	void monsSetDrop(float posX, float posY);
+	void monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY);
 
 	TileInfo * getTileSetPoint() { return m_tileset; }
 

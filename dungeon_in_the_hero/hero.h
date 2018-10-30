@@ -2,19 +2,22 @@
 #include "animation.h"
 
 #define IMG_TILE_SET_Y 5.0f
-#define ENEMY_DIE_DALEY 60
-#define ENEMY_MOVE_DALEY 60
+#define HERO_MOVE_DALEY 30
 
 class tileMap;
+class aStarNode;
+class aStarPathFinding;
 
-class enemy
+class hero
 {
 private:
+
+
 	enum eMoveState
 	{
 		UP, DOWN, LEFT, RIGHT, MOVE_NUM
 	};
-	SYNTHESIZE(tagEnemyData, m_tEnemyData, tEnemyData);
+	SYNTHESIZE(tagHeroData, m_tHeroData, tHeroData);
 	animation m_ani;
 
 	int m_moveDaley;
@@ -23,16 +26,16 @@ private:
 	tileMap * m_pTileMapMag;
 
 public:
-	HRESULT init(tagEnemyData* enemyInfo, tileMap* pTileMag);
+	HRESULT init(tagHeroData * heroInfo, tileMap * pTileMap);
 	void release();
 	void update();
 	void render(HDC hdc);
 
-	void currHp();
-	void moveSys();
+	void aStarNodeStart();
+
 	bool moveRectCheck(int eMoveArrow);
 
-	enemy();
-	~enemy();
+	hero();
+	~hero();
 };
 

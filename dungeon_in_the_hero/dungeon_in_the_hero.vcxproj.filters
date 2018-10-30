@@ -90,6 +90,12 @@
       <Filter>MainGame\subClass</Filter>
     </ClCompile>
     <ClCompile Include="aStarPathFinding.cpp" />
+    <ClCompile Include="heroManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="hero.cpp">
+      <Filter>MainGame\subClass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h">
@@ -196,6 +202,12 @@
       <Filter>MainGame\subClass</Filter>
     </ClInclude>
     <ClInclude Include="aStarPathFinding.h" />
+    <ClInclude Include="heroManager.h">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="hero.h">
+      <Filter>MainGame\subClass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="dungeon_in_the_hero.ico">

@@ -1,34 +1,14 @@
 #include "stdafx.h"
 #include "gameScene.h"
 #include "enemyManager.h"
-
+#include "heroManager.h"
 
 HRESULT gameScene::init()
 {
-	//// 마우스 감추기
-	ShowCursor(FALSE);
-	m_imgMouseCur = IMAGEMANAGER->addImage("MouseCursor", "image/inGameImg/UI/MousePoint.bmp", 112, 49, 2, 1, true, RGB(255, 0, 255));
-
-	RECT rc = RectMake(WINS_PRISON_MIN_X, WINS_PRISON_MIN_Y, WINS_PRISON_MAX_X, WINS_PRISON_MAX_Y);
-	ClipCursor(&rc);
-	//// UI 매니저 동적할당
-	m_pUiMag = new uiManager;
-
-	//// Enemy 매니저 동적할당
-	m_pEnemyMag = new enemyManager;
-
-	//// 플레이어 셋팅
-	m_tPlayer = new PlayerInfo;
-	m_tPlayer->t_TileDesEne = 100;
-
-	m_MapTile = new tileMap;
-	m_MapTile->init(32, 42, m_tPlayer, m_pUiMag, m_pEnemyMag);
-	CAMERA->setCamPosY(CAMERA_MAX_Y);
-	
 	//// EffImgSet
 	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("MousePointEFF", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 5, 0.0f, true);
-	
+
 	//// UiImgSet
 	IMAGEMANAGER->addImage("mousePoint", "image/inGameImg/UI/MousePoint.bmp", 112, 49, 2, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("NumberPont", "image/inGameImg/UI/NumberPont.bmp", 80, 60, 10, 6, true, RGB(255, 0, 255));
@@ -41,10 +21,42 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("TilePopup", "image/inGameImg/UI/TilePopup.bmp", 157, 95, 1, 1, true, RGB(255, 0, 255));
 
 	//// enemyImgSet
-	IMAGEMANAGER->addImage("enemy_00", "image/inGameImg/ENEMY/enemy_0.bmp", 96, 16, 6, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("enemy_00_L", "image/inGameImg/ENEMY/enemy_0_L.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("enemy_00_R", "image/inGameImg/ENEMY/enemy_0_R.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("enemy_00_D", "image/inGameImg/ENEMY/enemy_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
+
+
+	//// heroImgSet
+	IMAGEMANAGER->addImage("hero_00", "image/inGameImg/HERO/hero_0.bmp", 60, 20, 3, 1, true, RGB(255, 0, 255));
+
+	//// 마우스 감추기
+	ShowCursor(FALSE);
+	m_imgMouseCur = IMAGEMANAGER->addImage("MouseCursor", "image/inGameImg/UI/MousePoint.bmp", 112, 49, 2, 1, true, RGB(255, 0, 255));
+
+	RECT rc = RectMake(WINS_PRISON_MIN_X, WINS_PRISON_MIN_Y, WINS_PRISON_MAX_X, WINS_PRISON_MAX_Y);
+	ClipCursor(&rc);
+	//// UI 매니저 동적할당
+	m_pUiMag = new uiManager;
+
+	//// 맵타일 우선 동적할당
+	m_MapTile = new tileMap;
+
+	//// Enemy 매니저 동적할당
+	m_pEnemyMag = new enemyManager;
+	m_pEnemyMag->init(m_MapTile);
+
+	//// Hero 매니저 동적할당
+	m_pHeroMag = new heroManager;
+	m_pHeroMag->init(m_MapTile);
+
+	//// 플레이어 셋팅
+	m_tPlayer = new PlayerInfo;
+	m_tPlayer->t_TileDesEne = 100;
+
+	m_MapTile->init(32, 42, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag);
+	CAMERA->setCamPosY(CAMERA_MAX_Y);
 
 	m_imgTopBg = IMAGEMANAGER->addImage("inGameTopBG", "image/inGameImg/BG/InGame_Top_Bg.bmp", m_MapTile->gettileMaxValueX(), TOP_IMG_SIZE_Y);
-
 
 	return S_OK;
 }
@@ -55,6 +67,7 @@ void gameScene::release()
 	SAFE_DELETE(m_tPlayer);
 	SAFE_DELETE(m_pUiMag);
 	SAFE_DELETE(m_pEnemyMag);
+	SAFE_DELETE(m_pHeroMag);
 }
 
 void gameScene::update()
@@ -62,6 +75,7 @@ void gameScene::update()
 	m_MapTile->update();
 	CAMERA->update(0.0f, CAMERA_MAX_Y, m_MapTile->gettileMaxValueX() - WINSIZEX, m_MapTile->gettileMaxValueY() - WINSIZEY);
 	m_pEnemyMag->update();
+	m_pHeroMag->update();
 	m_pUiMag->update();
 	OBJECTMANAGER->update();
 	EFFMANAGER->update();
@@ -72,6 +86,7 @@ void gameScene::render(HDC hdc)
 	m_imgTopBg->render(hdc, 0 - CAMERA->getCamPosX(), 0 - CAMERA->getCamPosY() + CAMERA_MAX_Y);
 	m_MapTile->render(hdc);
 	m_pEnemyMag->render(hdc);
+	m_pHeroMag->render(hdc);
 	m_pUiMag->render(hdc);
 	OBJECTMANAGER->render(hdc);
 	EFFMANAGER->render(hdc);
