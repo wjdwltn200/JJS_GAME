@@ -19,12 +19,34 @@ HRESULT gameScene::init()
 
 	IMAGEMANAGER->addImage("Item_Jewel", "image/inGameImg/EFF/Item_JewelSet.bmp", 75, 105, 5, 7, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TilePopup", "image/inGameImg/UI/TilePopup.bmp", 157, 95, 1, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("EnemyPopup", "image/inGameImg/UI/EnemyPopup.bmp", 157, 95, 1, 1, true, RGB(255, 0, 255));
+
 
 	//// enemyImgSet
-	IMAGEMANAGER->addImage("enemy_00_L", "image/inGameImg/ENEMY/enemy_0_L.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("enemy_00_R", "image/inGameImg/ENEMY/enemy_0_R.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("enemy_00_D", "image/inGameImg/ENEMY/enemy_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
-
+	//»À´Ù±Í
+	IMAGEMANAGER->addImage("Skeleton_00_L", "image/inGameImg/ENEMY/Skeleton_0_L.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Skeleton_00_R", "image/inGameImg/ENEMY/Skeleton_0_R.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Skeleton_00_D", "image/inGameImg/ENEMY/Skeleton_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
+	//¾×±«
+	IMAGEMANAGER->addImage("Slime_00_L", "image/inGameImg/ENEMY/Slime_0_L.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Slime_00_R", "image/inGameImg/ENEMY/Slime_0_R.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Slime_00_D", "image/inGameImg/ENEMY/Slime_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
+	//Ã¶°©Ãß
+	IMAGEMANAGER->addImage("Daemon_00_L", "image/inGameImg/ENEMY/Daemon_0_L.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Daemon_00_R", "image/inGameImg/ENEMY/Daemon_0_R.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Daemon_00_D", "image/inGameImg/ENEMY/Daemon_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
+	//¹ÚÁã
+	IMAGEMANAGER->addImage("Bat_00_L", "image/inGameImg/ENEMY/Bat_0_L.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bat_00_R", "image/inGameImg/ENEMY/Bat_0_R.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bat_00_D", "image/inGameImg/ENEMY/Bat_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
+	//»ıÁã
+	IMAGEMANAGER->addImage("Rat_00_L", "image/inGameImg/ENEMY/Rat_0_L.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Rat_00_R", "image/inGameImg/ENEMY/Rat_0_R.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Rat_00_D", "image/inGameImg/ENEMY/Rat_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
+	//°Å¹Ì
+	IMAGEMANAGER->addImage("Spider_00_L", "image/inGameImg/ENEMY/Spider_0_L.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Spider_00_R", "image/inGameImg/ENEMY/Spider_0_R.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Spider_00_D", "image/inGameImg/ENEMY/Spider_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
 
 	//// heroImgSet
 	IMAGEMANAGER->addImage("hero_00", "image/inGameImg/HERO/hero_0.bmp", 60, 20, 3, 1, true, RGB(255, 0, 255));
@@ -43,7 +65,7 @@ HRESULT gameScene::init()
 
 	//// Enemy ¸Å´ÏÀú µ¿ÀûÇÒ´ç
 	m_pEnemyMag = new enemyManager;
-	m_pEnemyMag->init(m_MapTile);
+	m_pEnemyMag->init(m_MapTile, m_pUiMag);
 
 	//// Hero ¸Å´ÏÀú µ¿ÀûÇÒ´ç
 	m_pHeroMag = new heroManager;
@@ -72,10 +94,10 @@ void gameScene::release()
 
 void gameScene::update()
 {
-	m_MapTile->update();
-	CAMERA->update(0.0f, CAMERA_MAX_Y, m_MapTile->gettileMaxValueX() - WINSIZEX, m_MapTile->gettileMaxValueY() - WINSIZEY);
 	m_pEnemyMag->update();
 	m_pHeroMag->update();
+	m_MapTile->update();
+	CAMERA->update(0.0f, CAMERA_MAX_Y, m_MapTile->gettileMaxValueX() - WINSIZEX, m_MapTile->gettileMaxValueY() - WINSIZEY);
 	m_pUiMag->update();
 	OBJECTMANAGER->update();
 	EFFMANAGER->update();

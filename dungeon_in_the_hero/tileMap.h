@@ -8,7 +8,7 @@
 #define TILE_SHAKING_COUNT 20
 #define TILE_DES_DALEY 10
 
-#define TILE_POPUP_COUNT 120
+#define POPUP_COUNT 1
 #define TILE_POPUP_Y_SIZE 64.0f
 
 #define TILE_NON_BLOCK 5
@@ -36,7 +36,6 @@ private:
 	SYNTHESIZE(int, m_tileSizeY, TileSizeY);
 	char szText[256];
 
-	bool m_isTilePopup;
 	int m_tileDesDaley;
 	PlayerInfo * m_pPlayer;
 	enemyManager * m_pEnemyMag;
@@ -56,7 +55,7 @@ public:
 	void keyInput();
 	void tileSetTxt(int tileType);
 	tagItemData dropItemSet(int itemType);
-	void monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY);
+	void monsSetDrop(int monType, float posX, float posY, int setTileNum, int tileX, int tileY);
 
 	TileInfo * getTileSetPoint() { return m_tileset; }
 
