@@ -7,12 +7,12 @@ private:
 	SYNTHESIZE(int, m_dist, Dist);
 	SYNTHESIZE(int, m_depth, Depth);
 
-	aStarNode * pParent;
+	aStarNode * pParent = nullptr;
 
 public:
 	void NodeCopy(aStarNode * pNode);
 	bool isSamePos(aStarNode * pNode);
-	aStarNode Clone();
+	aStarNode* Clone();
 	aStarNode * Create(int sX, int sY, int dX, int dY, int dep);
 	aStarNode * Create(int sX, int sY);
 

@@ -17,6 +17,9 @@ HRESULT uiPopup::init(image * img, float posX, float posY, int DesDaley)
 	m_tTxtInfo.t_DefPoint = -1;
 	m_tTxtInfo.t_HpPoint = -1;
 	m_tTxtInfo.t_MaxHpPoint = -1;
+	m_tTxtInfo.t_TileMana = -1;
+	m_tTxtInfo.t_TileEnemyName = "";
+
 	return S_OK;
 }
 
@@ -57,6 +60,7 @@ void uiPopup::render(HDC hdc)
 	DrawText(hdc, temp, strlen(temp), &rcTextArea, DT_WORDBREAK);
 	MY_UTIL::FontDelete(hdc);
 
+	//// enemy 정보 출력
 	if (m_tTxtInfo.t_AtkPoint > -1)
 	{
 		MY_UTIL::FontOption(hdc, 14, 1000);
@@ -79,7 +83,19 @@ void uiPopup::render(HDC hdc)
 		MY_UTIL::FontDelete(hdc);
 	}
 
+	//// tile 정보 출력
+	if (m_tTxtInfo.t_TileMana > -1)
+	{
+		MY_UTIL::FontOption(hdc, 14, 1000);
+		sprintf_s(temp, "%d", m_tTxtInfo.t_TileMana);
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 17.0f, m_fPosY - CAMERA->getCamPosY() + 63.0f, temp, strlen(temp));
+		MY_UTIL::FontDelete(hdc);
 
+		MY_UTIL::FontOption(hdc, 14, 1000);
+		sprintf_s(temp, "%s", m_tTxtInfo.t_TileEnemyName.c_str());
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 60.0f, m_fPosY - CAMERA->getCamPosY() + 63.0f, temp, strlen(temp));
+		MY_UTIL::FontDelete(hdc);
+	}
 }
 
 void uiPopup::setXY(float posX, float posY)

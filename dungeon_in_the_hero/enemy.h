@@ -7,10 +7,18 @@
 
 class tileMap;
 class enemyManager;
+class aStarNode;
 
 class enemy
 {
 private:
+	list<aStarNode*> m_vecOpenNode;
+	list<aStarNode*>::iterator	m_iterOpenNode;
+	list<aStarNode*> m_vecCloseNode;
+	list<aStarNode*>::iterator	m_iterCloseNode;
+	list<aStarNode*> m_vecChildsNode;
+	list<aStarNode*>::iterator	m_iterChildNode;
+
 	enum eMoveState
 	{
 		UP, RIGHT, DOWN, LEFT, MOVE_NUM
@@ -22,22 +30,38 @@ private:
 	int m_moveDaley;
 	int m_eMoveState;
 	bool m_isMoveAct;
+
 	tileMap * m_pTileMapMag;
 	enemyManager * m_pEnemyMag;
+	aStarNode * m_pAStartNode;
+
 public:
 	HRESULT init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag);
 	void release();
 	void update();
 	void render(HDC hdc);
 
+	bool aStarIsRect(int x, int y);
+	bool aStarFind(aStarNode * endXY, aStarNode * node);
+	void Delete(bool isOpen, bool isClose);
+	void SortOpenNode();
+	bool NodeCompare(aStarNode * p1, aStarNode * p2);
+	void InsertOpenNode(aStarNode * pNode);
+	bool FindFromCloseNode(aStarNode * pNode);
+	int aStarisMove(aStarNode * pos, list<aStarNode*> * verNode);
+
 	void currHp();
 	void moveSys();
 	bool moveRectCheck(int eMoveArrow);
 	bool moveIsRect(int eMoveArrow);
-
+	bool tileManaChg(int eMoveArrow, int manaValue);
 
 	void enemySetTxt(int enemyType);
 	void movePattern();
+	void isDieTileMana();
+
+	bool eatIsEnemy(int eMoveArrow);
+	void eatEnemy();
 
 	enemy();
 	~enemy();

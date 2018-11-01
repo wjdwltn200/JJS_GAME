@@ -31,6 +31,9 @@ HRESULT tileMap::init(int tileX, int tileY,
 	m_tileSizeMaxX = tileX * TILE_SIZE;
 	m_tileSizeMaxY = tileY * TILE_SIZE;
 	IMAGEMANAGER->addImage("TileSet", "image/inGameImg/TILE/TileSet_Terrain.bmp", 160, 128, 5, 4, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("TileSet_1", "image/inGameImg/TILE/TileSet_Terrain_1.bmp", 160, 128, 5, 4, true, RGB(255, 0, 255));
+
+	
 	IMAGEMANAGER->addImage("TileShadow", "image/inGameImg/TILE/TileSet_Terrain_Shadow.bmp", 6, 32);
 
 	//// 타일 초기화
@@ -38,6 +41,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 	{
 		for (int y = 0; y < m_tileSizeY; y++)
 		{
+			m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 			m_tileset[x * m_tileSizeY + y].t_rc = RectMakeCenter(NULL, NULL, TILE_SIZE, TILE_SIZE);
 			m_tileset[x * m_tileSizeY + y].t_isStart = false;
 			m_tileset[x * m_tileSizeY + y].t_isShaking = false;
@@ -50,16 +54,20 @@ HRESULT tileMap::init(int tileX, int tileY,
 				TILE_SIZE
 			);
 
-
+			m_tileset[x * m_tileSizeY + y].t_setX = x;
+			m_tileset[x * m_tileSizeY + y].t_setY = y;
+			m_tileset[x * m_tileSizeY + y].t_enemyInfo = nullptr;
 
 			int TempRandom = RANDOM->getFromIntTo(1, 100);
 
 			if ((x + 1) == (m_tileSizeX / 2) && y == 0)
 			{
+				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = 4;
 				m_tileset[x * m_tileSizeY + y].t_isStart = true;
 				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::START;
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 
 				////// 용사 임시 드롭
 				//tagHeroData tempHero;
@@ -77,28 +85,36 @@ HRESULT tileMap::init(int tileX, int tileY,
 			}
 			else if (x <= m_tileSizeX && y == (y * m_tileSizeY) || x == 0 || x == m_tileSizeX - 1 || y == m_tileSizeY - 1)
 			{
+				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 3);
 				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::TOP;
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 			}
 			else if ((x + 1) == (m_tileSizeX / 2) && y <= TILE_SETNON)
 			{
+				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 3);
 				m_tileset[x * m_tileSizeY + y].t_isAlive = false;
 				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::RAND;
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 			}
 			else if (TempRandom < TILE_NON_BLOCK && y > TILE_NON_BLOCK_SET_Y)
 			{
+				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 4);
 				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::BLOCK_NON;
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 			}
 			else
 			{
+				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet_1");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 4);
 				m_tileset[x * m_tileSizeY + y].t_isNetDes = false;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::BLOCK;
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = RANDOM->getFromIntTo(1, 4);
 			}
 
 			
@@ -107,8 +123,6 @@ HRESULT tileMap::init(int tileX, int tileY,
 
 	//// 카메라 최초 위치 셋팅
 	CAMERA->setCamPosX((m_tileSizeMaxX - WINSIZEX - WINSTARTX) / 2);
-
-
 
 
 
@@ -157,8 +171,7 @@ void tileMap::update()
 				KEYMANAGER->isStayKeyDown(VK_RBUTTON) &&
 				(IntersectRect(&tempRc, &m_tileset[x * m_tileSizeY + y].t_rc, &g_MouseRc)))
 			{
-				
-				tileSetTxt(m_tileset[x * m_tileSizeY + y].t_enumType);
+				tileSetTxt(m_tileset[x * m_tileSizeY + y].t_enumType, (x * m_tileSizeY + y));
 				m_pTilePopup->setImg(IMAGEMANAGER->findImage("TilePopup"));
 				m_pTilePopup->setDaley(POPUP_COUNT);
 				m_pTilePopup->setIsAilve(true);
@@ -181,6 +194,7 @@ void tileMap::update()
 				m_pTilePopup->setIsAilve(false);
 				m_tileset[x * m_tileSizeY + y].t_isAlive = false;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::RAND;
+				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_isTileClick = true;
 				m_pPlayer->t_TileDesEne--;
 				for (int i = 0; i < 6; i++)
@@ -199,8 +213,9 @@ void tileMap::update()
 				}
 				else
 				{
-					//monsSetDrop(RANDOM->getFromIntTo(0, 5), m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
-					monsSetDrop(tagEnemyType::Spider ,m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
+					monsSetDrop(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
+					m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
+					//monsSetDrop(tagEnemyType::Spider ,m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
 				}
 				EFFMANAGER->play("MousePointEFF", m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)));
 				m_tileDesDaley = TILE_DES_DALEY;
@@ -257,7 +272,7 @@ void tileMap::render(HDC hdc)
 			{
 				if (x * m_tileSizeY + y == x * m_tileSizeY + y * m_tileSizeY || x == 0 || x == m_tileSizeX - 1 || y == m_tileSizeY - 1)  //// 각 면 끝 타일)
 				{
-					IMAGEMANAGER->findImage("TileSet")->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 1, TILE_SCALE, false);
+					m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 1, TILE_SCALE, false);
 				}
 				else //// 파괴 가능 타일
 				{
@@ -266,10 +281,10 @@ void tileMap::render(HDC hdc)
 						switch (m_tileset[x * m_tileSizeY + y].t_enumType)
 						{
 						case tagTileType::BLOCK:
-							IMAGEMANAGER->findImage("TileSet")->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 0, TILE_SCALE, false);
+							m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 0, TILE_SCALE, false);
 							break;
 						case tagTileType::BLOCK_NON:
-							IMAGEMANAGER->findImage("TileSet")->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 3, TILE_SCALE, false);
+							m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 3, TILE_SCALE, false);
 							break;
 						}
 					}
@@ -278,10 +293,10 @@ void tileMap::render(HDC hdc)
 						switch (m_tileset[x * m_tileSizeY + y].t_enumType)
 						{
 						case tagTileType::BLOCK:
-							IMAGEMANAGER->findImage("TileSet")->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 0, TILE_SCALE, false);
+							tileImgSet(x * m_tileSizeY + y, hdc);
 							break;
 						case tagTileType::BLOCK_NON:
-							IMAGEMANAGER->findImage("TileSet")->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 3, TILE_SCALE, false);
+							m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 3, TILE_SCALE, false);
 							break;
 						}
 					}
@@ -289,7 +304,7 @@ void tileMap::render(HDC hdc)
 			}
 			else //// 파괴된 타일
 			{
-				IMAGEMANAGER->findImage("TileSet")->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 2, TILE_SCALE, false);
+				m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 2, TILE_SCALE, false);
 			}
 			
 			//// 타일 그림자 생성
@@ -310,8 +325,10 @@ void tileMap::render(HDC hdc)
 				//// 타일정보 디버깅 정보
 				sprintf_s(szText, "%d", TestTileNum);
 				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
-				sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_isAlive, m_tileset[x * m_tileSizeY + y].t_isShaking);
+				sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
 				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));
+				//sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_isAlive, m_tileset[x * m_tileSizeY + y].t_isShaking);
+				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));
 			}
 			TestTileNum++;
 		}
@@ -345,9 +362,10 @@ void tileMap::keyInput()
 
 }
 
-void tileMap::tileSetTxt(int tileType)
+void tileMap::tileSetTxt(int tileType, int tileNum)
 {
 	tagTileTxt setTxt;
+	setTxt.t_TileMana = m_tileset[tileNum].t_ManaValue;
 
 	switch (tileType)
 	{
@@ -362,6 +380,10 @@ void tileMap::tileSetTxt(int tileType)
 	case tagTileType::BLOCK:
 		setTxt.t_txtName = "흙 블럭";
 		setTxt.t_txtInfo = "부수다보면 무언가 튀어나오지 않을까요?";
+		if (setTxt.t_TileMana < 3)
+		{
+			setTxt.t_TileEnemyName = "쥐";
+		}
 		break;
 	case tagTileType::RAND:
 		setTxt.t_txtName = "돌 바닥";
@@ -388,10 +410,95 @@ tagItemData tileMap::dropItemSet(int itemType)
 	}
 }
 
-void tileMap::monsSetDrop(int monType, float posX, float posY, int setTileNum, int tileX, int tileY)
+void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY)
 {
 	tagEnemyData tempEnemy;
-	switch (monType)
+	
+	if (m_tileset[setTileNum].t_ManaValue >= 6)
+	{
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Daemon_00_L");
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Daemon_00_R");
+		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Daemon_00_D");
+		tempEnemy.t_isAilve = true;
+		tempEnemy.t_currHp = 100;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
+		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
+		tempEnemy.t_tilePosX = tileX;
+		tempEnemy.t_tilePosY = tileY;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 0.7f;
+		tempEnemy.t_moveDaley = 120;
+		tempEnemy.t_setTileMapNum = setTileNum;
+		tempEnemy.t_atkPoint = 10;
+		tempEnemy.t_defPoint = 3;
+		tempEnemy.t_enumType = tagEnemyType::Daemon;
+	}
+	else if (m_tileset[setTileNum].t_ManaValue >= 5)
+	{
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Bat_00_L");
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Bat_00_R");
+		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Bat_00_D");
+		tempEnemy.t_isAilve = true;
+		tempEnemy.t_currHp = 100;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
+		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
+		tempEnemy.t_tilePosX = tileX;
+		tempEnemy.t_tilePosY = tileY;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 0.7f;
+		tempEnemy.t_moveDaley = 10;
+		tempEnemy.t_setTileMapNum = setTileNum;
+		tempEnemy.t_atkPoint = 10;
+		tempEnemy.t_defPoint = 3;
+		tempEnemy.t_enumType = tagEnemyType::Spider;
+	}
+	else if (m_tileset[setTileNum].t_ManaValue >= 4)
+	{
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Rat_00_L");
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Rat_00_R");
+		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Rat_00_D");
+		tempEnemy.t_isAilve = true;
+		tempEnemy.t_currHp = 10;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
+		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
+		tempEnemy.t_tilePosX = tileX;
+		tempEnemy.t_tilePosY = tileY;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 0.7f;
+		tempEnemy.t_moveDaley = 0;
+		tempEnemy.t_setTileMapNum = setTileNum;
+		tempEnemy.t_atkPoint = 10;
+		tempEnemy.t_defPoint = 3;
+		tempEnemy.t_FoodChainLv = 1;
+		tempEnemy.t_enumType = tagEnemyType::Rat;
+		
+	}
+	else if (m_tileset[setTileNum].t_ManaValue <= 3)
+	{
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Slime_00_L");
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Slime_00_R");
+		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Slime_00_D");
+		tempEnemy.t_isAilve = true;
+		tempEnemy.t_currHp = 30;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
+		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
+		tempEnemy.t_tilePosX = tileX;
+		tempEnemy.t_tilePosY = tileY;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 0.5f;
+		tempEnemy.t_moveDaley = 0;
+		tempEnemy.t_setTileMapNum = setTileNum;
+		tempEnemy.t_atkPoint = 3;
+		tempEnemy.t_defPoint = 0;
+		tempEnemy.t_FoodChainLv = 0;
+		tempEnemy.t_enumType = tagEnemyType::Slime;
+	}
+
+	/*switch (monType)
 	{
 	case tagEnemyType::Skeleton:
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Skeleton_00_L");
@@ -432,42 +539,10 @@ void tileMap::monsSetDrop(int monType, float posX, float posY, int setTileNum, i
 		tempEnemy.t_enumType = monType;
 		break;
 	case tagEnemyType::Daemon:
-		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Daemon_00_L");
-		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Daemon_00_R");
-		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Daemon_00_D");
-		tempEnemy.t_isAilve = true;
-		tempEnemy.t_currHp = 100;
-		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
-		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
-		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
-		tempEnemy.t_tilePosX = tileX;
-		tempEnemy.t_tilePosY = tileY;
-		tempEnemy.t_scale = 2.0f;
-		tempEnemy.t_moveSpeed = 0.7f;
-		tempEnemy.t_moveDaley = 120;
-		tempEnemy.t_setTileMapNum = setTileNum;
-		tempEnemy.t_atkPoint = 10;
-		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_enumType = monType;
+
 		break;
 	case tagEnemyType::Bat:
-		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Bat_00_L");
-		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Bat_00_R");
-		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Bat_00_D");
-		tempEnemy.t_isAilve = true;
-		tempEnemy.t_currHp = 100;
-		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
-		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
-		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
-		tempEnemy.t_tilePosX = tileX;
-		tempEnemy.t_tilePosY = tileY;
-		tempEnemy.t_scale = 2.0f;
-		tempEnemy.t_moveSpeed = 0.7f;
-		tempEnemy.t_moveDaley = 10;
-		tempEnemy.t_setTileMapNum = setTileNum;
-		tempEnemy.t_atkPoint = 10;
-		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_enumType = monType;
+
 		break;
 	case tagEnemyType::Rat:
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Rat_00_L");
@@ -507,10 +582,25 @@ void tileMap::monsSetDrop(int monType, float posX, float posY, int setTileNum, i
 		tempEnemy.t_defPoint = 3;
 		tempEnemy.t_enumType = monType;
 		break;
-	}
+	}*/
 
 
 	m_pEnemyMag->enemyDrop(&tempEnemy);
+}
+
+void tileMap::tileImgSet(int tileNum, HDC hdc)
+{
+	if (m_tileset[tileNum].t_ManaValue <= 3)
+		m_tileset[tileNum].t_img->frameRender(hdc, m_tileset[tileNum].t_rc.left, m_tileset[tileNum].t_rc.top, m_tileset[tileNum].t_setImg, 0, TILE_SCALE, false);
+	
+	if (m_tileset[tileNum].t_ManaValue >= 4)
+		m_tileset[tileNum].t_img->frameRender(hdc, m_tileset[tileNum].t_rc.left, m_tileset[tileNum].t_rc.top, m_tileset[tileNum].t_setImg, 1, TILE_SCALE, false);
+	
+	if (m_tileset[tileNum].t_ManaValue >= 5)
+		m_tileset[tileNum].t_img->frameRender(hdc, m_tileset[tileNum].t_rc.left, m_tileset[tileNum].t_rc.top, m_tileset[tileNum].t_setImg, 2, TILE_SCALE, false);
+	
+	if (m_tileset[tileNum].t_ManaValue >= 6)
+		m_tileset[tileNum].t_img->frameRender(hdc, m_tileset[tileNum].t_rc.left, m_tileset[tileNum].t_rc.top, m_tileset[tileNum].t_setImg, 3, TILE_SCALE, false);
 }
 
 tileMap::tileMap()

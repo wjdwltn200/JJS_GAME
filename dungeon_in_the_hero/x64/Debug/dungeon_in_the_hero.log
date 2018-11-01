@@ -1,4 +1,177 @@
-﻿soundManager.obj : error LNK2019: FMOD_System_Create 외부 기호(참조 위치: "enum FMOD_RESULT __cdecl FMOD::System_Create(class FMOD::System * *)" (?System_Create@FMOD@@YA?AW4FMOD_RESULT@@PEAPEAVSystem@1@@Z) 함수)에서 확인하지 못했습니다.
+﻿  stdafx.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\stdafx.h(151): warning C4099: 'tagItemData': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+  c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\stdafx.h(150): note: 'tagItemData' 선언을 참조하십시오.
+  aStarNode.cpp
+  aStarPathFinding.cpp
+  CameraManager.cpp
+  dungeon_in_the_hero.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\dungeon_in_the_hero.cpp(83): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\dungeon_in_the_hero.cpp(96): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\dungeon_in_the_hero.cpp(135): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  animation.cpp
+  effect.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\effect.cpp(59): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\effect.cpp(72): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\effect.cpp(73): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  effectManager.cpp
+  enemy.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(137): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(136): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(135): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(143): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(142): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(153): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(153): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(174): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\enemy.cpp(541): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
+  enemyManager.cpp
+  gameNode.cpp
+  gameScene.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(59): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(109): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(124): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(124): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(126): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(126): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(128): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(128): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(130): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(130): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(139): warning C4244: '인수': 'LONG'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\gamescene.cpp(143): warning C4244: '인수': 'LONG'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  hero.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\hero.cpp(59): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\hero.cpp(58): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\hero.cpp(57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  heroManager.cpp
+  image.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(44): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(45): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(122): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(125): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(126): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(184): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(187): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(188): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(274): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(306): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(318): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(336): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(331): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(350): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(345): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(373): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(372): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(371): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(388): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(402): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(401): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(450): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(447): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(457): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(456): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(455): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(476): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(471): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(470): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(492): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(491): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(486): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(485): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(484): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(503): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(513): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(512): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(532): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(527): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(548): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(547): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(542): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(541): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(610): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(623): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\image.cpp(635): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  imageManager.cpp
+  keyManager.cpp
+  loadingScene.cpp
+  mainGame.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\maingame.cpp(10): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  ObjectManager.cpp
+  scene.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  sceneManager.cpp
+  soundManager.cpp
+  subObject.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\subobject.cpp(93): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\subobject.cpp(96): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  tileMap.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(31): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(32): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(216): warning C4244: '인수': 'LONG'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(220): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(264): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(263): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(262): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(261): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(327): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(329): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(329): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(429): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(449): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(469): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(491): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  timeManager.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\timemanager.cpp(39): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\timemanager.cpp(44): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\timemanager.cpp(49): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  timer.cpp
+  titleScene.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\titlescene.cpp(10): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\titlescene.cpp(49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\titlescene.cpp(51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\titlescene.cpp(54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  txtData.cpp
+  uiManager.cpp
+  uiPopup.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(50): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(50): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(59): warning C4838: 'float'에서 'LONG'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(56): warning C4244: '초기화 중': 'float'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(57): warning C4244: '초기화 중': 'float'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(58): warning C4244: '초기화 중': 'float'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(59): warning C4244: '초기화 중': 'float'에서 'LONG'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(60): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(68): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(68): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(75): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(75): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(82): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(82): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(91): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(91): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(96): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uipopup.cpp(96): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  uiTxt.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uitxt.cpp(48): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\uitxt.cpp(48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  utils.cpp
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\utils.cpp(60): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\utils.cpp(61): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\utils.cpp(72): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\utils.cpp(79): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\txtdata.cpp(57): warning C4172: 지역 변수 또는 임시: str의 주소를 반환하고 있습니다.
+c:\users\5_kga_1\documents\github\jjs_game\dungeon_in_the_hero\tilemap.cpp(411): warning C4715: 'tileMap::dropItemSet': 모든 제어 경로에서 값을 반환하지는 않습니다.
+soundManager.obj : error LNK2019: FMOD_System_Create 외부 기호(참조 위치: "enum FMOD_RESULT __cdecl FMOD::System_Create(class FMOD::System * *)" (?System_Create@FMOD@@YA?AW4FMOD_RESULT@@PEAPEAVSystem@1@@Z) 함수)에서 확인하지 못했습니다.
 soundManager.obj : error LNK2019: "public: enum FMOD_RESULT __cdecl FMOD::System::release(void)" (?release@System@FMOD@@QEAA?AW4FMOD_RESULT@@XZ) 외부 기호(참조 위치: "public: void __cdecl soundManager::release(void)" (?release@soundManager@@QEAAXXZ) 함수)에서 확인하지 못했습니다.
 soundManager.obj : error LNK2019: "public: enum FMOD_RESULT __cdecl FMOD::System::init(int,unsigned int,void *)" (?init@System@FMOD@@QEAA?AW4FMOD_RESULT@@HIPEAX@Z) 외부 기호(참조 위치: "public: long __cdecl soundManager::init(void)" (?init@soundManager@@QEAAJXZ) 함수)에서 확인하지 못했습니다.
 soundManager.obj : error LNK2019: "public: enum FMOD_RESULT __cdecl FMOD::System::update(void)" (?update@System@FMOD@@QEAA?AW4FMOD_RESULT@@XZ) 외부 기호(참조 위치: "public: void __cdecl soundManager::update(void)" (?update@soundManager@@QEAAXXZ) 함수)에서 확인하지 못했습니다.
@@ -11,4 +184,4 @@ soundManager.obj : error LNK2019: "public: enum FMOD_RESULT __cdecl FMOD::Channe
 soundManager.obj : error LNK2019: "public: enum FMOD_RESULT __cdecl FMOD::Channel::setVolume(float)" (?setVolume@Channel@FMOD@@QEAA?AW4FMOD_RESULT@@M@Z) 외부 기호(참조 위치: "public: void __cdecl soundManager::play(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >,float)" (?play@soundManager@@QEAAXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@M@Z) 함수)에서 확인하지 못했습니다.
 soundManager.obj : error LNK2019: "public: enum FMOD_RESULT __cdecl FMOD::Channel::isPlaying(bool *)" (?isPlaying@Channel@FMOD@@QEAA?AW4FMOD_RESULT@@PEA_N@Z) 외부 기호(참조 위치: "public: bool __cdecl soundManager::isPlaying(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >)" (?isPlaying@soundManager@@QEAA_NV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) 함수)에서 확인하지 못했습니다.
 lib\fmodex_vc.lib : warning LNK4272: 'x86' 라이브러리 컴퓨터 종류가 'x64' 대상 컴퓨터 종류와 충돌합니다.
-C:\Users\5_KGA_1\Desktop\용사 따위가 날 잡아갈 수있을리가 없잖아\dungeon_in_the_hero\x64\Debug\dungeon_in_the_hero.exe : fatal error LNK1120: 12개의 확인할 수 없는 외부 참조입니다.
+C:\Users\5_KGA_1\Documents\GitHub\JJS_GAME\x64\Debug\dungeon_in_the_hero.exe : fatal error LNK1120: 12개의 확인할 수 없는 외부 참조입니다.

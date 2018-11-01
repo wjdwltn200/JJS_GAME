@@ -18,16 +18,16 @@ bool aStarNode::isSamePos(aStarNode * pNode)
 	return true;
 }
 
-aStarNode aStarNode::Clone()
+aStarNode* aStarNode::Clone()
 {
-	aStarNode * pNode = new aStarNode;
+	aStarNode* pNode = new aStarNode;
 	pNode->m_posX = m_posX;
 	pNode->m_posY = m_posY;
 	pNode->m_dist = m_dist;
 	pNode->m_depth = m_depth;
 	pNode->pParent = NULL;
 
-	return * pNode;
+	return  pNode;
 }
 
 aStarNode * aStarNode::Create(int sX, int sY, int dX, int dY, int dep)

@@ -8,8 +8,8 @@ class aStarPathFinding
 private:
 	list<aStarNode*> m_vecOpenNode;
 	list<aStarNode*>::iterator	m_iterOpenNode;
-	list<aStarNode*> m_vecCloseNode;
-	list<aStarNode*>::iterator	m_iterCloseNode;
+	//list<aStarNode*> m_vecCloseNode;
+	//list<aStarNode*>::iterator	m_iterCloseNode;
 
 	bool NodeCompare(aStarNode * p1, aStarNode * p2);
 	void InsertOpenNode(aStarNode * pNode);

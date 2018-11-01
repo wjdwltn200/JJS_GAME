@@ -4,13 +4,13 @@
 #include "tileMap.h"
 #include "enemyManager.h"
 #include "uiManager.h"
+#include "aStarNode.h"
 
 HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag)
 {
 	//// 타일 맵 주소 초기화
 	m_pTileMapMag = pTileMag;
 	m_pEnemyMag = pEnemyMag;
-
 
 	m_tEnemyData.t_isAilve = enemyInfo->t_isAilve;
 	m_tEnemyData.t_posX = enemyInfo->t_posX;
@@ -49,11 +49,15 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	m_tEnemyData.t_DieCountDaley = ENEMY_DIE_DALEY;
 	m_tEnemyData.t_setTileMapNum = enemyInfo->t_setTileMapNum;
 
+	m_tEnemyData.t_FoodChainLv = enemyInfo->t_FoodChainLv;
+
 	m_tEnemyData.t_rc = RectMakeCenter(m_tEnemyData.t_posX, m_tEnemyData.t_posY, m_tEnemyData.t_img->getFrameWidth(), m_tEnemyData.t_img->getFrameHeight());
 	m_tEnemyData.t_enumType = enemyInfo->t_enumType;
 
 
 	m_moveDaley = m_tEnemyData.t_moveDaley;
+
+	Delete(true, true);
 
 	m_isMoveAct = false;
 	switch (m_tEnemyData.t_enumType)
@@ -82,6 +86,7 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	}
 
 
+	aStarFind(m_pAStartNode->Create(15, 4), m_pAStartNode->Create(m_tEnemyData.t_tilePosX, m_tEnemyData.t_tilePosY));
 
 	return S_OK;
 }
@@ -93,6 +98,9 @@ void enemy::release()
 void enemy::update()
 {
 	if (!m_tEnemyData.t_isAilve) return;
+
+
+
 
 	RECT tempRc;
 	if (
@@ -154,6 +162,208 @@ void enemy::render(HDC hdc)
 
 }
 
+int enemy::aStarisMove(aStarNode * pos, list<aStarNode*> * vecNode)
+{
+	int distX[3] = { -1, 0, 1 };
+	int distY[3] = { -1, 0, 1 };
+	int tempTileX = m_tEnemyData.t_tilePosX;
+	int tempTileY = m_tEnemyData.t_tilePosY;
+
+	for (int y = 0; y < 3; y++)
+	{
+		for (int x = 0; x < 3; x++)
+		{
+			int cx = distX[x] + pos->getPosX();
+			int cy = distX[y] + pos->getPosY();
+
+			if (cx == pos->getPosX() && cy == pos->getPosY()) continue;
+
+			if (aStarIsRect(cx, cy)) continue;
+			vecNode->push_back(m_pAStartNode->Create(cx, cy));
+			EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.top + TILE_SIZE / 2);
+
+		}
+	}
+
+	return sizeof(vecNode);
+}
+
+bool enemy::aStarFind(aStarNode * endXY, aStarNode * node)
+{
+	Delete(true, true);
+
+
+	
+	// 임시 aStar 생성
+	aStarNode * tempNode = node->Clone();
+	m_vecOpenNode.push_back(tempNode);
+	// 검색 깊이(비용?)
+	int iDepth = 0;
+	tempNode->setDepth(iDepth);
+
+	//list<aStarNode*> * vecChildsNode;
+	//vecChildsNode = new list<aStarNode*>;
+	//list<aStarNode*>::iterator	iterChildNode;
+
+	while (true)
+	{
+		if (m_vecOpenNode.size() == 0) break;
+
+		// openList 첫번째를 담는다
+		m_iterOpenNode = m_vecOpenNode.begin();
+		tempNode = (*m_iterOpenNode);
+
+		// 꺼낸 첫번째를 없앤다
+		m_vecOpenNode.pop_front();
+
+		// 목적지에 도착했다면
+		if (tempNode->getPosX() == endXY->getPosX() &&
+			tempNode->getPosY() == endXY->getPosY())
+		{
+
+			int tempX = endXY->getPosX();
+			int tempY = endXY->getPosY();
+			// 함수를 종료한다
+			EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[tempX * m_pTileMapMag->getTileSizeY() + tempY].t_rc.left, m_pTileMapMag->getTileSetPoint()[tempX * m_pTileMapMag->getTileSizeY() + tempY].t_rc.top);
+			return true;
+		}
+
+
+		// 도착 못했다면 닫힌 노드에 넣어준다
+		m_vecCloseNode.push_back(tempNode);
+		iDepth++; // 검색 깊이를 1 증가 시킨다
+		m_vecChildsNode.clear();
+
+		aStarisMove(tempNode, &m_vecChildsNode);
+		for (m_iterChildNode = m_vecChildsNode.begin(); m_iterChildNode != m_vecChildsNode.end(); m_iterChildNode++)
+		{
+			if (FindFromCloseNode((*m_iterChildNode))) continue;
+
+			(*m_iterChildNode)->CalcDist(endXY, iDepth);
+			(*m_iterChildNode)->setParent(tempNode);
+			InsertOpenNode((*m_iterChildNode));
+		}
+
+
+		//if (m_vecCloseNode.size() > 0)
+		//{
+		//	m_tempIter = m_vecCloseNode.begin();
+		//}
+
+
+ 
+		//SortOpenNode();
+	}
+
+	Delete(true, true);
+
+	return false;
+}
+
+void enemy::Delete(bool isOpen, bool isClose)
+{
+
+
+	if (isOpen)
+	{
+		for (m_iterOpenNode = m_vecOpenNode.begin();
+			m_iterOpenNode != m_vecOpenNode.end();
+			m_iterOpenNode++)
+		{
+			delete (*m_iterOpenNode);
+		}
+		m_vecOpenNode.clear();
+	}
+
+	if (isClose)
+	{
+		for (m_iterCloseNode = m_vecCloseNode.begin();
+			m_iterCloseNode != m_vecCloseNode.end();
+			m_iterCloseNode++)
+		{
+			delete (*m_iterCloseNode);
+		}
+		m_vecCloseNode.clear();
+	}
+
+}
+
+void enemy::SortOpenNode()
+{
+	if (m_vecOpenNode.size() < 2) return;
+	aStarNode * pNode;
+	list<aStarNode*>::iterator tempIter;
+
+	bool bContinue = true;
+
+	while (bContinue)
+	{
+		bContinue = false;
+		for (m_iterOpenNode = m_vecOpenNode.begin();
+			m_iterOpenNode != m_vecOpenNode.end()--;
+			m_iterOpenNode++)
+		{
+			tempIter = m_iterOpenNode++;
+			if (!NodeCompare((*m_iterOpenNode), (*tempIter)))
+			{
+				pNode = (*m_iterOpenNode);
+				
+				(*m_iterOpenNode) = (*tempIter);
+				(*tempIter) = pNode;
+				
+				bContinue = true;
+			}
+		}
+	}
+}
+
+bool enemy::NodeCompare(aStarNode * p1, aStarNode * p2)
+{
+	if (p1->getDist() < p2->getDist()) return true;
+	if (p1->getDist() > p2->getDist()) return false;
+	if (p1->getDepth() <= p2->getDepth()) return true;
+
+	return false;
+}
+
+void enemy::InsertOpenNode(aStarNode * pNode)
+
+{
+	for (m_iterOpenNode = m_vecOpenNode.begin();
+		m_iterOpenNode != m_vecOpenNode.end();
+		m_iterOpenNode++)
+	{
+		if ((*m_iterOpenNode)->isSamePos(pNode))
+		{
+			m_vecCloseNode.push_back((*m_iterOpenNode));
+			(*m_iterOpenNode) = pNode;
+			return;
+		}
+	}
+
+	m_vecOpenNode.push_back(pNode);
+}
+
+bool enemy::FindFromCloseNode(aStarNode * pNode)
+{
+	for (m_iterCloseNode = m_vecCloseNode.begin();
+		m_iterCloseNode != m_vecCloseNode.end();
+		m_iterCloseNode++)
+	{
+		if ((*m_iterCloseNode)->isSamePos(pNode)) return true;
+	}
+	return false;
+}
+
+bool enemy::aStarIsRect(int x, int y)
+{
+	if (x < 0 || x >= m_pTileMapMag->getTileSizeX()) return false;
+	if (y < 0 || y >= m_pTileMapMag->getTileSizeY()) return false;
+
+	if (!m_pTileMapMag->getTileSetPoint()[x * m_pTileMapMag->getTileSizeY() + y].t_isAlive) return false;
+	return true;
+}
+
 void enemy::currHp()
 {
 	m_tEnemyData.t_DieCountDaley--;
@@ -167,7 +377,12 @@ void enemy::currHp()
 		m_tEnemyData.t_currHp = m_tEnemyData.t_MaxHp;
 
 	if (m_tEnemyData.t_currHp <= 0) // 죽음
+	{
+		Delete(true, true);
+		isDieTileMana();
+		EFFMANAGER->play("Enemy_Die", m_tEnemyData.t_posX - CAMERA->getCamPosX() + (TILE_SIZE / 2), m_tEnemyData.t_posY - CAMERA->getCamPosY() + (TILE_SIZE / 2));
 		m_tEnemyData.t_isAilve = false;
+	}
 }
 
 void enemy::moveSys()
@@ -297,6 +512,31 @@ bool enemy::moveIsRect(int eMoveArrow)
 	return true;
 }
 
+bool enemy::tileManaChg(int eMoveArrow, int manaValue)
+{
+	switch (eMoveArrow)
+	{
+	case eMoveState::UP:
+		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1)].t_isAlive) return false;
+		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1)].t_ManaValue += manaValue;
+		break;
+	case eMoveState::DOWN:
+		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1)].t_isAlive) return false;
+		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1)].t_ManaValue += manaValue;
+		break;
+	case eMoveState::LEFT:
+		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_isAlive) return false;
+		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_ManaValue += manaValue;
+		break;
+	case eMoveState::RIGHT:
+		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_isAlive) return false;
+		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_ManaValue += manaValue;
+		break;
+	}
+
+	return true;
+}
+
 void enemy::enemySetTxt(int enemyType)
 {
 	tagTileTxt setTxt;
@@ -339,7 +579,12 @@ void enemy::enemySetTxt(int enemyType)
 
 void enemy::movePattern()
 {
+	//// 최초 행동 방향 저장
 	int tempMoveState = m_eMoveState;
+	if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo == &m_tEnemyData)
+		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
+	
+	eatEnemy();
 
 	switch (m_tEnemyData.t_enumType)
 	{
@@ -431,8 +676,89 @@ void enemy::movePattern()
 		m_isMoveAct = true;
 		break;
 	}
-	m_ani.start();
 
+	//// tileMap 위치에 몬스터 정보 저장
+	m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = &m_tEnemyData;
+	m_ani.start();
+}
+
+void enemy::isDieTileMana()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		int temp = RANDOM->getFromIntTo(0, 3);
+		if (tileManaChg(temp, m_tEnemyData.t_MaxHp / 10)) return;
+	}
+}
+
+bool enemy::eatIsEnemy(int eMoveArrow)
+{
+	int moveArrow;
+
+	switch (eMoveArrow)
+	{
+	case eMoveState::UP:
+		moveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1);
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
+		{
+			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
+			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
+			EFFMANAGER->play("MousePointEFF", 100, 100);
+
+			return true;
+		}
+		break;
+	case eMoveState::DOWN:
+		moveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1);
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
+		{
+			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
+			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
+			EFFMANAGER->play("MousePointEFF", 100, 100);
+
+
+			return true;
+		}
+		break;
+	case eMoveState::LEFT:
+		moveArrow = (m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
+		{
+			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
+			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
+			EFFMANAGER->play("MousePointEFF", 100, 100);
+
+
+			return true;
+		}
+		break;
+	case eMoveState::RIGHT:
+		moveArrow = (m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
+		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
+		{
+			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
+			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
+			EFFMANAGER->play("MousePointEFF", 100, 100);
+
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+void enemy::eatEnemy()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 3 && eatIsEnemy(i));
+		return;
+	}
 }
 
 enemy::enemy()

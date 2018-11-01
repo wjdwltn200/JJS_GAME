@@ -53,9 +53,10 @@ public:
 	void render(HDC hdc);
 
 	void keyInput();
-	void tileSetTxt(int tileType);
+	void tileSetTxt(int tileType, int tileNum);
 	tagItemData dropItemSet(int itemType);
-	void monsSetDrop(int monType, float posX, float posY, int setTileNum, int tileX, int tileY);
+	void monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY);
+	void tileImgSet(int tileNum, HDC hdc);
 
 	TileInfo * getTileSetPoint() { return m_tileset; }
 
