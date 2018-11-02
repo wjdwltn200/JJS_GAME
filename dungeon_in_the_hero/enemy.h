@@ -18,6 +18,8 @@ private:
 	list<aStarNode*>::iterator	m_iterCloseNode;
 	list<aStarNode*> m_vecChildsNode;
 	list<aStarNode*>::iterator	m_iterChildNode;
+	list<aStarNode*> m_vecRoute;
+	list<aStarNode*>::iterator	m_iterRoute;
 
 	enum eMoveState
 	{
@@ -30,6 +32,7 @@ private:
 	int m_moveDaley;
 	int m_eMoveState;
 	bool m_isMoveAct;
+	int m_aStarDepValue;
 
 	tileMap * m_pTileMapMag;
 	enemyManager * m_pEnemyMag;
@@ -43,12 +46,14 @@ public:
 
 	bool aStarIsRect(int x, int y);
 	bool aStarFind(aStarNode * endXY, aStarNode * node);
-	void Delete(bool isOpen, bool isClose);
+	void Delete(bool isOpen = false, bool isClose = false, bool isRoute = false);
 	void SortOpenNode();
 	bool NodeCompare(aStarNode * p1, aStarNode * p2);
 	void InsertOpenNode(aStarNode * pNode);
 	bool FindFromCloseNode(aStarNode * pNode);
-	int aStarisMove(aStarNode * pos, list<aStarNode*> * verNode);
+	int aStarisMove(aStarNode * pos, list<aStarNode*> * vecNode);
+
+	void aStarRoute();
 
 	void currHp();
 	void moveSys();
@@ -61,7 +66,6 @@ public:
 	void isDieTileMana();
 
 	bool eatIsEnemy(int eMoveArrow);
-	void eatEnemy();
 
 	enemy();
 	~enemy();

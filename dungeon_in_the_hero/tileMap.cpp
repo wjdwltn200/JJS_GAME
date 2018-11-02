@@ -69,18 +69,20 @@ HRESULT tileMap::init(int tileX, int tileY,
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::START;
 				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 
-				////// 용사 임시 드롭
-				//tagHeroData tempHero;
-				//tempHero.t_img = IMAGEMANAGER->findImage("hero_00");
-				//tempHero.t_isAilve = true;
-				//tempHero.t_currHp = 10;
-				//tempHero.t_MaxHp = tempHero.t_currHp;
-				//tempHero.t_posX = m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2;
-				//tempHero.t_posY = m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2;
-				//tempHero.t_scale = 2.0f;
-				//tempHero.t_setTileMapNum = (x * m_tileSizeY + y);
+				//// 용사 임시 드롭
+				tagHeroData tempHero;
+				tempHero.t_img = IMAGEMANAGER->findImage("hero_00");
+				tempHero.t_isAilve = true;
+				tempHero.t_currHp = 10;
+				tempHero.t_MaxHp = tempHero.t_currHp;
+				tempHero.t_posX = m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2;
+				tempHero.t_posY = m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2;
+				tempHero.t_scale = 2.0f;
+				tempHero.t_setTileMapNum = (x * m_tileSizeY + y);
+				tempHero.t_tilePosX = x;
+				tempHero.t_tilePosY = y;
 
-				//m_pHeroMag->heroDrop(&tempHero);
+				m_pHeroMag->heroDrop(&tempHero);
 
 			}
 			else if (x <= m_tileSizeX && y == (y * m_tileSizeY) || x == 0 || x == m_tileSizeX - 1 || y == m_tileSizeY - 1)
@@ -467,7 +469,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_tilePosX = tileX;
 		tempEnemy.t_tilePosY = tileY;
 		tempEnemy.t_scale = 2.0f;
-		tempEnemy.t_moveSpeed = 0.7f;
+		tempEnemy.t_moveSpeed = 1.0f;
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_setTileMapNum = setTileNum;
 		tempEnemy.t_atkPoint = 10;
@@ -488,7 +490,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
 		tempEnemy.t_tilePosX = tileX;
 		tempEnemy.t_tilePosY = tileY;
-		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_scale = 2.0;
 		tempEnemy.t_moveSpeed = 0.5f;
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_setTileMapNum = setTileNum;

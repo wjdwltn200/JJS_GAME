@@ -30,8 +30,8 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	m_tEnemyData.t_scale = enemyInfo->t_scale;
 	m_tEnemyData.t_alphaValue = enemyInfo->t_alphaValue = 255;
 	m_ani.init(m_tEnemyData.t_img->getWidth(), m_tEnemyData.t_img->getHeight(), m_tEnemyData.t_img->getFrameWidth(), m_tEnemyData.t_img->getFrameHeight());
-	m_ani.setDefPlayFrame(false, true);
-	m_ani.setFPS(10);
+	m_ani.setDefPlayFrame(false, false);
+	m_ani.setFPS(15);
 
 	m_tEnemyData.t_currHp = enemyInfo->t_currHp;
 	m_tEnemyData.t_MaxHp = enemyInfo->t_MaxHp;
@@ -56,6 +56,7 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 
 
 	m_moveDaley = m_tEnemyData.t_moveDaley;
+	m_aStarDepValue = 0;
 
 	Delete(true, true);
 
@@ -85,9 +86,7 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 		break;
 	}
 
-
-	aStarFind(m_pAStartNode->Create(15, 4), m_pAStartNode->Create(m_tEnemyData.t_tilePosX, m_tEnemyData.t_tilePosY));
-
+	//aStarFind(m_pAStartNode->Create(15, 4), m_pAStartNode->Create(m_tEnemyData.t_tilePosX, m_tEnemyData.t_tilePosY));
 	return S_OK;
 }
 
@@ -121,6 +120,7 @@ void enemy::update()
 	moveSys();
 	currHp();
 	m_ani.frameUpdate();
+
 }
 
 void enemy::render(HDC hdc)
@@ -164,35 +164,59 @@ void enemy::render(HDC hdc)
 
 int enemy::aStarisMove(aStarNode * pos, list<aStarNode*> * vecNode)
 {
-	int distX[3] = { -1, 0, 1 };
-	int distY[3] = { -1, 0, 1 };
 	int tempTileX = m_tEnemyData.t_tilePosX;
 	int tempTileY = m_tEnemyData.t_tilePosY;
 
-	for (int y = 0; y < 3; y++)
+	for (int i = 0; i < 4; i++)
 	{
-		for (int x = 0; x < 3; x++)
+		int cy = pos->getPosY(), cx = pos->getPosX();
+		switch (i)
 		{
-			int cx = distX[x] + pos->getPosX();
-			int cy = distX[y] + pos->getPosY();
-
-			if (cx == pos->getPosX() && cy == pos->getPosY()) continue;
-
-			if (aStarIsRect(cx, cy)) continue;
-			vecNode->push_back(m_pAStartNode->Create(cx, cy));
-			EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.top + TILE_SIZE / 2);
-
+		case eMoveState::UP:
+			cy = pos->getPosY() + 1;
+			break;
+		case eMoveState::RIGHT:
+			cx = pos->getPosX() + 1;
+			break;
+		case eMoveState::DOWN:
+			cy = pos->getPosY() - 1;
+			break;
+		case eMoveState::LEFT:
+			cx = pos->getPosX() - 1;
+			break;
 		}
+
+		if (cx == pos->getPosX() && cy == pos->getPosY()) continue;
+
+		if (aStarIsRect(cx, cy)) continue;
+		vecNode->push_back(m_pAStartNode->Create(cx, cy));
 	}
 
 	return sizeof(vecNode);
 }
 
+void enemy::aStarRoute()
+{
+	if (m_vecRoute.size() != 0)
+	{
+		aStarNode * tempStar;
+		m_iterRoute = m_vecRoute.begin();
+		tempStar = (*m_iterRoute);
+		while (true)
+		{
+			m_vecRoute.push_front(tempStar->getParent());
+			tempStar = tempStar->getParent();
+
+			if (tempStar->getDepth() == 0)
+				break;
+		}
+
+	}
+}
+
 bool enemy::aStarFind(aStarNode * endXY, aStarNode * node)
 {
 	Delete(true, true);
-
-
 	
 	// 임시 aStar 생성
 	aStarNode * tempNode = node->Clone();
@@ -200,11 +224,7 @@ bool enemy::aStarFind(aStarNode * endXY, aStarNode * node)
 	// 검색 깊이(비용?)
 	int iDepth = 0;
 	tempNode->setDepth(iDepth);
-
-	//list<aStarNode*> * vecChildsNode;
-	//vecChildsNode = new list<aStarNode*>;
-	//list<aStarNode*>::iterator	iterChildNode;
-
+	
 	while (true)
 	{
 		if (m_vecOpenNode.size() == 0) break;
@@ -217,17 +237,15 @@ bool enemy::aStarFind(aStarNode * endXY, aStarNode * node)
 		m_vecOpenNode.pop_front();
 
 		// 목적지에 도착했다면
-		if (tempNode->getPosX() == endXY->getPosX() &&
-			tempNode->getPosY() == endXY->getPosY())
+		if (endXY->isSamePos(tempNode))
 		{
-
-			int tempX = endXY->getPosX();
-			int tempY = endXY->getPosY();
 			// 함수를 종료한다
-			EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[tempX * m_pTileMapMag->getTileSizeY() + tempY].t_rc.left, m_pTileMapMag->getTileSetPoint()[tempX * m_pTileMapMag->getTileSizeY() + tempY].t_rc.top);
+			m_vecRoute.push_back(tempNode);
+			tempNode = tempNode->getParent();
+
+			aStarRoute();
 			return true;
 		}
-
 
 		// 도착 못했다면 닫힌 노드에 넣어준다
 		m_vecCloseNode.push_back(tempNode);
@@ -243,27 +261,18 @@ bool enemy::aStarFind(aStarNode * endXY, aStarNode * node)
 			(*m_iterChildNode)->setParent(tempNode);
 			InsertOpenNode((*m_iterChildNode));
 		}
-
-
-		//if (m_vecCloseNode.size() > 0)
-		//{
-		//	m_tempIter = m_vecCloseNode.begin();
-		//}
-
-
  
-		//SortOpenNode();
+		SortOpenNode();
 	}
 
+	// 못찾았을 경우
 	Delete(true, true);
 
 	return false;
 }
 
-void enemy::Delete(bool isOpen, bool isClose)
+void enemy::Delete(bool isOpen, bool isClose, bool isRoute)
 {
-
-
 	if (isOpen)
 	{
 		for (m_iterOpenNode = m_vecOpenNode.begin();
@@ -286,6 +295,12 @@ void enemy::Delete(bool isOpen, bool isClose)
 		m_vecCloseNode.clear();
 	}
 
+	if (isRoute)
+	{
+		if (m_vecRoute.size() == 0) return;
+		delete m_vecRoute.back();
+		m_vecRoute.clear();
+	}
 }
 
 void enemy::SortOpenNode()
@@ -293,17 +308,20 @@ void enemy::SortOpenNode()
 	if (m_vecOpenNode.size() < 2) return;
 	aStarNode * pNode;
 	list<aStarNode*>::iterator tempIter;
-
+	int tempVec = m_vecOpenNode.size();
 	bool bContinue = true;
 
 	while (bContinue)
 	{
 		bContinue = false;
-		for (m_iterOpenNode = m_vecOpenNode.begin();
-			m_iterOpenNode != m_vecOpenNode.end()--;
+ 		for (m_iterOpenNode = m_vecOpenNode.begin();
+			tempVec < m_vecOpenNode.size() - 1;
 			m_iterOpenNode++)
 		{
-			tempIter = m_iterOpenNode++;
+			tempVec--;
+			tempIter = m_iterOpenNode;
+			++tempIter;
+
 			if (!NodeCompare((*m_iterOpenNode), (*tempIter)))
 			{
 				pNode = (*m_iterOpenNode);
@@ -378,9 +396,8 @@ void enemy::currHp()
 
 	if (m_tEnemyData.t_currHp <= 0) // 죽음
 	{
-		Delete(true, true);
+		Delete(true, true, true);
 		isDieTileMana();
-		EFFMANAGER->play("Enemy_Die", m_tEnemyData.t_posX - CAMERA->getCamPosX() + (TILE_SIZE / 2), m_tEnemyData.t_posY - CAMERA->getCamPosY() + (TILE_SIZE / 2));
 		m_tEnemyData.t_isAilve = false;
 	}
 }
@@ -581,11 +598,21 @@ void enemy::movePattern()
 {
 	//// 최초 행동 방향 저장
 	int tempMoveState = m_eMoveState;
+	//// 이동 시 자신의 위치에 자신의 정보가 있다면 지워준다
 	if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo == &m_tEnemyData)
 		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
-	
-	eatEnemy();
 
+	// 4방향을 살피며 먹을 수 있다면 먹는다
+	if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 3)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (eatIsEnemy(i));
+			break;
+		}
+	}
+
+	//// enemyType에 맞춰 이동 패턴 적용
 	switch (m_tEnemyData.t_enumType)
 	{
 	case tagEnemyType::Bat: // 이동하다가 방향 전환
@@ -631,7 +658,7 @@ void enemy::movePattern()
 
 		m_isMoveAct = true;
  		break;
-	case tagEnemyType::Slime: // 막을때 까지 이동
+	case tagEnemyType::Slime: // 박을때 까지 이동
 		if (moveRectCheck(m_eMoveState))
 		{
 			m_isMoveAct = true;
@@ -670,7 +697,9 @@ void enemy::movePattern()
 			m_isMoveAct = true;
 		}
 		break;
-	default: // 움직일때마다 랜덤
+	default: // 패턴이 없을 경우 랜덤 이동
+
+
 		m_eMoveState = RANDOM->getFromIntTo(0, 4);
 		moveRectCheck(m_eMoveState);
 		m_isMoveAct = true;
@@ -679,6 +708,7 @@ void enemy::movePattern()
 
 	//// tileMap 위치에 몬스터 정보 저장
 	m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = &m_tEnemyData;
+	//// 모션 재생
 	m_ani.start();
 }
 
@@ -700,65 +730,32 @@ bool enemy::eatIsEnemy(int eMoveArrow)
 	case eMoveState::UP:
 		moveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1);
 		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
-		{
-			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
-			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
-			EFFMANAGER->play("MousePointEFF", 100, 100);
-
-			return true;
-		}
 		break;
 	case eMoveState::DOWN:
 		moveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1);
 		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
-		{
-			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
-			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
-			EFFMANAGER->play("MousePointEFF", 100, 100);
-
-
-			return true;
-		}
 		break;
 	case eMoveState::LEFT:
 		moveArrow = (m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
 		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
-		{
-			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
-			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
-			EFFMANAGER->play("MousePointEFF", 100, 100);
-
-
-			return true;
-		}
 		break;
 	case eMoveState::RIGHT:
 		moveArrow = (m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
 		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
-		{
-			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_isAilve = false;
-			m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
-			EFFMANAGER->play("MousePointEFF", 100, 100);
-
-			return true;
-		}
 		break;
 	}
 
-	return false;
-}
-
-void enemy::eatEnemy()
-{
-	for (int i = 0; i < 4; i++)
+	if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
 	{
-		if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 3 && eatIsEnemy(i));
-		return;
+		m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
+		m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp = 0;
+		EFFMANAGER->play("Enemy_Eat",
+			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_posX - CAMERA->getCamPosX() + (TILE_SIZE / 2),
+			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_posY - CAMERA->getCamPosY() + (TILE_SIZE / 2));
 	}
+
+
+	return true;;
 }
 
 enemy::enemy()

@@ -19,7 +19,7 @@ public:
 	void CalcDist(aStarNode * pDest, int cdepth);
 
 	void setParent(aStarNode * p) { pParent = p; }
-	aStarNode getParent() { return * pParent; }
+	aStarNode * getParent() { return pParent; }
 
 	aStarNode();
 	~aStarNode();

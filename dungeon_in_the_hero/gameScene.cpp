@@ -9,6 +9,8 @@ HRESULT gameScene::init()
 	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("MousePointEFF", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("Enemy_Die", "image/inGameImg/EFF/Enemy_Die.bmp", 512, 384, 512 / 4, 384 / 3, 15, 5, 0.0f, true);
+	EFFMANAGER->addEffect("Enemy_Eat", "image/inGameImg/EFF/EAT_EFF.bmp", 136, 30, 136 / 4, 30 / 1, 15, 5, 0.0f, true);
+
 
 	//// UiImgSet
 	IMAGEMANAGER->addImage("mousePoint", "image/inGameImg/UI/MousePoint.bmp", 112, 49, 2, 1, true, RGB(255, 0, 255));
@@ -50,7 +52,7 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("Spider_00_D", "image/inGameImg/ENEMY/Spider_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
 
 	//// heroImgSet
-	IMAGEMANAGER->addImage("hero_00", "image/inGameImg/HERO/hero_0.bmp", 60, 20, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00", "image/inGameImg/HERO/hero_0.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
 
 	//// 마우스 감추기
 	ShowCursor(FALSE);
@@ -102,6 +104,7 @@ void gameScene::update()
 	m_pUiMag->update();
 	OBJECTMANAGER->update();
 	EFFMANAGER->update();
+
 }
 
 void gameScene::render(HDC hdc)
