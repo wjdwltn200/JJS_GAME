@@ -53,10 +53,8 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	m_tEnemyData.t_FoodChainLv = enemyInfo->t_FoodChainLv;
 	m_tEnemyData.t_currMana = enemyInfo->t_currMana;
 
-
 	m_tEnemyData.t_rc = RectMakeCenter(m_tEnemyData.t_posX, m_tEnemyData.t_posY, m_tEnemyData.t_img->getFrameWidth(), m_tEnemyData.t_img->getFrameHeight());
 	m_tEnemyData.t_enumType = enemyInfo->t_enumType;
-
 
 	m_moveDaley = m_tEnemyData.t_moveDaley;
 	m_aStarDepValue = 0;
@@ -353,7 +351,6 @@ bool enemy::NodeCompare(aStarNode * p1, aStarNode * p2)
 }
 
 void enemy::InsertOpenNode(aStarNode * pNode)
-
 {
 	for (m_iterOpenNode = m_vecOpenNode.begin();
 		m_iterOpenNode != m_vecOpenNode.end();
@@ -504,8 +501,6 @@ void enemy::moveSys()
 			eatActPattern();
 			break;
 		}
-
-
 	}
 }
 
@@ -573,24 +568,28 @@ bool enemy::tileManaChg(int eMoveArrow, int manaValue)
 	{
 	case eMoveState::UP:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1);
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
 		m_tEnemyData.t_currMana -= manaValue;
 		break;
 	case eMoveState::DOWN:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1);
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
 		m_tEnemyData.t_currMana -= manaValue;
 		break;
 	case eMoveState::LEFT:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
 		m_tEnemyData.t_currMana -= manaValue;
 		break;
 	case eMoveState::RIGHT:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
 		m_tEnemyData.t_currMana -= manaValue;
@@ -613,24 +612,28 @@ bool enemy::tileManaDrain(int eMoveArrow, int manaValue)
 	{
 	case eMoveState::UP:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1);
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
 		m_tEnemyData.t_currMana += manaValue;
 		break;
 	case eMoveState::DOWN:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1);
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
 		m_tEnemyData.t_currMana += manaValue;
 		break;
 	case eMoveState::LEFT:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
 		m_tEnemyData.t_currMana += manaValue;
 		break;
 	case eMoveState::RIGHT:
 		tempMoveArrow = (m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue == -1) return false;
 		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
 		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
 		m_tEnemyData.t_currMana += manaValue;

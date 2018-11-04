@@ -57,17 +57,16 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("Lili_00_LA", "image/inGameImg/ENEMY/Lili/Lili_0_LEFT_ATK.bmp", 241, 30, 10, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Lili_00_Dead", "image/inGameImg/ENEMY/Lili/Lili_0_DEAD.bmp", 255, 31, 15, 1, true, RGB(255, 0, 255));
 
-	////생쥐
-	//IMAGEMANAGER->addImage("Rat_00_L", "image/inGameImg/ENEMY/Rat_0_L.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
-	//IMAGEMANAGER->addImage("Rat_00_R", "image/inGameImg/ENEMY/Rat_0_R.bmp", 32, 16, 2, 1, true, RGB(255, 0, 255));
-	//IMAGEMANAGER->addImage("Rat_00_D", "image/inGameImg/ENEMY/Rat_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
-	////거미
-	//IMAGEMANAGER->addImage("Spider_00_L", "image/inGameImg/ENEMY/Spider_0_L.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
-	//IMAGEMANAGER->addImage("Spider_00_R", "image/inGameImg/ENEMY/Spider_0_R.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
-	//IMAGEMANAGER->addImage("Spider_00_D", "image/inGameImg/ENEMY/Spider_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
-
 	//// heroImgSet
-	IMAGEMANAGER->addImage("hero_00", "image/inGameImg/HERO/hero_0.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_U", "image/inGameImg/HERO/hero_0/hero_0_UP.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_R", "image/inGameImg/HERO/hero_0/hero_0_RIGHT.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_D", "image/inGameImg/HERO/hero_0/hero_0_DOWN.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_L", "image/inGameImg/HERO/hero_0/hero_0_LEFT.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+
+
+	//// player
+	IMAGEMANAGER->addImage("player_00", "image/inGameImg/HERO/Player.bmp", 72, 25, 4, 1, true, RGB(255, 0, 255));
+
 
 	//// 마우스 감추기
 	ShowCursor(FALSE);
@@ -119,7 +118,6 @@ void gameScene::update()
 	m_pUiMag->update();
 	OBJECTMANAGER->update();
 	EFFMANAGER->update();
-
 }
 
 void gameScene::render(HDC hdc)

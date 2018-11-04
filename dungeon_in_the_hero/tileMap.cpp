@@ -69,20 +69,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::START;
 				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 
-				//// 용사 임시 드롭
-				tagHeroData tempHero;
-				tempHero.t_img = IMAGEMANAGER->findImage("hero_00");
-				tempHero.t_isAilve = true;
-				tempHero.t_currHp = 10;
-				tempHero.t_MaxHp = tempHero.t_currHp;
-				tempHero.t_posX = m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2;
-				tempHero.t_posY = m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2;
-				tempHero.t_scale = 2.0f;
-				tempHero.t_setTileMapNum = (x * m_tileSizeY + y);
-				tempHero.t_tilePosX = x;
-				tempHero.t_tilePosY = y;
 
-				m_pHeroMag->heroDrop(&tempHero);
 
 			}
 			else if (x <= m_tileSizeX && y == (y * m_tileSizeY) || x == 0 || x == m_tileSizeX - 1 || y == m_tileSizeY - 1)
@@ -125,9 +112,6 @@ HRESULT tileMap::init(int tileX, int tileY,
 
 	//// 카메라 최초 위치 셋팅
 	CAMERA->setCamPosX((m_tileSizeMaxX - WINSIZEX - WINSTARTX) / 2);
-
-
-
 
 	return S_OK;
 }
@@ -217,6 +201,9 @@ void tileMap::update()
 				{
 					monsSetDrop(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
 					m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
+
+
+
 					//monsSetDrop(tagEnemyType::Spider ,m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
 				}
 				EFFMANAGER->play("MousePointEFF", m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)));
@@ -325,14 +312,14 @@ void tileMap::render(HDC hdc)
 				);
 
 				//// 타일정보 디버깅 정보
-				sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_ManaValue);
-				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
+				//sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_ManaValue);
+				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				/*sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_enemyInfo);
 				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));*/
-				/*sprintf_s(szText, "%d", TestTileNum);
-				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
-				sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
-				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));*/
+				//sprintf_s(szText, "%d", TestTileNum);
+				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
+				sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
+				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));
 				//sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_isAlive, m_tileset[x * m_tileSizeY + y].t_isShaking);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));
 			}
@@ -365,6 +352,32 @@ void tileMap::keyInput()
 	if (KEYMANAGER->isStayKeyDown('D'))
 		CAMERA->setCamPosX(CAMERA->getCamPosX() + 3.0f);
 
+	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
+	{
+		//// 용사 임시 드롭
+		tagHeroData tempHero;
+		tempHero.t_img_U = IMAGEMANAGER->findImage("hero_00_U");
+		tempHero.t_img_R = IMAGEMANAGER->findImage("hero_00_R");
+		tempHero.t_img_D = IMAGEMANAGER->findImage("hero_00_D");
+		tempHero.t_img_L = IMAGEMANAGER->findImage("hero_00_L");
+		tempHero.t_img_Dead = IMAGEMANAGER->findImage("Slime_00_Dead");
+
+		tempHero.t_isAilve = true;
+		tempHero.t_currHp = 10;
+		tempHero.t_MaxHp = tempHero.t_currHp;
+		tempHero.t_posX = m_tileset[15 * m_tileSizeY + 0].t_rc.left + CAMERA->getCamPosX();
+		tempHero.t_posY = m_tileset[15 * m_tileSizeY + 0].t_rc.top + CAMERA->getCamPosY();
+		tempHero.t_tilePosX = 15;
+		tempHero.t_tilePosY = 0;
+		tempHero.t_scale = 2.0f;
+		tempHero.t_moveSpeed = 1.0f;
+		tempHero.t_moveDaley = 0;
+		tempHero.t_setTileMapNum = (15 * m_tileSizeY + 0);
+		tempHero.t_atkPoint = 3;
+		tempHero.t_defPoint = 0;
+
+		m_pHeroMag->heroDrop(&tempHero);
+	}
 
 }
 
@@ -412,8 +425,8 @@ tagItemData tileMap::dropItemSet(int itemType)
 		m_tItemInfo.t_frameX = RANDOM->getFromIntTo(0, 4);
 		m_tItemInfo.t_frameY = RANDOM->getFromIntTo(0, 6);
 		return m_tItemInfo;
-		break;
 	}
+	return m_tItemInfo;
 }
 
 void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY)

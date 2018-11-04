@@ -28,7 +28,6 @@ private:
 		UP, RIGHT, DOWN, LEFT, MOVE_NUM
 	};
 	SYNTHESIZE(tagEnemyData, m_tEnemyData, tEnemyData);
-
 	animation m_ani;
 
 	int m_moveDaley;
@@ -50,16 +49,15 @@ public:
 	void update();
 	void render(HDC hdc);
 
-	bool aStarIsRect(int x, int y);
+	int aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode);
+	void aStarRoute();
 	bool aStarFind(aStarNode * endXY, aStarNode * node);
-	void Delete(bool isOpen = false, bool isClose = false, bool isRoute = false);
+	void Delete(bool isOpen = false , bool isClose = false, bool isRoute = false);
 	void SortOpenNode();
 	bool NodeCompare(aStarNode * p1, aStarNode * p2);
 	void InsertOpenNode(aStarNode * pNode);
 	bool FindFromCloseNode(aStarNode * pNode);
-	int aStarisMove(aStarNode * pos, list<aStarNode*> * vecNode);
-
-	void aStarRoute();
+	bool aStarIsRect(int x, int y);
 
 	void currHp();
 	void moveSys();
@@ -67,7 +65,6 @@ public:
 	bool moveIsRect(int eMoveArrow);
 	bool tileManaChg(int eMoveArrow, int manaValue);
 	bool tileManaDrain(int eMoveArrow, int manaValue);
-
 
 	void enemySetTxt(int enemyType);
 	void movePattern();
