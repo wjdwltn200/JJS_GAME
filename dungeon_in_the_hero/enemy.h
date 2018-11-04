@@ -3,7 +3,9 @@
 
 #define IMG_TILE_SET_Y 5.0f
 #define ENEMY_DIE_DALEY 60
-#define ENEMY_MOVE_DALEY 10
+#define ENEMY_ACT_DALEY 120
+
+#define ENEMY_FLOWER_MANA 7
 
 class tileMap;
 class enemyManager;
@@ -32,11 +34,15 @@ private:
 	int m_moveDaley;
 	int m_eMoveState;
 	bool m_isMoveAct;
+	bool m_isAttAct;
 	int m_aStarDepValue;
+	bool m_isDead;
 
 	tileMap * m_pTileMapMag;
 	enemyManager * m_pEnemyMag;
 	aStarNode * m_pAStartNode;
+
+	tagEnemyData tempEnemy;
 
 public:
 	HRESULT init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag);
@@ -60,12 +66,19 @@ public:
 	bool moveRectCheck(int eMoveArrow);
 	bool moveIsRect(int eMoveArrow);
 	bool tileManaChg(int eMoveArrow, int manaValue);
+	bool tileManaDrain(int eMoveArrow, int manaValue);
+
 
 	void enemySetTxt(int enemyType);
 	void movePattern();
 	void isDieTileMana();
 
+	void eatActPattern();
 	bool eatIsEnemy(int eMoveArrow);
+
+	tagEnemyData * FlowerInfo();
+	tagEnemyData * SlimeInfo();
+
 
 	enemy();
 	~enemy();

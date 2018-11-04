@@ -325,10 +325,14 @@ void tileMap::render(HDC hdc)
 				);
 
 				//// 타일정보 디버깅 정보
-				sprintf_s(szText, "%d", TestTileNum);
+				sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_ManaValue);
+				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
+				/*sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_enemyInfo);
+				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));*/
+				/*sprintf_s(szText, "%d", TestTileNum);
 				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
-				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));
+				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));*/
 				//sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_isAlive, m_tileset[x * m_tileSizeY + y].t_isShaking);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));
 			}
@@ -415,52 +419,15 @@ tagItemData tileMap::dropItemSet(int itemType)
 void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY)
 {
 	tagEnemyData tempEnemy;
-	
-	if (m_tileset[setTileNum].t_ManaValue >= 6)
+
+	if (m_tileset[setTileNum].t_ManaValue >= 5)
 	{
-		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Daemon_00_L");
-		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Daemon_00_R");
-		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Daemon_00_D");
-		tempEnemy.t_isAilve = true;
-		tempEnemy.t_currHp = 100;
-		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
-		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
-		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
-		tempEnemy.t_tilePosX = tileX;
-		tempEnemy.t_tilePosY = tileY;
-		tempEnemy.t_scale = 2.0f;
-		tempEnemy.t_moveSpeed = 0.7f;
-		tempEnemy.t_moveDaley = 120;
-		tempEnemy.t_setTileMapNum = setTileNum;
-		tempEnemy.t_atkPoint = 10;
-		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_enumType = tagEnemyType::Daemon;
-	}
-	else if (m_tileset[setTileNum].t_ManaValue >= 5)
-	{
-		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Bat_00_L");
-		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Bat_00_R");
-		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Bat_00_D");
-		tempEnemy.t_isAilve = true;
-		tempEnemy.t_currHp = 100;
-		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
-		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
-		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
-		tempEnemy.t_tilePosX = tileX;
-		tempEnemy.t_tilePosY = tileY;
-		tempEnemy.t_scale = 2.0f;
-		tempEnemy.t_moveSpeed = 0.7f;
-		tempEnemy.t_moveDaley = 10;
-		tempEnemy.t_setTileMapNum = setTileNum;
-		tempEnemy.t_atkPoint = 10;
-		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_enumType = tagEnemyType::Spider;
-	}
-	else if (m_tileset[setTileNum].t_ManaValue >= 4)
-	{
-		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Rat_00_L");
-		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Rat_00_R");
-		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Rat_00_D");
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Lili_00_R");
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Lili_00_L");
+		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Lili_00_RA");
+		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Lili_00_LA");
+		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Lili_00_Dead");
+
 		tempEnemy.t_isAilve = true;
 		tempEnemy.t_currHp = 10;
 		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
@@ -468,35 +435,63 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
 		tempEnemy.t_tilePosX = tileX;
 		tempEnemy.t_tilePosY = tileY;
-		tempEnemy.t_scale = 2.0f;
-		tempEnemy.t_moveSpeed = 1.0f;
+		tempEnemy.t_scale = 2.0;
+		tempEnemy.t_moveSpeed = 0.7f;
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_setTileMapNum = setTileNum;
-		tempEnemy.t_atkPoint = 10;
-		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_FoodChainLv = 1;
-		tempEnemy.t_enumType = tagEnemyType::Rat;
-		
+		tempEnemy.t_atkPoint = 3;
+		tempEnemy.t_defPoint = 0;
+		tempEnemy.t_FoodChainLv = 2;
+		tempEnemy.t_enumType = tagEnemyType::Bug;
 	}
-	else if (m_tileset[setTileNum].t_ManaValue <= 3)
+	else if (m_tileset[setTileNum].t_ManaValue >= 4)
 	{
-		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Slime_00_L");
-		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Slime_00_R");
-		tempEnemy.t_img_D = IMAGEMANAGER->findImage("Slime_00_D");
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Bug_00_R");
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Bug_00_L");
+		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Bug_00_RA");
+		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Bug_00_LA");
+		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Bug_00_Dead");
+
 		tempEnemy.t_isAilve = true;
-		tempEnemy.t_currHp = 30;
+		tempEnemy.t_currHp = 50;
 		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
 		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
 		tempEnemy.t_tilePosX = tileX;
 		tempEnemy.t_tilePosY = tileY;
 		tempEnemy.t_scale = 2.0;
-		tempEnemy.t_moveSpeed = 0.5f;
+		tempEnemy.t_moveSpeed = 0.8f;
+		tempEnemy.t_moveDaley = 0;
+		tempEnemy.t_setTileMapNum = setTileNum;
+		tempEnemy.t_atkPoint = 3;
+		tempEnemy.t_defPoint = 0;
+		tempEnemy.t_FoodChainLv = 1;
+		tempEnemy.t_currMana = RANDOM->getFromIntTo(1, 1);
+		tempEnemy.t_enumType = tagEnemyType::Bug;
+	}
+	else if (m_tileset[setTileNum].t_ManaValue <= 3)
+	{
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Slime_00_R");
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Slime_00_L");
+		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Slime_00_RA");
+		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Slime_00_LA");
+		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Slime_00_Dead");
+
+		tempEnemy.t_isAilve = true;
+		tempEnemy.t_currHp = 25;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
+		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
+		tempEnemy.t_tilePosX = tileX;
+		tempEnemy.t_tilePosY = tileY;
+		tempEnemy.t_scale = 1.5f;
+		tempEnemy.t_moveSpeed = RANDOM->getFromFloatTo(0.5f, 0.8f);
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_setTileMapNum = setTileNum;
 		tempEnemy.t_atkPoint = 3;
 		tempEnemy.t_defPoint = 0;
 		tempEnemy.t_FoodChainLv = 0;
+		tempEnemy.t_currMana = RANDOM->getFromIntTo(1, 2);
 		tempEnemy.t_enumType = tagEnemyType::Slime;
 	}
 

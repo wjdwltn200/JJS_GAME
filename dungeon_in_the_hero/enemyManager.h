@@ -1,5 +1,6 @@
 #pragma once
 
+#define SET_ENEMY_VEC 100
 
 class enemy;
 class tileMap;

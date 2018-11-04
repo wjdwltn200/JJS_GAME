@@ -5,6 +5,11 @@
 
 HRESULT enemyManager::init(tileMap * pTileMag, uiManager * pUiMag)
 {
+	for (int i = 0; i < SET_ENEMY_VEC; i++)
+	{
+		enemy * tempEnemy = new enemy;
+		m_vecEnemy.push_back(tempEnemy);
+	}
 	m_pTileMap = pTileMag;
 	m_pUiMag = pUiMag;
 	m_pEnemyPopup = pUiMag->addPopup(NULL, NULL, NULL, NULL);
@@ -52,9 +57,9 @@ void enemyManager::enemyDrop(tagEnemyData * enemyInfo)
 		return;
 	}
 
-	enemy * tempEnemy = new enemy;
-	tempEnemy->init(enemyInfo, m_pTileMap, this);
-	m_vecEnemy.push_back(tempEnemy);
+	//enemy * tempEnemy = new enemy;
+	//tempEnemy->init(enemyInfo, m_pTileMap, this);
+	//m_vecEnemy.push_back(tempEnemy);
 }
 
 enemyManager::enemyManager()

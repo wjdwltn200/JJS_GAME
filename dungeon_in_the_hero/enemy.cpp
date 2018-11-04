@@ -21,10 +21,11 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	m_tEnemyData.t_moveEndX = m_tEnemyData.t_posX;
 	m_tEnemyData.t_moveEndY = m_tEnemyData.t_posY;
 
-
-	m_tEnemyData.t_img_L = enemyInfo->t_img_L;
 	m_tEnemyData.t_img_R = enemyInfo->t_img_R;
-	m_tEnemyData.t_img_D = enemyInfo->t_img_D;
+	m_tEnemyData.t_img_L = enemyInfo->t_img_L;
+	m_tEnemyData.t_img_RA = enemyInfo->t_img_RA;
+	m_tEnemyData.t_img_LA = enemyInfo->t_img_LA;
+	m_tEnemyData.t_img_Dead = enemyInfo->t_img_Dead;
 
 	m_tEnemyData.t_img = enemyInfo->t_img_L;
 	m_tEnemyData.t_scale = enemyInfo->t_scale;
@@ -50,6 +51,8 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	m_tEnemyData.t_setTileMapNum = enemyInfo->t_setTileMapNum;
 
 	m_tEnemyData.t_FoodChainLv = enemyInfo->t_FoodChainLv;
+	m_tEnemyData.t_currMana = enemyInfo->t_currMana;
+
 
 	m_tEnemyData.t_rc = RectMakeCenter(m_tEnemyData.t_posX, m_tEnemyData.t_posY, m_tEnemyData.t_img->getFrameWidth(), m_tEnemyData.t_img->getFrameHeight());
 	m_tEnemyData.t_enumType = enemyInfo->t_enumType;
@@ -57,32 +60,34 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 
 	m_moveDaley = m_tEnemyData.t_moveDaley;
 	m_aStarDepValue = 0;
+	m_isDead = false;
+	m_isAttAct = false;
 
 	Delete(true, true);
 
 	m_isMoveAct = false;
 	switch (m_tEnemyData.t_enumType)
 	{
-	case tagEnemyType::Rat:
-		m_eMoveState = eMoveState::LEFT;
-		break;
+	//case tagEnemyType::Rat:
+	//	m_eMoveState = eMoveState::LEFT;
+	//	break;
 	case tagEnemyType::Slime:
 		m_eMoveState = RANDOM->getFromIntTo(0, 3);
 		break;
-	case tagEnemyType::Daemon:
-		for (int i = 0; i < 4; i++)
-		{
-			if (moveRectCheck(i))
-			{
-				m_eMoveState = i;
-				m_ani.start();
-				m_isMoveAct = true;
-				break;
-			}
-		}
-		break;
+	//case tagEnemyType::Daemon:
+	//	for (int i = 0; i < 4; i++)
+	//	{
+	//		if (moveRectCheck(i))
+	//		{
+	//			m_eMoveState = i;
+	//			m_ani.start();
+	//			m_isMoveAct = true;
+	//			break;
+	//		}
+	//	}
+	//	break;
 	default:
-		m_eMoveState = RANDOM->getFromIntTo(0, 4);
+		m_eMoveState = RANDOM->getFromIntTo(0, 3);
 		break;
 	}
 
@@ -97,9 +102,6 @@ void enemy::release()
 void enemy::update()
 {
 	if (!m_tEnemyData.t_isAilve) return;
-
-
-
 
 	RECT tempRc;
 	if (
@@ -120,46 +122,52 @@ void enemy::update()
 	moveSys();
 	currHp();
 	m_ani.frameUpdate();
-
 }
 
 void enemy::render(HDC hdc)
 {
-	if (m_eMoveState == eMoveState::LEFT)
-	{
-		m_tEnemyData.t_img = m_tEnemyData.t_img_L;
-	}
-	else if (m_eMoveState == eMoveState::RIGHT)
-	{
-		m_tEnemyData.t_img = m_tEnemyData.t_img_R;
-	}
-
-	if (!(m_tEnemyData.t_rc.left < -TILE_SIZE || m_tEnemyData.t_rc.left > WINSIZEX) &&
-	!(m_tEnemyData.t_rc.top < -TILE_SIZE || m_tEnemyData.t_rc.top > WINSIZEY))
-	{
-		m_tEnemyData.t_img->aniRender(hdc,
-			m_tEnemyData.t_posX - CAMERA->getCamPosX(),
-			m_tEnemyData.t_posY - CAMERA->getCamPosY(),
-			&m_ani, m_tEnemyData.t_scale, true, m_tEnemyData.t_alphaValue);
-	}
-
-
-	m_tEnemyData.t_rc = RectMake(
-		m_tEnemyData.t_posX - CAMERA->getCamPosX(),
-		m_tEnemyData.t_posY - CAMERA->getCamPosY(),
-		m_tEnemyData.t_img->getFrameWidth() * 2,
-		m_tEnemyData.t_img->getFrameHeight() * 2);
+	m_ani.init(m_tEnemyData.t_img->getWidth(), m_tEnemyData.t_img->getHeight(), m_tEnemyData.t_img->getFrameWidth(), m_tEnemyData.t_img->getFrameHeight());
+	m_ani.setDefPlayFrame(false, false);
+	m_ani.setFPS(15);
 
 	if (g_saveData.gisTest)
 	{
 		Rectangle(hdc, m_tEnemyData.t_rc.left, m_tEnemyData.t_rc.top, m_tEnemyData.t_rc.right, m_tEnemyData.t_rc.bottom);
 
 		char szText[256];
-		sprintf_s(szText, "%d,%d", m_tEnemyData.t_tilePosX, m_tEnemyData.t_tilePosY);
+		sprintf_s(szText, "%d,%d", m_tEnemyData.t_currMana , m_moveDaley);
 		TextOut(hdc, m_tEnemyData.t_posX - CAMERA->getCamPosX(), m_tEnemyData.t_posY - CAMERA->getCamPosY(), szText, strlen(szText));
 	}
 
+	if (!m_isDead && !m_isAttAct)
+	{
+		if (m_eMoveState == eMoveState::LEFT)
+		{
+			m_tEnemyData.t_img = m_tEnemyData.t_img_L;
+		}
+		else if (m_eMoveState == eMoveState::RIGHT)
+		{
+			m_tEnemyData.t_img = m_tEnemyData.t_img_R;
+		}
+	}
 
+	
+
+	// 스크린 랜더 조건
+	if (!(m_tEnemyData.t_rc.left < -TILE_SIZE || m_tEnemyData.t_rc.left > WINSIZEX) &&
+	!(m_tEnemyData.t_rc.top < -TILE_SIZE || m_tEnemyData.t_rc.top > WINSIZEY))
+	{
+		m_tEnemyData.t_img->aniRender(hdc,
+			(m_tEnemyData.t_posX + (TILE_SIZE / 2) - (m_tEnemyData.t_img->getFrameWidth() * m_tEnemyData.t_scale) / 2) - CAMERA->getCamPosX(),
+			((m_tEnemyData.t_posY + TILE_SIZE ) - (m_tEnemyData.t_img->getFrameHeight() * m_tEnemyData.t_scale)) - CAMERA->getCamPosY(),
+			&m_ani, m_tEnemyData.t_scale, true, m_tEnemyData.t_alphaValue);
+	}
+
+	m_tEnemyData.t_rc = RectMake(
+		m_tEnemyData.t_posX - CAMERA->getCamPosX(),
+		m_tEnemyData.t_posY - CAMERA->getCamPosY(),
+		TILE_SIZE,
+		TILE_SIZE);
 }
 
 int enemy::aStarisMove(aStarNode * pos, list<aStarNode*> * vecNode)
@@ -384,6 +392,20 @@ bool enemy::aStarIsRect(int x, int y)
 
 void enemy::currHp()
 {
+	if (m_isDead && m_ani.getIsPlaying())
+	{
+		m_tEnemyData.t_alphaValue += 50;
+		return;
+	}
+	else if (m_isDead && !m_ani.getIsPlaying())
+	{
+		if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo == &m_tEnemyData)
+			m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
+		Delete(true, true, true);
+		isDieTileMana();
+		m_tEnemyData.t_isAilve = false;
+	}
+
 	m_tEnemyData.t_DieCountDaley--;
 	if (m_tEnemyData.t_DieCountDaley <= 0)
 	{
@@ -396,37 +418,48 @@ void enemy::currHp()
 
 	if (m_tEnemyData.t_currHp <= 0) // 죽음
 	{
-		Delete(true, true, true);
-		isDieTileMana();
-		m_tEnemyData.t_isAilve = false;
+		m_tEnemyData.t_img = m_tEnemyData.t_img_Dead;
+		m_ani.start();
+		m_isDead = true;
 	}
 }
 
 void enemy::moveSys()
 {
+	// 사망 대기 상태라면 움직이지 않는다
+	if (m_isDead) return;
+
+	// 행동 액션 여부
 	if (!m_isMoveAct)
 	{
-		if (m_moveDaley <= 0)
+		if (m_moveDaley <= 0 && !m_ani.getIsPlaying())
 		{
 			// 지정된 위치로 좌표 및 변경
 			movePattern();
-		}	
+		}
 		m_moveDaley--;
 	}
 	else
 	{
+		// 이동 액션 실행
 		switch (m_eMoveState)
 		{
 		case eMoveState::UP:
+			// 이동 거리
 			if (m_tEnemyData.t_posY > m_tEnemyData.t_moveEndY)
 				m_tEnemyData.t_posY -= m_tEnemyData.t_moveSpeed;
 
+			// 이동 거리 도착 시
 			if (m_tEnemyData.t_posY <= m_tEnemyData.t_moveEndY)
 			{
+				// 위치를 이동하려고 했던 거리로 초기화
 				m_tEnemyData.t_posY = m_tEnemyData.t_moveEndY;
+				// 이동 액션 종료 bool 문
 				m_isMoveAct = false;
+				// 다음 이동 액션까지 딜레이
 				m_moveDaley = m_tEnemyData.t_moveDaley;
-				m_ani.stop();
+				// 움직임 정지
+				eatActPattern();
 			}
 			break;
 		case eMoveState::DOWN:
@@ -438,7 +471,7 @@ void enemy::moveSys()
 				m_tEnemyData.t_posY = m_tEnemyData.t_moveEndY;
 				m_isMoveAct = false;
 				m_moveDaley = m_tEnemyData.t_moveDaley;
-				m_ani.stop();
+				eatActPattern();
 			}
 			break;
 		case eMoveState::LEFT:
@@ -450,7 +483,7 @@ void enemy::moveSys()
 				m_tEnemyData.t_posX = m_tEnemyData.t_moveEndX;
 				m_isMoveAct = false;
 				m_moveDaley = m_tEnemyData.t_moveDaley;
-				m_ani.stop();
+				eatActPattern();
 			}
 			break;
 		case eMoveState::RIGHT:
@@ -462,14 +495,17 @@ void enemy::moveSys()
 				m_tEnemyData.t_posX = m_tEnemyData.t_moveEndX;
 				m_isMoveAct = false;
 				m_moveDaley = m_tEnemyData.t_moveDaley;
-				m_ani.stop();
+				eatActPattern();
 			}
 			break;
 		case eMoveState::MOVE_NUM:
 			m_isMoveAct = false;
 			m_moveDaley = m_tEnemyData.t_moveDaley;
+			eatActPattern();
 			break;
 		}
+
+
 	}
 }
 
@@ -531,26 +567,79 @@ bool enemy::moveIsRect(int eMoveArrow)
 
 bool enemy::tileManaChg(int eMoveArrow, int manaValue)
 {
+	int tempMoveArrow;
+
 	switch (eMoveArrow)
 	{
 	case eMoveState::UP:
-		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1)].t_isAlive) return false;
-		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1)].t_ManaValue += manaValue;
+		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1);
+		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
+		m_tEnemyData.t_currMana -= manaValue;
 		break;
 	case eMoveState::DOWN:
-		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1)].t_isAlive) return false;
-		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1)].t_ManaValue += manaValue;
+		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1);
+		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
+		m_tEnemyData.t_currMana -= manaValue;
 		break;
 	case eMoveState::LEFT:
-		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_isAlive) return false;
-		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_ManaValue += manaValue;
+		tempMoveArrow = (m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
+		m_tEnemyData.t_currMana -= manaValue;
 		break;
 	case eMoveState::RIGHT:
-		if (!m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_isAlive) return false;
-		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_ManaValue += manaValue;
+		tempMoveArrow = (m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (!m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive || m_tEnemyData.t_currMana < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue += manaValue;
+		m_tEnemyData.t_currMana -= manaValue;
 		break;
 	}
 
+
+	//EFFMANAGER->play("Enemy_Eat_R",
+	//	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + (TILE_SIZE / 2),
+	//	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + (TILE_SIZE / 2));
+
+	return true;
+}
+
+bool enemy::tileManaDrain(int eMoveArrow, int manaValue)
+{
+	int tempMoveArrow;
+
+	switch (eMoveArrow)
+	{
+	case eMoveState::UP:
+		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1);
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
+		m_tEnemyData.t_currMana += manaValue;
+		break;
+	case eMoveState::DOWN:
+		tempMoveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1);
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
+		m_tEnemyData.t_currMana += manaValue;
+		break;
+	case eMoveState::LEFT:
+		tempMoveArrow = (m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
+		m_tEnemyData.t_currMana += manaValue;
+		break;
+	case eMoveState::RIGHT:
+		tempMoveArrow = (m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue < manaValue) return false;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_ManaValue -= manaValue;
+		m_tEnemyData.t_currMana += manaValue;
+		break;
+	}
+
+	//EFFMANAGER->play("Enemy_Eat",
+	//	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + (TILE_SIZE / 2),
+	//	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + (TILE_SIZE / 2));
 	return true;
 }
 
@@ -560,29 +649,13 @@ void enemy::enemySetTxt(int enemyType)
 
 	switch (enemyType)
 	{
-	case tagEnemyType::Skeleton:
-		setTxt.t_txtName = "뼈다귀";
-		setTxt.t_txtInfo = "던전을 공략하다 실패한 용사 처럼 보입니다.";
-		break;
 	case tagEnemyType::Slime:
 		setTxt.t_txtName = "액괴";
 		setTxt.t_txtInfo = "이래뵈도, 움직이는 영양덩어리 입니다.";
 		break;
-	case tagEnemyType::Daemon:
-		setTxt.t_txtName = "철갑추";
-		setTxt.t_txtInfo = "철컹철컹 걸을때 마다 시끄러운 녀석 입니다.";
-		break;
-	case tagEnemyType::Bat:
-		setTxt.t_txtName = "뱃치";
-		setTxt.t_txtInfo = "던전에 박쥐가 빠질 수 없죠 파닥파닥~";
-		break;
-	case tagEnemyType::Rat:
-		setTxt.t_txtName = "쥐";
-		setTxt.t_txtInfo = "찍 찍찍 찍찍찍! 라고 하는군요..";
-		break;
-	case tagEnemyType::Spider:
-		setTxt.t_txtName = "커미";
-		setTxt.t_txtInfo = "저 다리좀 보세요 각선미가 엄청납니다!";
+	case tagEnemyType::Bug:
+		setTxt.t_txtName = "볼레레";
+		setTxt.t_txtInfo = "액괴를 먹는 볼레입니다 하얗고 귀엽죠?";
 		break;
 	}
 
@@ -596,110 +669,139 @@ void enemy::enemySetTxt(int enemyType)
 
 void enemy::movePattern()
 {
+	// 공격 여부는 이동하기 전에 행동하여 이동을 실시하지 않도록 해야한다
+	m_isAttAct = false;
+	if (RANDOM->getInt(100) < 50)
+	{
+		m_tEnemyData.t_img = m_tEnemyData.t_img_L;
+	}
+	else
+	{
+		m_tEnemyData.t_img = m_tEnemyData.t_img_R;
+	}
+
 	//// 최초 행동 방향 저장
 	int tempMoveState = m_eMoveState;
 	//// 이동 시 자신의 위치에 자신의 정보가 있다면 지워준다
 	if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo == &m_tEnemyData)
 		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
 
-	// 4방향을 살피며 먹을 수 있다면 먹는다
-	if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 3)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			if (eatIsEnemy(i));
-			break;
-		}
-	}
-
 	//// enemyType에 맞춰 이동 패턴 적용
 	switch (m_tEnemyData.t_enumType)
 	{
-	case tagEnemyType::Bat: // 이동하다가 방향 전환
-		if (moveIsRect(m_eMoveState) && RANDOM->getInt(100) > 30)
-		{
-			moveRectCheck(m_eMoveState);
-			m_isMoveAct = true;
-		}
-		else
-		{
+	case tagEnemyType::Bug: // 이동하다가 방향 전환
+		while (!moveRectCheck(m_eMoveState))
 			m_eMoveState = RANDOM->getFromIntTo(0, 3);
-			m_isMoveAct = true;
-		}
-		break;
-	case tagEnemyType::Rat: // 벽 짚고 이동
-
-		m_eMoveState = 0;
-		if (moveIsRect(m_eMoveState) && eMoveState::DOWN != tempMoveState)
-		{
-			m_eMoveState = m_eMoveState;
-			moveRectCheck(m_eMoveState);
-		}
-		else if (moveIsRect(m_eMoveState + 1) && eMoveState::LEFT != tempMoveState)
-		{
-			m_eMoveState = m_eMoveState + 1;
-			moveRectCheck(m_eMoveState);
-		}
-		else if (moveIsRect(m_eMoveState + 2) && eMoveState::UP != tempMoveState)
-		{
-			m_eMoveState = m_eMoveState + 2;
-			moveRectCheck(m_eMoveState);
-		}
-		else if (moveIsRect(m_eMoveState + 3) && eMoveState::RIGHT != tempMoveState)
-		{
-			m_eMoveState = m_eMoveState + 3;
-			moveRectCheck(m_eMoveState);
-		}
-		else if ((!(moveIsRect(m_eMoveState) && !(moveIsRect(m_eMoveState + 1) && !(moveIsRect(m_eMoveState + 3))))))
-		{
-			m_eMoveState = m_eMoveState + 2;
-			moveRectCheck(m_eMoveState);
-		}
-
 		m_isMoveAct = true;
- 		break;
+		break;
+	//case tagEnemyType::Rat:
+	//	m_eMoveState = 0;
+	//	if (moveIsRect(m_eMoveState) && eMoveState::DOWN != tempMoveState)
+	//	{
+	//		m_eMoveState = m_eMoveState;
+	//		moveRectCheck(m_eMoveState);
+	//	}
+	//	else if (moveIsRect(m_eMoveState + 1) && eMoveState::LEFT != tempMoveState)
+	//	{
+	//		m_eMoveState = m_eMoveState + 1;
+	//		moveRectCheck(m_eMoveState);
+	//	}
+	//	else if (moveIsRect(m_eMoveState + 2) && eMoveState::UP != tempMoveState)
+	//	{
+	//		m_eMoveState = m_eMoveState + 2;
+	//		moveRectCheck(m_eMoveState);
+	//	}
+	//	else if (moveIsRect(m_eMoveState + 3) && eMoveState::RIGHT != tempMoveState)
+	//	{
+	//		m_eMoveState = m_eMoveState + 3;
+	//		moveRectCheck(m_eMoveState);
+	//	}
+	//	else if ((!(moveIsRect(m_eMoveState) && !(moveIsRect(m_eMoveState + 1) && !(moveIsRect(m_eMoveState + 3))))))
+	//	{
+	//		m_eMoveState = m_eMoveState + 2;
+	//		moveRectCheck(m_eMoveState);
+	//	}
+	//	m_isMoveAct = true;
+	//	break;
+	case tagEnemyType::Flower:
+		if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 2)
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				m_pEnemyMag->enemyDrop(SlimeInfo());
+			}
+
+			m_tEnemyData.t_currHp = 0;
+			return;
+		}
+		m_isMoveAct = true;
+		break;
 	case tagEnemyType::Slime: // 박을때 까지 이동
-		if (moveRectCheck(m_eMoveState))
+		//// Mana가 일정 이상 모였을 경우 꽃으로 변신
+		if (m_tEnemyData.t_currMana >= ENEMY_FLOWER_MANA)
 		{
-			m_isMoveAct = true;
+			m_pEnemyMag->enemyDrop(FlowerInfo());
+			m_tEnemyData.t_currHp = 0;
+			return;
 		}
-		else
+
+		if (RANDOM->getInt(100) < 60) // 4방향을 검색하여 타일 Mana를 흡수
 		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (tileManaDrain(i, 1))
+				{
+					m_tEnemyData.t_scale += 0.1f;
+					break; // 1번이라도 흡수하면 이동한다
+				}
+			}
+		}
+		else // 4방향을 검색하여 자신의 Mana를 배출
+		{
+			for (int i = 0; i < 4; i++) 
+			{
+				if (tileManaChg(i, 1))
+				{
+					m_tEnemyData.t_scale -= 0.1f;
+					break; // 1번이라도 배출하면 이동한다
+				}
+			}
+		}
+
+		// 벽에 충돌할때까지 이동 => 충돌했을 경우 다른 이동 가능한 곳을 검색하여 이동
+		while (!moveRectCheck(m_eMoveState))
 			m_eMoveState = RANDOM->getFromIntTo(0, 3);
-			m_isMoveAct = true;
-		}
-		break;
-	case tagEnemyType::Daemon: // 벽에 닿으면 반대 방향으로 이동
-		if (moveRectCheck(m_eMoveState))
-		{
-			m_isMoveAct = true;
-		}
-		else
-		{
-			if (m_eMoveState == eMoveState::UP)
-			{
-				m_eMoveState = eMoveState::DOWN;
-			}
-			else if (m_eMoveState == eMoveState::DOWN)
-			{
-				m_eMoveState = eMoveState::UP;
-			}
 
-			if (m_eMoveState == eMoveState::LEFT)
-			{
-				m_eMoveState = eMoveState::RIGHT;
-			}
-			else if (m_eMoveState == eMoveState::RIGHT)
-			{
-				m_eMoveState = eMoveState::LEFT;
-			}
-
-			m_isMoveAct = true;
-		}
+		// 이동 설정을 true로 만들어 해당 유닛이 다음 위치까지 이동하도록 만들어준다.
+		m_isMoveAct = true;
 		break;
+	//case tagEnemyType::Daemon: // 벽에 닿으면 반대 방향으로 이동
+	//	if (moveRectCheck(m_eMoveState))
+	//	{
+	//		m_isMoveAct = true;
+	//	}
+	//	else
+	//	{
+	//		if (m_eMoveState == eMoveState::UP)
+	//		{
+	//			m_eMoveState = eMoveState::DOWN;
+	//		}
+	//		else if (m_eMoveState == eMoveState::DOWN)
+	//		{
+	//			m_eMoveState = eMoveState::UP;
+	//		}
+	//		if (m_eMoveState == eMoveState::LEFT)
+	//		{
+	//			m_eMoveState = eMoveState::RIGHT;
+	//		}
+	//		else if (m_eMoveState == eMoveState::RIGHT)
+	//		{
+	//			m_eMoveState = eMoveState::LEFT;
+	//		}
+	//		m_isMoveAct = true;
+	//	}
+	//	break;
 	default: // 패턴이 없을 경우 랜덤 이동
-
-
 		m_eMoveState = RANDOM->getFromIntTo(0, 4);
 		moveRectCheck(m_eMoveState);
 		m_isMoveAct = true;
@@ -708,6 +810,7 @@ void enemy::movePattern()
 
 	//// tileMap 위치에 몬스터 정보 저장
 	m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = &m_tEnemyData;
+
 	//// 모션 재생
 	m_ani.start();
 }
@@ -717,45 +820,140 @@ void enemy::isDieTileMana()
 	for (int i = 0; i < 4; i++)
 	{
 		int temp = RANDOM->getFromIntTo(0, 3);
-		if (tileManaChg(temp, m_tEnemyData.t_MaxHp / 10)) return;
+		if (tileManaChg(temp, m_tEnemyData.t_currMana)) return;
 	}
+}
+
+void enemy::eatActPattern()
+{
+	// 공격중이 아닐 경우(m_isAttAct) 현재 체력이 1/3 경우
+	if (!m_isAttAct && m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 4)
+	{
+		// 4방향을 모두 검색한다(UP, RIGHT, DOWN, LEFT)
+		for (int i = 0; i < 4; i++)
+		{
+			if (eatIsEnemy(i))
+			{
+				// 자신보다 약한 enemy를 먹었을 경우(이때 해당 enemy의 Hp는 0으로 된다
+				// 공격 액션을 실시한다
+				m_isAttAct = true;
+				// 바라보았던 방향에 따라 액션 위치를 설정한다
+				if (i == eMoveState::LEFT || i == eMoveState::UP)
+				{
+					m_tEnemyData.t_img = m_tEnemyData.t_img_LA;
+				}
+				else if (i == eMoveState::RIGHT || i == eMoveState::DOWN)
+				{
+					m_tEnemyData.t_img = m_tEnemyData.t_img_RA;
+				}
+				// 공격 모션이 실시 가능하도록 moveDaley와 다른 actDaley로 초기화
+				m_moveDaley = m_tEnemyData.t_moveDaley;
+				m_ani.start();
+				// 실행시 함수를 빠져나간다(재실행 예외처리)
+				return;
+			}
+		}
+	}
+
+	return;
 }
 
 bool enemy::eatIsEnemy(int eMoveArrow)
 {
-	int moveArrow;
+	// 타일 검색 방향
+	int tempMoveArrow;
 
 	switch (eMoveArrow)
 	{
 	case eMoveState::UP:
-		moveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1);
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
-		break;
-	case eMoveState::DOWN:
-		moveArrow = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1);
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
-		break;
-	case eMoveState::LEFT:
-		moveArrow = (m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
+		// 검색 방향
+		tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - 1;
+		// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
 		break;
 	case eMoveState::RIGHT:
-		moveArrow = (m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY;
-		if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo == nullptr) return false;
+		tempMoveArrow = ((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
+		break;
+	case eMoveState::DOWN:
+		tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + 1;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
+		break;
+	case eMoveState::LEFT:
+		tempMoveArrow = ((m_tEnemyData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
 		break;
 	}
 
-	if (m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
+	// 몬스터 정보가 있다면 해당 enemy의 FoodChainLv 확인 자신이 더 높을 경우 먹는다
+	if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
 	{
-		m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp;
-		m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_currHp = 0;
-		EFFMANAGER->play("Enemy_Eat",
-			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_posX - CAMERA->getCamPosX() + (TILE_SIZE / 2),
-			m_pTileMapMag->getTileSetPoint()[moveArrow].t_enemyInfo->t_posY - CAMERA->getCamPosY() + (TILE_SIZE / 2));
+		// 해당 enemy의 최대 체력 만큼 체력을 회복한다
+		m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_MaxHp;
+		// 해당 enemy의 체력은 0으로 만들어 죽도록 한다
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_currHp = 0;
+		// true로 반환
+		return true;
 	}
 
+	// 먹을 수 없는 경우 return false 한다
+	return false;
+}
 
-	return true;;
+tagEnemyData * enemy::FlowerInfo()
+{
+	tempEnemy.t_img_R = IMAGEMANAGER->findImage("Flower_00_R");
+	tempEnemy.t_img_L = IMAGEMANAGER->findImage("Flower_00_L");
+	tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Flower_00_RA");
+	tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Flower_00_LA");
+	tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Flower_00_Dead");
+
+	tempEnemy.t_isAilve = true;
+	tempEnemy.t_currHp = 10;
+	tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+	tempEnemy.t_posX = m_tEnemyData.t_posX;
+	tempEnemy.t_posY = m_tEnemyData.t_posY;
+	tempEnemy.t_tilePosX = m_tEnemyData.t_tilePosX;
+	tempEnemy.t_tilePosY = m_tEnemyData.t_tilePosY;
+	tempEnemy.t_scale = 2.0;
+	tempEnemy.t_moveSpeed = 1.0f;
+	tempEnemy.t_moveDaley = 120;
+	tempEnemy.t_setTileMapNum = m_tEnemyData.t_setTileMapNum;
+	tempEnemy.t_atkPoint = 5;
+	tempEnemy.t_defPoint = 0;
+	tempEnemy.t_FoodChainLv = 0;
+	tempEnemy.t_currMana = 2;
+	tempEnemy.t_enumType = tagEnemyType::Flower;
+
+	return &tempEnemy;
+}
+
+tagEnemyData * enemy::SlimeInfo()
+{
+	tempEnemy.t_img_R = IMAGEMANAGER->findImage("Slime_00_R");
+	tempEnemy.t_img_L = IMAGEMANAGER->findImage("Slime_00_L");
+	tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Slime_00_RA");
+	tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Slime_00_LA");
+	tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Slime_00_Dead");
+
+	tempEnemy.t_isAilve = true;
+	tempEnemy.t_currHp = 25;
+	tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+	tempEnemy.t_posX = m_tEnemyData.t_posX;
+	tempEnemy.t_posY = m_tEnemyData.t_posY;
+	tempEnemy.t_tilePosX = m_tEnemyData.t_tilePosX;
+	tempEnemy.t_tilePosY = m_tEnemyData.t_tilePosY;
+	tempEnemy.t_scale = 1.5f;
+	tempEnemy.t_moveSpeed = RANDOM->getFromFloatTo(0.5f, 0.8f);
+	tempEnemy.t_moveDaley = 0;
+	tempEnemy.t_setTileMapNum = m_tEnemyData.t_setTileMapNum;
+	tempEnemy.t_atkPoint = 3;
+	tempEnemy.t_defPoint = 0;
+	tempEnemy.t_FoodChainLv = 0;
+	tempEnemy.t_currMana = RANDOM->getFromIntTo(1, 2);
+	tempEnemy.t_enumType = tagEnemyType::Slime;
+
+	return &tempEnemy;
 }
 
 enemy::enemy()
