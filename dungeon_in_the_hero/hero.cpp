@@ -50,6 +50,7 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMap)
 	m_tHeroData.t_defPoint = heroInfo->t_defPoint;
 
 	m_tHeroData.t_setTileMapNum = heroInfo->t_setTileMapNum;
+	m_tHeroData.t_damgePoint = heroInfo->t_damgePoint;
 
 	m_tHeroData.t_rc = RectMakeCenter(m_tHeroData.t_posX, m_tHeroData.t_posY, m_tHeroData.t_img->getFrameWidth(), m_tHeroData.t_img->getFrameHeight());
 
@@ -79,6 +80,7 @@ void hero::update()
 {
 	if (!m_tHeroData.t_isAilve) return;
 
+	damge();
 	moveSys();
 	currHp();
 	m_ani.frameUpdate();
@@ -733,13 +735,16 @@ bool hero::IsEnemy(int eMoveArrow)
 	return true;
 }
 
-void hero::damge(int atkPoint)
+void hero::damge()
 {
-	int tempPoint = (atkPoint - m_tHeroData.t_defPoint);
+	if (m_tHeroData.t_damgePoint <= 0) return;
+
+	int tempPoint = (m_tHeroData.t_damgePoint - m_tHeroData.t_defPoint);
 	if (tempPoint <= 0)
 		tempPoint = 0;
 
 	m_tHeroData.t_currHp -= tempPoint;
+	m_tHeroData.t_damgePoint = 0;
 }
 
 hero::hero()

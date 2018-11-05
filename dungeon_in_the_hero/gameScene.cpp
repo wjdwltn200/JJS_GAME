@@ -61,6 +61,12 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("Flower_00_RA", "image/inGameImg/ENEMY/Flower/Flower_0_RIGHT_ATK.bmp", 192, 19, 8, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Flower_00_LA", "image/inGameImg/ENEMY/Flower/Flower_0_LEFT_ATK.bmp", 192, 19, 8, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Flower_00_Dead", "image/inGameImg/ENEMY/Flower/Flower_0_Dead.bmp", 360, 19, 15, 1, true, RGB(255, 0, 255));
+	//슬라임 꽃 변형
+	IMAGEMANAGER->addImage("FlowerV2_00_R", "image/inGameImg/ENEMY/FlowerV2/FlowerV2_0_RIGHT.bmp", 288, 27, 12, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("FlowerV2_00_L", "image/inGameImg/ENEMY/FlowerV2/FlowerV2_0_LEFT.bmp", 288, 27, 12, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("FlowerV2_00_RA", "image/inGameImg/ENEMY/FlowerV2/FlowerV2_0_RIGHT_ATK.bmp", 380, 31, 10, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("FlowerV2_00_LA", "image/inGameImg/ENEMY/FlowerV2/FlowerV2_0_LEFT_ATK.bmp", 380, 31, 10, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("FlowerV2_00_Dead", "image/inGameImg/ENEMY/FlowerV2/FlowerV2_0_Dead.bmp", 1008, 45, 18, 1, true, RGB(255, 0, 255));
 	//볼레레
 	IMAGEMANAGER->addImage("Bug_00_R", "image/inGameImg/ENEMY/Bug/Bug_0_RIGHT.bmp", 192, 18, 8, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Bug_00_L", "image/inGameImg/ENEMY/Bug/Bug_0_LEFT.bmp", 192, 18, 8, 1, true, RGB(255, 0, 255));
@@ -230,7 +236,7 @@ void gameScene::RectCol()
 				((*iterBullet)->gettBulletInfo().t_master == tagMaster::Enemy &&
 				IntersectRect(&temp_rc, &tempBullet, &tempHero)))
 			{
-				(*iterHero)->damge((*iterBullet)->gettBulletInfo().t_atkPoint);
+				(*iterHero)->setDamgePoint((*iterBullet)->gettBulletInfo().t_atkPoint);
 				(*iterBullet)->setIsAlive(false);
 				HitEff(tempHero.left, tempHero.top);
 			}

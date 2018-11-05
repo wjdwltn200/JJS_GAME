@@ -154,8 +154,7 @@ void mainGame::render()
 
 	m_pBackBuffer->render(hdc, 0, 0);
 
-	if (g_saveData.gisTest)
-		TIMEMANAGER->render(hdc);
+	TIMEMANAGER->render(hdc);
 }
 
 mainGame::mainGame()

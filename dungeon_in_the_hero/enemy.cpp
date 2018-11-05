@@ -660,7 +660,15 @@ void enemy::enemySetTxt(int enemyType)
 		break;
 	case tagEnemyType::Bug:
 		setTxt.t_txtName = "볼레레";
-		setTxt.t_txtInfo = "액괴를 먹는 볼레입니다 하얗고 귀엽죠?";
+		setTxt.t_txtInfo = "액괴를 먹고 사는 볼레입니다 하얗고 귀엽죠?";
+		break;
+	case tagEnemyType::Lili:
+		setTxt.t_txtName = "릴리";
+		setTxt.t_txtInfo = "멀리서 마력덩어리를 발사합니다!";
+		break;
+	case tagEnemyType::Flower:
+		setTxt.t_txtName = "액라워";
+		setTxt.t_txtInfo = "액괴의 변형체로 시간이 지나면 액괴로 분열합니다!";
 		break;
 	}
 
@@ -1023,7 +1031,7 @@ bool enemy::isHero(int eMoveArrow)
 	default:
 		// 기본형
 		// 몬스터 정보가 있다면 자신의 공격력 만큼 해당 몬스터의 hp를 깍아낸다
-		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo->t_currHp -= m_tEnemyData.t_atkPoint;
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo->t_damgePoint = m_tEnemyData.t_atkPoint;
 		EFFMANAGER->play("Hit_Eff_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 		break;
 	}
@@ -1037,28 +1045,57 @@ bool enemy::isHero(int eMoveArrow)
 
 tagEnemyData * enemy::FlowerInfo()
 {
-	tempEnemy.t_img_R = IMAGEMANAGER->findImage("Flower_00_R");
-	tempEnemy.t_img_L = IMAGEMANAGER->findImage("Flower_00_L");
-	tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Flower_00_RA");
-	tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Flower_00_LA");
-	tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Flower_00_Dead");
+	if (RANDOM->getInt(100) <= 80)
+	{
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Flower_00_R");
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Flower_00_L");
+		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Flower_00_RA");
+		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Flower_00_LA");
+		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Flower_00_Dead");
 
-	tempEnemy.t_isAilve = true;
-	tempEnemy.t_currHp = 10;
-	tempEnemy.t_MaxHp = tempEnemy.t_currHp;
-	tempEnemy.t_posX = m_tEnemyData.t_posX;
-	tempEnemy.t_posY = m_tEnemyData.t_posY;
-	tempEnemy.t_tilePosX = m_tEnemyData.t_tilePosX;
-	tempEnemy.t_tilePosY = m_tEnemyData.t_tilePosY;
-	tempEnemy.t_scale = 2.0;
-	tempEnemy.t_moveSpeed = 1.0f;
-	tempEnemy.t_moveDaley = 120;
-	tempEnemy.t_setTileMapNum = m_tEnemyData.t_setTileMapNum;
-	tempEnemy.t_atkPoint = 5;
-	tempEnemy.t_defPoint = 0;
-	tempEnemy.t_FoodChainLv = 0;
-	tempEnemy.t_currMana = 2;
-	tempEnemy.t_enumType = tagEnemyType::Flower;
+		tempEnemy.t_isAilve = true;
+		tempEnemy.t_currHp = 10;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_posX = m_tEnemyData.t_posX;
+		tempEnemy.t_posY = m_tEnemyData.t_posY;
+		tempEnemy.t_tilePosX = m_tEnemyData.t_tilePosX;
+		tempEnemy.t_tilePosY = m_tEnemyData.t_tilePosY;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 1.0f;
+		tempEnemy.t_moveDaley = 120;
+		tempEnemy.t_setTileMapNum = m_tEnemyData.t_setTileMapNum;
+		tempEnemy.t_atkPoint = 5;
+		tempEnemy.t_defPoint = 0;
+		tempEnemy.t_FoodChainLv = 0;
+		tempEnemy.t_currMana = 2;
+		tempEnemy.t_enumType = tagEnemyType::Flower;
+	}
+	else
+	{
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("FlowerV2_00_R");
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("FlowerV2_00_L");
+		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("FlowerV2_00_RA");
+		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("FlowerV2_00_LA");
+		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("FlowerV2_00_Dead");
+
+		tempEnemy.t_isAilve = true;
+		tempEnemy.t_currHp = 50;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_posX = m_tEnemyData.t_posX;
+		tempEnemy.t_posY = m_tEnemyData.t_posY;
+		tempEnemy.t_tilePosX = m_tEnemyData.t_tilePosX;
+		tempEnemy.t_tilePosY = m_tEnemyData.t_tilePosY;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 1.0f;
+		tempEnemy.t_moveDaley = 10;
+		tempEnemy.t_setTileMapNum = m_tEnemyData.t_setTileMapNum;
+		tempEnemy.t_atkPoint = 7;
+		tempEnemy.t_defPoint = 1;
+		tempEnemy.t_FoodChainLv = 2;
+		tempEnemy.t_currMana = 5;
+		tempEnemy.t_enumType = tagEnemyType::FlowerV2;
+	}
+
 
 	return &tempEnemy;
 }

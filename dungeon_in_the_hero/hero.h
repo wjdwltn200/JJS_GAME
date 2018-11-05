@@ -65,7 +65,8 @@ public:
 
 	bool IsEnemy(int eMoveArrow);
 
-	void damge(int atkPoint);
+	void damge();
+	void setDamgePoint(int DamValue) { m_tHeroData.t_damgePoint = DamValue; }
 
 	hero();
 	~hero();
