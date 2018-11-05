@@ -22,6 +22,11 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMap)
 	m_tHeroData.t_img_R = heroInfo->t_img_R;
 	m_tHeroData.t_img_D = heroInfo->t_img_D;
 	m_tHeroData.t_img_L = heroInfo->t_img_L;
+
+	m_tHeroData.t_img_UA = heroInfo->t_img_UA;
+	m_tHeroData.t_img_RA = heroInfo->t_img_RA;
+	m_tHeroData.t_img_DA = heroInfo->t_img_DA;
+	m_tHeroData.t_img_LA = heroInfo->t_img_LA;
 	m_tHeroData.t_img_Dead = heroInfo->t_img_Dead;
 
 	m_tHeroData.t_img = heroInfo->t_img_D;
@@ -59,7 +64,7 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMap)
 	m_isMoveAct = false;
 	m_eMoveState = eMoveState::UP;
 
-	aStarFind(m_pAStartNode->Create(27, 15), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
+	//aStarFind(m_pAStartNode->Create(20, 15), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
 
 	
 
@@ -72,7 +77,6 @@ void hero::release()
 
 void hero::update()
 {
-
 	if (!m_tHeroData.t_isAilve) return;
 
 	moveSys();
@@ -82,11 +86,11 @@ void hero::update()
 
 void hero::render(HDC hdc)
 {
+	if (!m_tHeroData.t_isAilve) return;
+
 	m_ani.init(m_tHeroData.t_img->getWidth(), m_tHeroData.t_img->getHeight(), m_tHeroData.t_img->getFrameWidth(), m_tHeroData.t_img->getFrameHeight());
 	m_ani.setDefPlayFrame(false, false);
-	m_ani.setFPS(15);
-
-
+	m_ani.setFPS(10);
 
 	if (!m_isDead && !m_isAttAct)
 	{
@@ -116,7 +120,7 @@ void hero::render(HDC hdc)
 	{
 		m_tHeroData.t_img->aniRender(hdc,
 			(m_tHeroData.t_posX + (TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameWidth() * m_tHeroData.t_scale) / 2) - CAMERA->getCamPosX(),
-			((m_tHeroData.t_posY + TILE_SIZE) - (m_tHeroData.t_img->getFrameHeight() * m_tHeroData.t_scale)) - CAMERA->getCamPosY(),
+			((m_tHeroData.t_posY + TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameHeight() * m_tHeroData.t_scale) / 2) - CAMERA->getCamPosY(),
 			&m_ani, m_tHeroData.t_scale, true, m_tHeroData.t_alphaValue);
 	}
 
@@ -131,7 +135,7 @@ void hero::render(HDC hdc)
 		Rectangle(hdc, m_tHeroData.t_rc.left, m_tHeroData.t_rc.top, m_tHeroData.t_rc.right, m_tHeroData.t_rc.bottom);
 
 		char szText[256];
-		sprintf_s(szText, "%.1f,%.1f", m_tHeroData.t_posX, m_tHeroData.t_posY);
+		sprintf_s(szText, "%d", m_tHeroData.t_currHp);
 		TextOut(hdc, m_tHeroData.t_posX - CAMERA->getCamPosX(), m_tHeroData.t_posY - CAMERA->getCamPosY(), szText, strlen(szText));
 	}
 
@@ -165,6 +169,7 @@ int hero::aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode)
 
 		if (aStarIsRect(cx, cy)) continue;
 		vecNode->push_back(m_pAStartNode->Create(cx, cy));
+		EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.top + TILE_SIZE / 2);
 	}
 
 	return sizeof(vecNode);
@@ -416,6 +421,7 @@ void hero::moveSys()
 				m_isMoveAct = false;
 				// 다음 이동 액션까지 딜레이
 				m_moveDaley = m_tHeroData.t_moveDaley;
+				//monActPattern();
 			}
 			break;
 		case eMoveState::DOWN:
@@ -427,6 +433,8 @@ void hero::moveSys()
 				m_tHeroData.t_posY = m_tHeroData.t_moveEndY;
 				m_isMoveAct = false;
 				m_moveDaley = m_tHeroData.t_moveDaley;
+				//monActPattern();
+
 			}
 			break;
 		case eMoveState::LEFT:
@@ -438,6 +446,8 @@ void hero::moveSys()
 				m_tHeroData.t_posX = m_tHeroData.t_moveEndX;
 				m_isMoveAct = false;
 				m_moveDaley = m_tHeroData.t_moveDaley;
+				//monActPattern();
+
 			}
 			break;
 		case eMoveState::RIGHT:
@@ -449,11 +459,15 @@ void hero::moveSys()
 				m_tHeroData.t_posX = m_tHeroData.t_moveEndX;
 				m_isMoveAct = false;
 				m_moveDaley = m_tHeroData.t_moveDaley;
+				//monActPattern();
+
 			}
 			break;
 		case eMoveState::MOVE_NUM:
 			m_isMoveAct = false;
 			m_moveDaley = m_tHeroData.t_moveDaley;
+			//monActPattern();
+
 			break;
 		}
 	}
@@ -566,10 +580,12 @@ void hero::aStarMoveSys()
 			moveRectCheck(eMoveState::LEFT);
 			m_eMoveState = eMoveState::LEFT;
 		}
+
+		EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[x * m_pTileMapMag->getTileSizeY() + y].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[x * m_pTileMapMag->getTileSizeY() + y].t_rc.top + TILE_SIZE / 2);
 	}
 }
 
-void hero::enemySetTxt(int enemyType)
+void hero::heroSetTxt(int enemyType)
 {
 	//tagTileTxt setTxt;
 
@@ -596,8 +612,11 @@ void hero::enemySetTxt(int enemyType)
 
 void hero::movePattern()
 {
+
+
 	// 공격 여부는 이동하기 전에 행동하여 이동을 실시하지 않도록 해야한다
-	m_isAttAct = false;
+	if (m_isAttAct)
+		m_isAttAct = false;
 	if (RANDOM->getInt(100) < 50)
 	{
 		m_tHeroData.t_img = m_tHeroData.t_img_L;
@@ -614,21 +633,113 @@ void hero::movePattern()
 		m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = nullptr;
 
 	//// enemyType에 맞춰 이동 패턴 적용
-	switch (m_tHeroData.t_enumType)
+	if (!monActPattern())
 	{
-	default: // 패턴이 없을 경우 랜덤 이동
-		//m_eMoveState = RANDOM->getFromIntTo(0, 4);
-		aStarMoveSys();
-		//moveRectCheck(m_eMoveState);
-		m_isMoveAct = true;
-		break;
+		switch (m_tHeroData.t_enumType)
+		{
+		default: // 패턴이 없을 경우 랜덤 이동
+			//aStarMoveSys();
+			m_eMoveState = RANDOM->getFromIntTo(0, 4);
+			moveRectCheck(m_eMoveState);
+			m_isMoveAct = true;
+			break;
+		}
 	}
+
 
 	//// tileMap 위치에 몬스터 정보 저장
 	m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = &m_tHeroData;
 
 	//// 모션 재생
 	m_ani.start();
+}
+
+bool hero::monActPattern()
+{
+	// 공격중이 아닐 경우(m_isAttAct)
+	if (!m_isAttAct)
+	{
+		// 4방향을 모두 검색한다(UP, RIGHT, DOWN, LEFT)
+		for (int i = 0; i < 4; i++)
+		{
+			if (IsEnemy(i))
+			{
+				// 공격 액션을 실시한다
+				m_isAttAct = true;
+				m_isMoveAct = false;
+				// 바라보았던 방향에 따라 액션 위치를 설정한다
+				if (i == eMoveState::UP)
+				{
+					m_tHeroData.t_img = m_tHeroData.t_img_UA;
+				}
+				else if (i == eMoveState::RIGHT)
+				{
+					m_tHeroData.t_img = m_tHeroData.t_img_RA;
+				}
+				else if (i == eMoveState::DOWN)
+				{
+					m_tHeroData.t_img = m_tHeroData.t_img_DA;
+				}
+				else if (i == eMoveState::LEFT)
+				{
+					m_tHeroData.t_img = m_tHeroData.t_img_LA;
+				}
+				// 공격 모션이 실시 가능하도록 moveDaley와 다른 actDaley로 초기화
+				m_eMoveState = eMoveState::MOVE_NUM;
+				m_moveDaley = m_tHeroData.t_moveDaley;
+				m_ani.start();
+				// 실행시 함수를 빠져나간다(재실행 예외처리)
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool hero::IsEnemy(int eMoveArrow)
+{
+	// 타일 검색 방향
+	int tempMoveArrow;
+
+	switch (eMoveArrow)
+	{
+	case eMoveState::UP:
+		// 검색 방향
+		tempMoveArrow = (m_tHeroData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY - 1;
+		// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
+		break;
+	case eMoveState::RIGHT:
+		tempMoveArrow = ((m_tHeroData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
+		break;
+	case eMoveState::DOWN:
+		tempMoveArrow = (m_tHeroData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY + 1;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
+		break;
+	case eMoveState::LEFT:
+		tempMoveArrow = ((m_tHeroData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY;
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
+		break;
+	}
+
+	// 몬스터 정보가 있다면 자신의 공격력 만큼 해당 몬스터의 hp를 깍아낸다
+	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_currHp -= m_tHeroData.t_atkPoint;
+	EFFMANAGER->play("Hit_Eff_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+
+
+	// true로 반환
+	return true;
+}
+
+void hero::damge(int atkPoint)
+{
+	int tempPoint = (atkPoint - m_tHeroData.t_defPoint);
+	if (tempPoint <= 0)
+		tempPoint = 0;
+
+	m_tHeroData.t_currHp -= tempPoint;
 }
 
 hero::hero()

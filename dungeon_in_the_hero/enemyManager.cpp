@@ -3,7 +3,7 @@
 #include "enemy.h"
 #include "uiManager.h"
 
-HRESULT enemyManager::init(tileMap * pTileMag, uiManager * pUiMag)
+HRESULT enemyManager::init(tileMap * pTileMag, uiManager * pUiMag, bulletManager * pBulletMag)
 {
 	for (int i = 0; i < SET_ENEMY_VEC; i++)
 	{
@@ -12,6 +12,7 @@ HRESULT enemyManager::init(tileMap * pTileMag, uiManager * pUiMag)
 	}
 	m_pTileMap = pTileMag;
 	m_pUiMag = pUiMag;
+	m_pBulletMag = pBulletMag;
 	m_pEnemyPopup = pUiMag->addPopup(NULL, NULL, NULL, NULL);
 	m_isEnemyInfoPopup = false;
 	return S_OK;
@@ -53,7 +54,7 @@ void enemyManager::enemyDrop(tagEnemyData * enemyInfo)
 	{
 		if ((*m_iter)->gettEnemyData().t_isAilve) continue;
 
-		(*m_iter)->init(enemyInfo, m_pTileMap, this);
+		(*m_iter)->init(enemyInfo, m_pTileMap, this, m_pBulletMag);
 		return;
 	}
 

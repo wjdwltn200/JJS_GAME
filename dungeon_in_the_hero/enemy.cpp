@@ -5,12 +5,14 @@
 #include "enemyManager.h"
 #include "uiManager.h"
 #include "aStarNode.h"
+#include "bulletManager.h"
 
-HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag)
+HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag, bulletManager * pBulletMag)
 {
 	//// 타일 맵 주소 초기화
 	m_pTileMapMag = pTileMag;
 	m_pEnemyMag = pEnemyMag;
+	m_pBulletMag = pBulletMag;
 
 	m_tEnemyData.t_isAilve = enemyInfo->t_isAilve;
 	m_tEnemyData.t_posX = enemyInfo->t_posX;
@@ -673,7 +675,9 @@ void enemy::enemySetTxt(int enemyType)
 void enemy::movePattern()
 {
 	// 공격 여부는 이동하기 전에 행동하여 이동을 실시하지 않도록 해야한다
-	m_isAttAct = false;
+	if (m_isAttAct)
+		m_isAttAct = false;
+
 	if (RANDOM->getInt(100) < 50)
 	{
 		m_tEnemyData.t_img = m_tEnemyData.t_img_L;
@@ -690,126 +694,130 @@ void enemy::movePattern()
 		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
 
 	//// enemyType에 맞춰 이동 패턴 적용
-	switch (m_tEnemyData.t_enumType)
+	if (!heroActPattern())
 	{
-	case tagEnemyType::Bug: // 이동하다가 방향 전환
-		while (!moveRectCheck(m_eMoveState))
-			m_eMoveState = RANDOM->getFromIntTo(0, 3);
-		m_isMoveAct = true;
-		break;
-	//case tagEnemyType::Rat:
-	//	m_eMoveState = 0;
-	//	if (moveIsRect(m_eMoveState) && eMoveState::DOWN != tempMoveState)
-	//	{
-	//		m_eMoveState = m_eMoveState;
-	//		moveRectCheck(m_eMoveState);
-	//	}
-	//	else if (moveIsRect(m_eMoveState + 1) && eMoveState::LEFT != tempMoveState)
-	//	{
-	//		m_eMoveState = m_eMoveState + 1;
-	//		moveRectCheck(m_eMoveState);
-	//	}
-	//	else if (moveIsRect(m_eMoveState + 2) && eMoveState::UP != tempMoveState)
-	//	{
-	//		m_eMoveState = m_eMoveState + 2;
-	//		moveRectCheck(m_eMoveState);
-	//	}
-	//	else if (moveIsRect(m_eMoveState + 3) && eMoveState::RIGHT != tempMoveState)
-	//	{
-	//		m_eMoveState = m_eMoveState + 3;
-	//		moveRectCheck(m_eMoveState);
-	//	}
-	//	else if ((!(moveIsRect(m_eMoveState) && !(moveIsRect(m_eMoveState + 1) && !(moveIsRect(m_eMoveState + 3))))))
-	//	{
-	//		m_eMoveState = m_eMoveState + 2;
-	//		moveRectCheck(m_eMoveState);
-	//	}
-	//	m_isMoveAct = true;
-	//	break;
-	case tagEnemyType::Flower:
-		if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 2)
+		switch (m_tEnemyData.t_enumType)
 		{
-			for (int i = 0; i < 2; i++)
+		case tagEnemyType::Bug: // 이동하다가 방향 전환
+			while (!moveRectCheck(m_eMoveState))
+				m_eMoveState = RANDOM->getFromIntTo(0, 3);
+			m_isMoveAct = true;
+			break;
+			//case tagEnemyType::Rat:
+			//	m_eMoveState = 0;
+			//	if (moveIsRect(m_eMoveState) && eMoveState::DOWN != tempMoveState)
+			//	{
+			//		m_eMoveState = m_eMoveState;
+			//		moveRectCheck(m_eMoveState);
+			//	}
+			//	else if (moveIsRect(m_eMoveState + 1) && eMoveState::LEFT != tempMoveState)
+			//	{
+			//		m_eMoveState = m_eMoveState + 1;
+			//		moveRectCheck(m_eMoveState);
+			//	}
+			//	else if (moveIsRect(m_eMoveState + 2) && eMoveState::UP != tempMoveState)
+			//	{
+			//		m_eMoveState = m_eMoveState + 2;
+			//		moveRectCheck(m_eMoveState);
+			//	}
+			//	else if (moveIsRect(m_eMoveState + 3) && eMoveState::RIGHT != tempMoveState)
+			//	{
+			//		m_eMoveState = m_eMoveState + 3;
+			//		moveRectCheck(m_eMoveState);
+			//	}
+			//	else if ((!(moveIsRect(m_eMoveState) && !(moveIsRect(m_eMoveState + 1) && !(moveIsRect(m_eMoveState + 3))))))
+			//	{
+			//		m_eMoveState = m_eMoveState + 2;
+			//		moveRectCheck(m_eMoveState);
+			//	}
+			//	m_isMoveAct = true;
+			//	break;
+		case tagEnemyType::Flower:
+			if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 2)
 			{
-				m_pEnemyMag->enemyDrop(SlimeInfo());
+				for (int i = 0; i < 2; i++)
+				{
+					m_pEnemyMag->enemyDrop(SlimeInfo());
+				}
+
+				m_tEnemyData.t_currHp = 0;
+				return;
+			}
+			m_isMoveAct = true;
+			break;
+		case tagEnemyType::Slime: // 박을때 까지 이동
+			//// Mana가 일정 이상 모였을 경우 꽃으로 변신
+			if (m_tEnemyData.t_currMana >= ENEMY_FLOWER_MANA)
+			{
+				m_pEnemyMag->enemyDrop(FlowerInfo());
+				m_tEnemyData.t_currHp = 0;
+				return;
 			}
 
-			m_tEnemyData.t_currHp = 0;
-			return;
-		}
-		m_isMoveAct = true;
-		break;
-	case tagEnemyType::Slime: // 박을때 까지 이동
-		//// Mana가 일정 이상 모였을 경우 꽃으로 변신
-		if (m_tEnemyData.t_currMana >= ENEMY_FLOWER_MANA)
-		{
-			m_pEnemyMag->enemyDrop(FlowerInfo());
-			m_tEnemyData.t_currHp = 0;
-			return;
-		}
-
-		if (RANDOM->getInt(100) < 60) // 4방향을 검색하여 타일 Mana를 흡수
-		{
-			for (int i = 0; i < 4; i++)
+			if (RANDOM->getInt(100) < 60) // 4방향을 검색하여 타일 Mana를 흡수
 			{
-				if (tileManaDrain(i, 1))
+				for (int i = 0; i < 4; i++)
 				{
-					m_tEnemyData.t_scale += 0.1f;
-					break; // 1번이라도 흡수하면 이동한다
+					if (tileManaDrain(i, 1))
+					{
+						m_tEnemyData.t_scale += 0.1f;
+						break; // 1번이라도 흡수하면 이동한다
+					}
 				}
 			}
-		}
-		else // 4방향을 검색하여 자신의 Mana를 배출
-		{
-			for (int i = 0; i < 4; i++) 
+			else // 4방향을 검색하여 자신의 Mana를 배출
 			{
-				if (tileManaChg(i, 1))
+				for (int i = 0; i < 4; i++)
 				{
-					m_tEnemyData.t_scale -= 0.1f;
-					break; // 1번이라도 배출하면 이동한다
+					if (tileManaChg(i, 1))
+					{
+						m_tEnemyData.t_scale -= 0.1f;
+						break; // 1번이라도 배출하면 이동한다
+					}
 				}
 			}
+
+			// 벽에 충돌할때까지 이동 => 충돌했을 경우 다른 이동 가능한 곳을 검색하여 이동
+			while (!moveRectCheck(m_eMoveState))
+				m_eMoveState = RANDOM->getFromIntTo(0, 3);
+
+			// 이동 설정을 true로 만들어 해당 유닛이 다음 위치까지 이동하도록 만들어준다.
+			m_isMoveAct = true;
+			break;
+			//case tagEnemyType::Daemon: // 벽에 닿으면 반대 방향으로 이동
+			//	if (moveRectCheck(m_eMoveState))
+			//	{
+			//		m_isMoveAct = true;
+			//	}
+			//	else
+			//	{
+			//		if (m_eMoveState == eMoveState::UP)
+			//		{
+			//			m_eMoveState = eMoveState::DOWN;
+			//		}
+			//		else if (m_eMoveState == eMoveState::DOWN)
+			//		{
+			//			m_eMoveState = eMoveState::UP;
+			//		}
+			//		if (m_eMoveState == eMoveState::LEFT)
+			//		{
+			//			m_eMoveState = eMoveState::RIGHT;
+			//		}
+			//		else if (m_eMoveState == eMoveState::RIGHT)
+			//		{
+			//			m_eMoveState = eMoveState::LEFT;
+			//		}
+			//		m_isMoveAct = true;
+			//	}
+			//	break;
+		default: // 패턴이 없을 경우 랜덤 이동
+			m_eMoveState = RANDOM->getFromIntTo(0, 4);
+			moveRectCheck(m_eMoveState);
+			m_isMoveAct = true;
+			break;
 		}
-
-		// 벽에 충돌할때까지 이동 => 충돌했을 경우 다른 이동 가능한 곳을 검색하여 이동
-		while (!moveRectCheck(m_eMoveState))
-			m_eMoveState = RANDOM->getFromIntTo(0, 3);
-
-		// 이동 설정을 true로 만들어 해당 유닛이 다음 위치까지 이동하도록 만들어준다.
-		m_isMoveAct = true;
-		break;
-	//case tagEnemyType::Daemon: // 벽에 닿으면 반대 방향으로 이동
-	//	if (moveRectCheck(m_eMoveState))
-	//	{
-	//		m_isMoveAct = true;
-	//	}
-	//	else
-	//	{
-	//		if (m_eMoveState == eMoveState::UP)
-	//		{
-	//			m_eMoveState = eMoveState::DOWN;
-	//		}
-	//		else if (m_eMoveState == eMoveState::DOWN)
-	//		{
-	//			m_eMoveState = eMoveState::UP;
-	//		}
-	//		if (m_eMoveState == eMoveState::LEFT)
-	//		{
-	//			m_eMoveState = eMoveState::RIGHT;
-	//		}
-	//		else if (m_eMoveState == eMoveState::RIGHT)
-	//		{
-	//			m_eMoveState = eMoveState::LEFT;
-	//		}
-	//		m_isMoveAct = true;
-	//	}
-	//	break;
-	default: // 패턴이 없을 경우 랜덤 이동
-		m_eMoveState = RANDOM->getFromIntTo(0, 4);
-		moveRectCheck(m_eMoveState);
-		m_isMoveAct = true;
-		break;
 	}
+	
 
 	//// tileMap 위치에 몬스터 정보 저장
 	m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = &m_tEnemyData;
@@ -830,30 +838,34 @@ void enemy::isDieTileMana()
 void enemy::eatActPattern()
 {
 	// 공격중이 아닐 경우(m_isAttAct) 현재 체력이 1/3 경우
-	if (!m_isAttAct && m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 4)
+	if (!m_isAttAct)
 	{
-		// 4방향을 모두 검색한다(UP, RIGHT, DOWN, LEFT)
-		for (int i = 0; i < 4; i++)
+
+		if (m_tEnemyData.t_currHp < m_tEnemyData.t_MaxHp / 4)
 		{
-			if (eatIsEnemy(i))
+			// 4방향을 모두 검색한다(UP, RIGHT, DOWN, LEFT)
+			for (int i = 0; i < 4; i++)
 			{
-				// 자신보다 약한 enemy를 먹었을 경우(이때 해당 enemy의 Hp는 0으로 된다
-				// 공격 액션을 실시한다
-				m_isAttAct = true;
-				// 바라보았던 방향에 따라 액션 위치를 설정한다
-				if (i == eMoveState::LEFT || i == eMoveState::UP)
+				if (eatIsEnemy(i))
 				{
-					m_tEnemyData.t_img = m_tEnemyData.t_img_LA;
+					// 자신보다 약한 enemy를 먹었을 경우(이때 해당 enemy의 Hp는 0으로 된다
+					// 공격 액션을 실시한다
+					m_isAttAct = true;
+					// 바라보았던 방향에 따라 액션 위치를 설정한다
+					if (i == eMoveState::LEFT || i == eMoveState::UP)
+					{
+						m_tEnemyData.t_img = m_tEnemyData.t_img_LA;
+					}
+					else if (i == eMoveState::RIGHT || i == eMoveState::DOWN)
+					{
+						m_tEnemyData.t_img = m_tEnemyData.t_img_RA;
+					}
+					// 공격 모션이 실시 가능하도록 moveDaley와 다른 actDaley로 초기화
+					m_moveDaley = m_tEnemyData.t_moveDaley;
+					m_ani.start();
+					// 실행시 함수를 빠져나간다(재실행 예외처리)
+					return;
 				}
-				else if (i == eMoveState::RIGHT || i == eMoveState::DOWN)
-				{
-					m_tEnemyData.t_img = m_tEnemyData.t_img_RA;
-				}
-				// 공격 모션이 실시 가능하도록 moveDaley와 다른 actDaley로 초기화
-				m_moveDaley = m_tEnemyData.t_moveDaley;
-				m_ani.start();
-				// 실행시 함수를 빠져나간다(재실행 예외처리)
-				return;
 			}
 		}
 	}
@@ -901,6 +913,126 @@ bool enemy::eatIsEnemy(int eMoveArrow)
 
 	// 먹을 수 없는 경우 return false 한다
 	return false;
+}
+
+bool enemy::heroActPattern()
+{
+	// 공격중이 아닐 경우(m_isAttAct)
+	if (!m_isAttAct)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (isHero(i))
+			{
+				m_isAttAct = true;
+				m_isMoveAct = false;
+				if (i == eMoveState::LEFT || i == eMoveState::UP)
+				{
+					m_tEnemyData.t_img = m_tEnemyData.t_img_LA;
+				}
+				else if (i == eMoveState::RIGHT || i == eMoveState::DOWN)
+				{
+					m_tEnemyData.t_img = m_tEnemyData.t_img_RA;
+				}
+				m_moveDaley = m_tEnemyData.t_moveDaley;
+				m_ani.start();
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool enemy::isHero(int eMoveArrow)
+{
+	// 타일 검색 방향
+	int tempMoveArrow = 0;
+	int tempAttRange = 0;
+	int tempAttArrow = 0;
+
+	//// enemy Type에 따른 사거리 조정
+	switch (m_tEnemyData.t_enumType)
+	{
+	case tagEnemyType::Lili:
+		tempAttRange = 3;
+		break;
+	default:
+		// 기본은 아무것도 없음
+		tempAttRange = 1;
+		break;
+	}
+
+
+	for (int i = 1; i < tempAttRange + 1; i++)
+	{
+		switch (eMoveArrow)
+		{
+		case eMoveState::UP:
+			// 검색 방향
+			tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i;
+			// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
+			if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
+				m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
+			tempAttArrow = eMoveState::UP;
+			break;
+		case eMoveState::RIGHT:
+			tempMoveArrow = ((m_tEnemyData.t_tilePosX + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
+			if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
+				m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
+			tempAttArrow = eMoveState::RIGHT;
+
+			break;
+		case eMoveState::DOWN:
+			tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + i;
+			if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
+				m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
+			tempAttArrow = eMoveState::DOWN;
+
+			break;
+		case eMoveState::LEFT:
+			tempMoveArrow = ((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
+			if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
+				m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
+			tempAttArrow = eMoveState::LEFT;
+
+			break;
+		}
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo != nullptr)
+			break;
+	}
+
+	tagBullet tempBullet;
+	//// enemy Type에 공격 방식
+	switch (m_tEnemyData.t_enumType)
+	{
+	case tagEnemyType::Lili:
+		//// 임시 bullet
+		tempBullet.t_isAilve = true;
+		tempBullet.t_img = IMAGEMANAGER->findImage("Bullet_0");
+		tempBullet.t_posX = m_tEnemyData.t_posX;
+		tempBullet.t_posY = m_tEnemyData.t_posY;
+		tempBullet.t_atkPoint = m_tEnemyData.t_atkPoint;
+		tempBullet.t_moveSpeed = 2.0f;
+		tempBullet.t_scale = 1.0f;
+		tempBullet.t_range = 100.0f;
+		tempBullet.t_moveArrow = tempAttArrow;
+		tempBullet.t_master = tagMaster::Enemy;
+		m_pBulletMag->addBullet(&tempBullet);
+		break;
+	default:
+		// 기본형
+		// 몬스터 정보가 있다면 자신의 공격력 만큼 해당 몬스터의 hp를 깍아낸다
+		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo->t_currHp -= m_tEnemyData.t_atkPoint;
+		EFFMANAGER->play("Hit_Eff_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+		break;
+	}
+
+	
+
+
+	// true로 반환
+	return true;
 }
 
 tagEnemyData * enemy::FlowerInfo()

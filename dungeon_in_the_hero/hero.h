@@ -58,8 +58,14 @@ public:
 	bool moveIsRect(int eMoveArrow);
 	void aStarMoveSys();
 
-	void enemySetTxt(int enemyType);
+	void heroSetTxt(int enemyType);
 	void movePattern();
+
+	bool monActPattern();
+
+	bool IsEnemy(int eMoveArrow);
+
+	void damge(int atkPoint);
 
 	hero();
 	~hero();

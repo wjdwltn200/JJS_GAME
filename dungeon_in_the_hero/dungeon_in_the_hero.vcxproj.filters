@@ -95,6 +95,12 @@
     <ClCompile Include="hero.cpp">
       <Filter>MainGame\subClass</Filter>
     </ClCompile>
+    <ClCompile Include="bullet.cpp">
+      <Filter>MainGame\subClass</Filter>
+    </ClCompile>
+    <ClCompile Include="bulletManager.cpp">
+      <Filter>2DGameFramework\manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h">
@@ -205,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="hero.h">
       <Filter>MainGame\subClass</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet.h">
+      <Filter>MainGame\subClass</Filter>
+    </ClInclude>
+    <ClInclude Include="bulletManager.h">
+      <Filter>2DGameFramework\manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,6 +11,8 @@
 #define MOUSE_FOINT_SET_NUMSIZE 4
 #define MOUSE_FOINT_CANG_VALUE 10
 
+class bulletManager;
+
 class gameScene : public scene
 {
 private:
@@ -23,6 +25,7 @@ private:
 	PlayerInfo * m_tPlayer;
 	enemyManager * m_pEnemyMag;
 	heroManager * m_pHeroMag;
+	bulletManager * m_pBulletMag;
 	char szText[256];
 
 public:
@@ -32,6 +35,8 @@ public:
 	virtual void render(HDC hdc);
 
 	void screenUi(HDC hdc);
+	void RectCol();
+	void HitEff(int x, int y);
 	
 	gameScene();
 	~gameScene();

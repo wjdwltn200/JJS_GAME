@@ -10,6 +10,7 @@
 class tileMap;
 class enemyManager;
 class aStarNode;
+class bulletManager;
 
 class enemy
 {
@@ -39,12 +40,13 @@ private:
 
 	tileMap * m_pTileMapMag;
 	enemyManager * m_pEnemyMag;
+	bulletManager * m_pBulletMag;
 	aStarNode * m_pAStartNode;
 
 	tagEnemyData tempEnemy;
 
 public:
-	HRESULT init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag);
+	HRESULT init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag, bulletManager * pBulletMag);
 	void release();
 	void update();
 	void render(HDC hdc);
@@ -72,6 +74,8 @@ public:
 
 	void eatActPattern();
 	bool eatIsEnemy(int eMoveArrow);
+	bool heroActPattern();
+	bool isHero(int eMoveArrow);
 
 	tagEnemyData * FlowerInfo();
 	tagEnemyData * SlimeInfo();

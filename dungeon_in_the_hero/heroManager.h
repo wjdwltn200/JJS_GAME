@@ -19,6 +19,8 @@ public:
 
 	void heroDrop(tagHeroData* enemyInfo);
 
+	vector<hero*> getVecHero() { return m_vecHero; }
+
 	heroManager();
 	~heroManager();
 };

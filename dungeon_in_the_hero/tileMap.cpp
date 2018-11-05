@@ -357,13 +357,17 @@ void tileMap::keyInput()
 		//// 용사 임시 드롭
 		tagHeroData tempHero;
 		tempHero.t_img_U = IMAGEMANAGER->findImage("hero_00_U");
+		tempHero.t_img_UA = IMAGEMANAGER->findImage("hero_00_UA");
 		tempHero.t_img_R = IMAGEMANAGER->findImage("hero_00_R");
+		tempHero.t_img_RA = IMAGEMANAGER->findImage("hero_00_RA");
 		tempHero.t_img_D = IMAGEMANAGER->findImage("hero_00_D");
+		tempHero.t_img_DA = IMAGEMANAGER->findImage("hero_00_DA");
 		tempHero.t_img_L = IMAGEMANAGER->findImage("hero_00_L");
-		tempHero.t_img_Dead = IMAGEMANAGER->findImage("Slime_00_Dead");
+		tempHero.t_img_LA = IMAGEMANAGER->findImage("hero_00_LA");
+		tempHero.t_img_Dead = IMAGEMANAGER->findImage("hero_00_Dead");
 
 		tempHero.t_isAilve = true;
-		tempHero.t_currHp = 10;
+		tempHero.t_currHp = 200;
 		tempHero.t_MaxHp = tempHero.t_currHp;
 		tempHero.t_posX = m_tileset[15 * m_tileSizeY + 0].t_rc.left + CAMERA->getCamPosX();
 		tempHero.t_posY = m_tileset[15 * m_tileSizeY + 0].t_rc.top + CAMERA->getCamPosY();
@@ -373,8 +377,8 @@ void tileMap::keyInput()
 		tempHero.t_moveSpeed = 1.0f;
 		tempHero.t_moveDaley = 0;
 		tempHero.t_setTileMapNum = (15 * m_tileSizeY + 0);
-		tempHero.t_atkPoint = 3;
-		tempHero.t_defPoint = 0;
+		tempHero.t_atkPoint = 10;
+		tempHero.t_defPoint = 1;
 
 		m_pHeroMag->heroDrop(&tempHero);
 	}
@@ -442,20 +446,20 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Lili_00_Dead");
 
 		tempEnemy.t_isAilve = true;
-		tempEnemy.t_currHp = 10;
+		tempEnemy.t_currHp = 35;
 		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 		tempEnemy.t_posX = posX + CAMERA->getCamPosX();
 		tempEnemy.t_posY = posY + CAMERA->getCamPosY();
 		tempEnemy.t_tilePosX = tileX;
 		tempEnemy.t_tilePosY = tileY;
-		tempEnemy.t_scale = 2.0;
+		tempEnemy.t_scale = 1.5f;
 		tempEnemy.t_moveSpeed = 0.7f;
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_setTileMapNum = setTileNum;
 		tempEnemy.t_atkPoint = 3;
 		tempEnemy.t_defPoint = 0;
 		tempEnemy.t_FoodChainLv = 2;
-		tempEnemy.t_enumType = tagEnemyType::Bug;
+		tempEnemy.t_enumType = tagEnemyType::Lili;
 	}
 	else if (m_tileset[setTileNum].t_ManaValue >= 4)
 	{
