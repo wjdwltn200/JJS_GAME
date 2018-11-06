@@ -149,7 +149,7 @@ HRESULT gameScene::init()
 	m_tPlayer = new PlayerInfo;
 	m_tPlayer->t_TileDesEne = 100;
 
-	m_MapTile->init(32, 42, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag);
+	m_MapTile->init(32, 64, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag);
 	CAMERA->setCamPosY(CAMERA_MAX_Y);
 
 	m_imgTopBg = IMAGEMANAGER->addImage("inGameTopBG", "image/inGameImg/BG/InGame_Top_Bg.bmp", m_MapTile->gettileMaxValueX(), TOP_IMG_SIZE_Y);
