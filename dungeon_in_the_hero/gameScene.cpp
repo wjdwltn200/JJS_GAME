@@ -8,6 +8,13 @@
 
 HRESULT gameScene::init()
 {
+	//// SoundSet
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_UnStart.wav", true, true);
+	SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.5f);
+
+	SOUNDMANAGER->addSound("Sound/SE/Impact1.wav", false, false);
+
+
 	//// EffImgSet
 	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("MousePointEFF", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 100, 0.0f, true);

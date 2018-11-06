@@ -739,6 +739,7 @@ void hero::damge()
 {
 	if (m_tHeroData.t_damgePoint <= 0) return;
 
+	SOUNDMANAGER->play("Sound/SE/Impact1.wav");
 	int tempPoint = (m_tHeroData.t_damgePoint - m_tHeroData.t_defPoint);
 	if (tempPoint <= 0)
 		tempPoint = 1;
