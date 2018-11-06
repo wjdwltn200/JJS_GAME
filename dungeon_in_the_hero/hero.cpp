@@ -727,7 +727,7 @@ bool hero::IsEnemy(int eMoveArrow)
 	}
 
 	// 몬스터 정보가 있다면 자신의 공격력 만큼 해당 몬스터의 hp를 깍아낸다
-	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_currHp -= m_tHeroData.t_atkPoint;
+	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_atkPoint;
 	EFFMANAGER->play("Hit_Eff_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 
 
@@ -741,7 +741,7 @@ void hero::damge()
 
 	int tempPoint = (m_tHeroData.t_damgePoint - m_tHeroData.t_defPoint);
 	if (tempPoint <= 0)
-		tempPoint = 0;
+		tempPoint = 1;
 
 	m_tHeroData.t_currHp -= tempPoint;
 	m_tHeroData.t_damgePoint = 0;

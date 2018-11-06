@@ -60,26 +60,27 @@ void uiPopup::render(HDC hdc)
 	DrawText(hdc, temp, strlen(temp), &rcTextArea, DT_WORDBREAK);
 	MY_UTIL::FontDelete(hdc);
 
+
 	//// enemy 정보 출력
 	if (m_tTxtInfo.t_AtkPoint > -1)
 	{
 		MY_UTIL::FontOption(hdc, 14, 1000);
 		sprintf_s(temp, "%d", m_tTxtInfo.t_AtkPoint);
-		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 17.0f, m_fPosY - CAMERA->getCamPosY() + 63.0f, temp, strlen(temp));
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 20.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
 		MY_UTIL::FontDelete(hdc);
 	}
 	if (m_tTxtInfo.t_DefPoint > -1)
 	{
 		MY_UTIL::FontOption(hdc, 14, 1000);
 		sprintf_s(temp, "%d", m_tTxtInfo.t_DefPoint);
-		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 57.0f, m_fPosY - CAMERA->getCamPosY() + 63.0f, temp, strlen(temp));
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 60.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
 		MY_UTIL::FontDelete(hdc);
 	}
 	if (m_tTxtInfo.t_MaxHpPoint > -1)
 	{
 		MY_UTIL::FontOption(hdc, 14, 1000);
 		sprintf_s(temp, "%d/%d", m_tTxtInfo.t_HpPoint, m_tTxtInfo.t_MaxHpPoint);
-		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 87.0f, m_fPosY - CAMERA->getCamPosY() + 63.0f, temp, strlen(temp));
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 95.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
 		MY_UTIL::FontDelete(hdc);
 	}
 

@@ -12,6 +12,10 @@ HRESULT gameScene::init()
 	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("MousePointEFF", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("Hit_Eff_0", "image/inGameImg/EFF/Hit_EFF_0.bmp", 133, 34, 133 / 4, 34/ 1, 15, 5, 0.0f, true);
+	EFFMANAGER->addEffect("Mana_Eat_0", "image/inGameImg/EFF/MANA_EAT_EFF_0.bmp", 252, 36, 252/ 7, 36 / 1, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("Mana_Eat_1", "image/inGameImg/EFF/MANA_EAT_EFF_1.bmp", 252, 36, 252 / 7, 36 / 1, 10, 10, 0.0f, true);
+
+
 	// 노란색
 	EFFMANAGER->addEffect("EXP_EFF_1", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("EXP_EFF_2", "image/inGameImg/EFF/EXP_EFF_2.bmp", 224, 32, 224 / 7, 32 / 1, 15, 5, 0.0f, true);
@@ -37,7 +41,7 @@ HRESULT gameScene::init()
 
 	IMAGEMANAGER->addImage("Item_Jewel", "image/inGameImg/EFF/Item_JewelSet.bmp", 75, 105, 5, 7, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TilePopup", "image/inGameImg/UI/TilePopup.bmp", 157, 95, 1, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("EnemyPopup", "image/inGameImg/UI/EnemyPopup.bmp", 157, 95, 1, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("EnemyPopup", "image/inGameImg/UI/EnemyPopup.bmp", 170, 110, 1, 1, true, RGB(255, 0, 255));
 
 	//// BuuletImgSet
 	IMAGEMANAGER->addImage("Bullet_0", "image/inGameImg/EFF/bullet_0.bmp", 104, 26, 4, 1, true, RGB(255, 0, 255));
@@ -73,12 +77,31 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("Bug_00_RA", "image/inGameImg/ENEMY/Bug/Bug_0_RIGHT_ATK.bmp", 288, 18, 12, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Bug_00_LA", "image/inGameImg/ENEMY/Bug/Bug_0_LEFT_ATK.bmp", 288, 18, 12, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Bug_00_Dead", "image/inGameImg/ENEMY/Bug/Bug_0_DEAD.bmp", 219, 30, 9, 1, true, RGB(255, 0, 255));
+	//볼레레 변형
+	IMAGEMANAGER->addImage("BugV2_00_R", "image/inGameImg/ENEMY/BugV2/BugV2_0_RIGHT.bmp", 272, 36, 8, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("BugV2_00_L", "image/inGameImg/ENEMY/BugV2/BugV2_0_LEFT.bmp", 272, 36, 8, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("BugV2_00_RA", "image/inGameImg/ENEMY/BugV2/BugV2_0_RIGHT_ATK.bmp", 136, 144, 4, 4, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("BugV2_00_LA", "image/inGameImg/ENEMY/BugV2/BugV2_0_LEFT_ATK.bmp", 136, 144, 4, 4, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("BugV2_00_Dead", "image/inGameImg/ENEMY/BugV2/BugV2_0_DEAD.bmp", 170, 72, 5, 2, true, RGB(255, 0, 255));
+	//리자드맨
+	IMAGEMANAGER->addImage("Lizardman_00_R", "image/inGameImg/ENEMY/Lizardman/Lizardman_0_RIGHT.bmp", 160, 104, 4, 4, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lizardman_00_L", "image/inGameImg/ENEMY/Lizardman/Lizardman_0_LEFT.bmp", 160, 104, 4, 4, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lizardman_00_RA", "image/inGameImg/ENEMY/Lizardman/Lizardman_0_RIGHT_ATK.bmp", 287, 24, 7, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lizardman_00_LA", "image/inGameImg/ENEMY/Lizardman/Lizardman_0_LEFT_ATK.bmp", 287, 24, 7, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lizardman_00_Dead", "image/inGameImg/ENEMY/Lizardman/Lizardman_0_DEAD.bmp", 164, 123, 4, 3, true, RGB(255, 0, 255));
 	//릴리
 	IMAGEMANAGER->addImage("Lili_00_R", "image/inGameImg/ENEMY/Lili/Lili_0_RIGHT.bmp", 264, 30, 11, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Lili_00_L", "image/inGameImg/ENEMY/Lili/Lili_0_LEFT.bmp", 264, 30, 11, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Lili_00_RA", "image/inGameImg/ENEMY/Lili/Lili_0_RIGHT_ATK.bmp", 241, 30, 10, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Lili_00_LA", "image/inGameImg/ENEMY/Lili/Lili_0_LEFT_ATK.bmp", 241, 30, 10, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Lili_00_Dead", "image/inGameImg/ENEMY/Lili/Lili_0_DEAD.bmp", 255, 31, 15, 1, true, RGB(255, 0, 255));
+
+	//데몬
+	IMAGEMANAGER->addImage("Demon_00_R", "image/inGameImg/ENEMY/Demon/Demon_0_RIGHT.bmp", 880, 39, 22, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Demon_00_L", "image/inGameImg/ENEMY/Demon/Demon_0_LEFT.bmp", 880, 39, 22, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Demon_00_RA", "image/inGameImg/ENEMY/Demon/Demon_0_RIGHT_ATK.bmp", 741, 38, 13, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Demon_00_LA", "image/inGameImg/ENEMY/Demon/Demon_0_LEFT_ATK.bmp", 741, 38, 13, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Demon_00_Dead", "image/inGameImg/ENEMY/Demon/Demon_0_DEAD.bmp", 201, 272, 4, 8, true, RGB(255, 0, 255));
 
 	//// heroImgSet
 	IMAGEMANAGER->addImage("hero_00_U", "image/inGameImg/HERO/hero_0/hero_0_UP.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
@@ -161,8 +184,8 @@ void gameScene::render(HDC hdc)
 {
 	m_imgTopBg->render(hdc, 0 - CAMERA->getCamPosX(), 0 - CAMERA->getCamPosY() + CAMERA_MAX_Y);
 	m_MapTile->render(hdc);
-	m_pEnemyMag->render(hdc);
 	m_pHeroMag->render(hdc);
+	m_pEnemyMag->render(hdc);
 	m_pBulletMag->render(hdc);
 	EFFMANAGER->render(hdc);
 	OBJECTMANAGER->render(hdc);

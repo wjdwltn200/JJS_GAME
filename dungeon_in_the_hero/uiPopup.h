@@ -4,6 +4,9 @@
 #define POPUP_TXT_INFO_SET_Y 35.0f
 #define POPUP_TXT_BOX_SEY_X 10.0f
 
+#define ENEMY_INFO_SET_Y 79.0f
+
+
 class uiPopup
 {
 private:

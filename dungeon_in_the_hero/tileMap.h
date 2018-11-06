@@ -14,6 +14,13 @@
 #define TILE_NON_BLOCK 5
 #define TILE_NON_BLOCK_SET_Y 1
 
+#define TILE_LV_0 3
+#define TILE_LV_1 4
+#define TILE_LV_2 6
+#define TILE_LV_3 9
+#define TILE_LV_4 12
+#define TILE_LV_5 15
+
 
 class uiPopup;
 class uiManager;
@@ -26,6 +33,10 @@ private:
 	enum tagTileType
 	{
 		START, TOP, BLOCK, RAND, BLOCK_NON, END_NUM
+	};
+	enum eTileEnemy
+	{
+		NonEnemy ,Slime, Bug, Lizardman, Lili, Demon
 	};
 
 	SYNTHESIZE(TileInfo, m_tileset[2048], tile);
@@ -56,7 +67,8 @@ public:
 	void tileSetTxt(int tileType, int tileNum);
 	tagItemData dropItemSet(int itemType);
 	void monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY);
-	void tileImgSet(int tileNum, HDC hdc);
+	void tileImgSet(int tileX, int tileY, HDC hdc, bool isShaking = false);
+	void tierSet(int tileNum);
 
 	TileInfo * getTileSetPoint() { return m_tileset; }
 

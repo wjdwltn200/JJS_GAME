@@ -7,6 +7,8 @@
 
 #define ENEMY_FLOWER_MANA 7
 
+#define FlowerV2_SET_VALUE 80
+
 class tileMap;
 class enemyManager;
 class aStarNode;
@@ -36,7 +38,6 @@ private:
 	bool m_isMoveAct;
 	bool m_isAttAct;
 	int m_aStarDepValue;
-	bool m_isDead;
 
 	tileMap * m_pTileMapMag;
 	enemyManager * m_pEnemyMag;
@@ -44,6 +45,10 @@ private:
 	aStarNode * m_pAStartNode;
 
 	tagEnemyData tempEnemy;
+
+	////2*2 enemy 타일 검사용 배열
+	int enemySizeX[2] = { 0,1 };
+	int enemySizeY[2] = { 0,1 };
 
 public:
 	HRESULT init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag, bulletManager * pBulletMag);
@@ -62,8 +67,10 @@ public:
 	bool aStarIsRect(int x, int y);
 
 	void currHp();
+	void damge();
 	void moveSys();
 	bool moveRectCheck(int eMoveArrow);
+	bool moveRectCheckBig(int eMoveArrow);
 	bool moveIsRect(int eMoveArrow);
 	bool tileManaChg(int eMoveArrow, int manaValue);
 	bool tileManaDrain(int eMoveArrow, int manaValue);
@@ -72,13 +79,15 @@ public:
 	void movePattern();
 	void isDieTileMana();
 
-	void eatActPattern();
+	bool eatActPattern();
 	bool eatIsEnemy(int eMoveArrow);
 	bool heroActPattern();
 	bool isHero(int eMoveArrow);
 
 	tagEnemyData * FlowerInfo();
 	tagEnemyData * SlimeInfo();
+
+	tagEnemyData * BugV2();
 
 
 	enemy();
