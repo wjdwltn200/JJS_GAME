@@ -63,12 +63,9 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMap)
 	Delete(true, true);
 
 	m_isMoveAct = false;
-	m_eMoveState = eMoveState::UP;
+	m_eMoveState = eMoveState::DOWN;
 
-	//aStarFind(m_pAStartNode->Create(20, 15), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
-
-	
-
+	//aStarFind(m_pAStartNode->Create(20, 24), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
 	return S_OK;
 }
 
@@ -151,6 +148,9 @@ int hero::aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode)
 	for (int i = 0; i < 4; i++)
 	{
 		int cy = pos->getPosY(), cx = pos->getPosX();
+		if(cy <= -1 || cy == m_pTileMapMag->getTileSizeY() ||
+			cx <= -1 || cx == m_pTileMapMag->getTileSizeX()) break;
+
 		switch (i)
 		{
 		case eMoveState::UP:
@@ -246,7 +246,7 @@ bool hero::aStarFind(aStarNode * endXY, aStarNode * node)
 
 		SortOpenNode();
 	}
-
+	 
 	// 못찾았을 경우
 	Delete(true, true);
 
@@ -739,7 +739,7 @@ void hero::damge()
 {
 	if (m_tHeroData.t_damgePoint <= 0) return;
 
-	SOUNDMANAGER->play("Sound/SE/Impact1.wav");
+	MY_UTIL::HetSe();
 	int tempPoint = (m_tHeroData.t_damgePoint - m_tHeroData.t_defPoint);
 	if (tempPoint <= 0)
 		tempPoint = 1;

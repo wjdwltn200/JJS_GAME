@@ -30,7 +30,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 	m_tileSizeY = tileY;
 	m_tileSizeMaxX = tileX * TILE_SIZE;
 	m_tileSizeMaxY = tileY * TILE_SIZE;
-	IMAGEMANAGER->addImage("TileSet", "image/inGameImg/TILE/TileSet_Terrain.bmp", 160, 288, 5, 9, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("TileSet", "image/inGameImg/TILE/TileSet_Terrain.bmp", 160, 352, 5, 11, true, RGB(255, 0, 255));
 	
 	IMAGEMANAGER->addImage("TileShadow", "image/inGameImg/TILE/TileSet_Terrain_Shadow.bmp", 6, 32);
 
@@ -56,13 +56,14 @@ HRESULT tileMap::init(int tileX, int tileY,
 			m_tileset[x * m_tileSizeY + y].t_setX = x;
 			m_tileset[x * m_tileSizeY + y].t_setY = y;
 			m_tileset[x * m_tileSizeY + y].t_enemyInfo = nullptr;
+			m_tileset[x * m_tileSizeY + y].t_heroInfo = nullptr;
+			m_tileset[x * m_tileSizeY + y].t_isOverlord = false;
 
 			// ±íÀÌ¿¡ µû¶ó ¸¶³ª ¼¼ÆÃ Ãß°¡
-
 			int tempY = (m_tileSizeY / 4);
 			if (y <= (tempY * 1))
 			{
-				m_tileset[x * m_tileSizeY + y].t_ManaValue = RANDOM->getFromIntTo(3, 4);
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = RANDOM->getFromIntTo(3, 20);
 			}
 			else if (y <= (tempY * 2))
 			{
@@ -78,6 +79,9 @@ HRESULT tileMap::init(int tileX, int tileY,
 			}
 
 			int TempRandom = RANDOM->getFromIntTo(1, 100);
+
+			if (x == TILE_OVERLORD_X && y == TILE_OVERLORD_Y)
+				m_tileset[x * m_tileSizeY + y].t_isOverlord = true;
 
 			if ((x + 1) == (m_tileSizeX / 2) && y == 0)
 			{
@@ -182,6 +186,7 @@ void tileMap::update()
 				m_pTilePopup->setXY(m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2, m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2 - TILE_POPUP_Y_SIZE);
 			}
 
+			
 			//// Å¸ÀÏ ÆÄ±«
 			if (m_tileDesDaley <= 0 &&
 				!m_tileset[x * m_tileSizeY + y].t_isNetDes &&
@@ -210,6 +215,8 @@ void tileMap::update()
 
 				if (RANDOM->getInt(100) <= 10)
 				{
+					SOUNDMANAGER->play("Sound/SE/getGam.wav");
+					
 					OBJECTMANAGER->addTileDesObj(tagObjectType::ITEM_JEWEL,
 						m_tileset[x * m_tileSizeY + y].t_rc.left + (TILE_SIZE / 2),
 						m_tileset[x * m_tileSizeY + y].t_rc.top + (TILE_SIZE / 2), dropItemSet(tagItemType::JEWEL));
@@ -326,10 +333,10 @@ void tileMap::render(HDC hdc)
 				);
 
 				//// Å¸ÀÏÁ¤º¸ µð¹ö±ë Á¤º¸
-				sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_ManaValue);
+				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
+				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
+				sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_heroInfo);
 				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
-				/*sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_enemyInfo);
-				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));*/
 				//sprintf_s(szText, "%d", TestTileNum);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
@@ -415,19 +422,57 @@ void tileMap::tileSetTxt(int tileType, int tileNum)
 		setTxt.t_txtInfo = "ÀÎ°£µéÀº Àý´ë ¶ÕÀ» ¼ö ¾ø´Â ¸¶¹ýÀÇ º®ÀÔ´Ï´Ù ¾ÆÂü, ¸¶¿Õ´Ôµµ ºÒ°¡´ÉÇÕ´Ï´Ù.";
 		break;
 	case tagTileType::BLOCK:
-		setTxt.t_txtName = "Èë ºí·°";
-		setTxt.t_txtInfo = "ºÎ¼ö´Ùº¸¸é ¹«¾ð°¡ Æ¢¾î³ª¿ÀÁö ¾ÊÀ»±î¿ä?";
-		if (setTxt.t_TileMana < 3)
+		switch (m_tileset[tileNum].t_tierValue)
 		{
-			setTxt.t_TileEnemyName = "Áã";
+		case eTileEnemy::Slime:
+			setTxt.t_txtName = "¾×±« ¼ÒÈ¯¼®";
+			setTxt.t_txtInfo = "ÀÌ ³à¼®ÀÇ ¾×Ã¼´Â ÇÇºÎ ¹Ì¿ë¿¡ Å¹¿ùÇÏ´Ù°í ÇÕ´Ï´Ù.";
+			setTxt.t_TileEnemyName = "¾×±«";
+			break;
+		case eTileEnemy::Bug:
+			setTxt.t_txtName = "º¼·¹ ¼ÒÈ¯¼®";
+			setTxt.t_txtInfo = "ÀÎ°£°è °ïÃæ°ú´Â Â÷¿øÀÌ ´Ù¸¥ ³à¼®ÀÌÁÒ!";
+			setTxt.t_TileEnemyName = "º¼·¹";
+			break;
+		case eTileEnemy::Lizardman:
+			setTxt.t_txtName = "²¿º¹ÀÌ ¼ÒÈ¯¼®";
+			setTxt.t_txtInfo = "¾îµð¼­ ÁÖ¿ü´ÂÁö ¹æÆÐ±îÁö °®Ãá °­·ÂÇÑ º¸º´ ÀÔ´Ï´Ù!";
+			setTxt.t_TileEnemyName = "²¿º¹ÀÌ";
+			break;
+		case eTileEnemy::Lili:
+			setTxt.t_txtName = "¸±¸® ¼ÒÈ¯¼®";
+			setTxt.t_txtInfo = "Ãµ¹æÁöÃàÀÌ¶ó, ¿ë»ç¸¦ ±«·ÓÈ÷´Âµ¥´Â ÃÖ°íÁÒ!";
+			setTxt.t_TileEnemyName = "¸±¸®";
+			break;
+		case eTileEnemy::Demon:
+			setTxt.t_txtName = "µ¢Ä¡ ¼ÒÈ¯¼®";
+			setTxt.t_txtInfo = "¹«¼·°í °­·ÂÇÑ ³à¼®ÀÔ´Ï´Ù¸¸.. ³Ê¹« Ä¿¼­ ¹®Á¦ÁÒ. Á¼Àº ±æÀº ¸ø³ª°©´Ï´Ù.";
+			setTxt.t_TileEnemyName = "µ¥¸ó";
+			break;
+		case eTileEnemy::Mamon:
+			setTxt.t_txtName = "¿Ü´«¹ÚÀÌ ¼ÒÈ¯¼®";
+			setTxt.t_txtInfo = "¿ä³à¼®ÀÇ °­·ÂÇÑ ­h °ø°ÝÀº »ó´ë¸¦ ±âÀý½ÃÅ³ Á¤µµ¶ó´õ±º¿ä.";
+			setTxt.t_TileEnemyName = "¿Ü´«¹ÚÀÌ";
+			break;
+		case eTileEnemy::Lady:
+			setTxt.t_txtName = "ºÎ²ô¸¶¸¶ ¼ÒÈ¯¼®";
+			setTxt.t_txtInfo = "³¸°¡¸²ÀÌ ½ÉÇØ¼­ ¿ë»ç°¡ ´Ù°¡¿À¸é ¼û¾î¹ö¸°´Ù°í ÇÏ´õ±º¿ä.";
+			setTxt.t_TileEnemyName = "¿Ü´«¹ÚÀÌ";
+			break;
+		default:
+			setTxt.t_txtName = "Èë ºí·°";
+			setTxt.t_txtInfo = "±×Àú Èë³¿»õ¸¸ ³ª´Â Æò¹üÇÑ Èëºí·° ÀÔ´Ï´Ù";
+			setTxt.t_TileEnemyName = "¾øÀ½";
+			break;
 		}
+
 		break;
 	case tagTileType::RAND:
 		setTxt.t_txtName = "µ¹ ¹Ù´Ú";
 		setTxt.t_txtInfo = "´Ü´ÜÇÑ ¹Ù´ÚÀÔ´Ï´Ù.";
 		break;
 	case tagTileType::BLOCK_NON:
-		setTxt.t_txtName = "¹«Áö´Ü´Ü ºí·°";
+		setTxt.t_txtName = "¹«Áö´Ü´Ü";
 		setTxt.t_txtInfo = "ÀÌ°Ç ¸¶¿Õ´Ôµµ ¾îÂ¿ ¼ö ¾øÀ» °Í °°½À´Ï´Ù..";
 		break;
 	}
@@ -461,10 +506,15 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 	tempEnemy.t_setTileMapNum = setTileNum;
 
 	// TileLv¿¡ µû¸¥ Ã³¸®
-	if (tempTierValue == 0) return;
+	if (tempTierValue == 0)
+	{
+		SOUNDMANAGER->play("Sound/SE/BarracudaJoe.wav");
+		return;
+	}
 
 	else if (tempTierValue == eTileEnemy::Slime)
 	{
+		SOUNDMANAGER->play("Sound/SE/Slime.wav");
 		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Slime_00_R");
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Slime_00_L");
 		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Slime_00_RA");
@@ -484,6 +534,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 	}
 	else if (tempTierValue == eTileEnemy::Bug)
 	{
+		SOUNDMANAGER->play("Sound/SE/Bug.wav");
 		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Bug_00_R");
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Bug_00_L");
 		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Bug_00_RA");
@@ -503,6 +554,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 	}
 	else if (tempTierValue == eTileEnemy::Lizardman)
 	{
+		SOUNDMANAGER->play("Sound/SE/Lizardman.wav");
 		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Lizardman_00_R");
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Lizardman_00_L");
 		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Lizardman_00_RA");
@@ -522,6 +574,8 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 	}
 	else if (tempTierValue == eTileEnemy::Lili)
 	{
+		SOUNDMANAGER->play("Sound/SE/Lili.wav");
+
 		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Lili_00_R");
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Lili_00_L");
 		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Lili_00_RA");
@@ -537,6 +591,42 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_defPoint = 0;
 		tempEnemy.t_FoodChainLv = 2;
 		tempEnemy.t_enumType = tagEnemyType::Lili;
+	}
+	else if (tempTierValue == eTileEnemy::Mamon)
+	{
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Mamon_00_R");
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Mamon_00_L");
+		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Mamon_00_RA");
+		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Mamon_00_LA");
+		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Mamon_00_Dead");
+
+		tempEnemy.t_currHp = 200;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 0.5f;
+		tempEnemy.t_moveDaley = 0;
+		tempEnemy.t_atkPoint = 20;
+		tempEnemy.t_defPoint = 3;
+		tempEnemy.t_FoodChainLv = 3;
+		tempEnemy.t_enumType = tagEnemyType::Mamon;
+	}
+	else if (tempTierValue == eTileEnemy::Lady)
+	{
+		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Lady_00_R");
+		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Lady_00_L");
+		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Lady_00_RA");
+		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Lady_00_LA");
+		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Lady_00_Dead");
+
+		tempEnemy.t_currHp = 200;
+		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
+		tempEnemy.t_scale = 2.0f;
+		tempEnemy.t_moveSpeed = 0.5f;
+		tempEnemy.t_moveDaley = 0;
+		tempEnemy.t_atkPoint = 20;
+		tempEnemy.t_defPoint = 3;
+		tempEnemy.t_FoodChainLv = 3;
+		tempEnemy.t_enumType = tagEnemyType::Lady;
 	}
 	else if (tempTierValue == eTileEnemy::Demon)
 	{

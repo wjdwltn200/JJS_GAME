@@ -5,18 +5,39 @@
 #include "bulletManager.h"
 #include "bullet.h"
 #include "hero.h"
+#include "overlord.h"
 
 HRESULT gameScene::init()
 {
 	//// SoundSet
-	SOUNDMANAGER->addSound("Sound/BGM/BGM_UnStart.wav", true, true);
-	SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.5f);
+	//SOUNDMANAGER->addSound("Sound/BGM/BGM_UnStart.wav", true, true);
+	//SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.5f);
 
 	SOUNDMANAGER->addSound("Sound/SE/Impact1.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/getGam.wav", false, false);
+
+	// 피격 SE
+	SOUNDMANAGER->addSound("Sound/SE/Het_0.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Het_1.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Het_2.wav", false, false);
+
+	// 공격 SE
+	SOUNDMANAGER->addSound("Sound/SE/LiliAtt.wav", false, false);
+
+	SOUNDMANAGER->addSound("Sound/SE/Slime.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Bug.wav", false, false);
+
+	SOUNDMANAGER->addSound("Sound/SE/flower.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/flowerV2.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Lizardman.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Lili.wav", false, false);
+
+
+
 
 
 	//// EffImgSet
-	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 5, 0.0f, true);
+	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("MousePointEFF", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("Hit_Eff_0", "image/inGameImg/EFF/Hit_EFF_0.bmp", 133, 34, 133 / 4, 34/ 1, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("Mana_Eat_0", "image/inGameImg/EFF/MANA_EAT_EFF_0.bmp", 252, 36, 252/ 7, 36 / 1, 10, 10, 0.0f, true);
@@ -55,11 +76,9 @@ HRESULT gameScene::init()
 
 
 
-	//// enemyImgSet
-	//뼈다귀
-	/*IMAGEMANAGER->addImage("Skeleton_00_L", "image/inGameImg/ENEMY/Skeleton_0_L.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("Skeleton_00_R", "image/inGameImg/ENEMY/Skeleton_0_R.bmp", 48, 16, 3, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("Skeleton_00_D", "image/inGameImg/ENEMY/Skeleton_0_D.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));*/
+	//마왕 공주
+	IMAGEMANAGER->addImage("Overlord", "image/inGameImg/ENEMY/Overlord_0.bmp", 72, 25, 4, 1, true, RGB(255, 0, 255));
+
 	//슬라임
 	IMAGEMANAGER->addImage("Slime_00_R", "image/inGameImg/ENEMY/Slime/Slime_0_RIGHT.bmp",442, 20, 13, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Slime_00_L", "image/inGameImg/ENEMY/Slime/Slime_0_LEFT.bmp", 442, 20, 13, 1, true, RGB(255, 0, 255));
@@ -103,12 +122,27 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("Lili_00_LA", "image/inGameImg/ENEMY/Lili/Lili_0_LEFT_ATK.bmp", 241, 30, 10, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Lili_00_Dead", "image/inGameImg/ENEMY/Lili/Lili_0_DEAD.bmp", 255, 31, 15, 1, true, RGB(255, 0, 255));
 
-	//데몬
+	//마몬
 	IMAGEMANAGER->addImage("Demon_00_R", "image/inGameImg/ENEMY/Demon/Demon_0_RIGHT.bmp", 880, 39, 22, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Demon_00_L", "image/inGameImg/ENEMY/Demon/Demon_0_LEFT.bmp", 880, 39, 22, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Demon_00_RA", "image/inGameImg/ENEMY/Demon/Demon_0_RIGHT_ATK.bmp", 741, 38, 13, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Demon_00_LA", "image/inGameImg/ENEMY/Demon/Demon_0_LEFT_ATK.bmp", 741, 38, 13, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Demon_00_Dead", "image/inGameImg/ENEMY/Demon/Demon_0_DEAD.bmp", 201, 272, 4, 8, true, RGB(255, 0, 255));
+
+	//레이지
+	IMAGEMANAGER->addImage("Lady_00_R", "image/inGameImg/ENEMY/Lady/Lady_0_RIGHT.bmp", 128, 68, 4, 2, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lady_00_L", "image/inGameImg/ENEMY/Lady/Lady_0_LEFT.bmp", 128, 68, 4, 2, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lady_00_RA", "image/inGameImg/ENEMY/Lady/Lady_0_RIGHT_ATK.bmp", 160, 102, 5, 3, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lady_00_LA", "image/inGameImg/ENEMY/Lady/Lady_0_LEFT_ATK.bmp", 160, 102, 5, 3, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Lady_00_Dead", "image/inGameImg/ENEMY/Lady/Lady_0_DEAD.bmp", 195, 102, 5, 3, true, RGB(255, 0, 255));
+
+
+	//데몬
+	IMAGEMANAGER->addImage("Mamon_00_R", "image/inGameImg/ENEMY/Mamon/Mamon_0_RIGHT.bmp", 235, 168, 5, 4, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Mamon_00_L", "image/inGameImg/ENEMY/Mamon/Mamon_0_LEFT.bmp", 235, 168, 5, 4, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Mamon_00_RA", "image/inGameImg/ENEMY/Mamon/Mamon_0_RIGHT_ATK.bmp", 192, 90, 4, 2, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Mamon_00_LA", "image/inGameImg/ENEMY/Mamon/Mamon_0_LEFT_ATK.bmp", 192, 90, 4, 2, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Mamon_00_Dead", "image/inGameImg/ENEMY/Mamon/Mamon_0_DEAD.bmp", 288, 180, 6, 4, true, RGB(255, 0, 255));
 
 	//// heroImgSet
 	IMAGEMANAGER->addImage("hero_00_U", "image/inGameImg/HERO/hero_0/hero_0_UP.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
@@ -144,6 +178,9 @@ HRESULT gameScene::init()
 	m_pBulletMag = new bulletManager;
 	m_pBulletMag->init();
 
+	//// Overlord Class 동적할당
+	m_pOverlord = new overlord;
+
 	//// Enemy 매니저 동적할당
 	m_pEnemyMag = new enemyManager;
 	m_pEnemyMag->init(m_MapTile, m_pUiMag, m_pBulletMag);
@@ -157,6 +194,7 @@ HRESULT gameScene::init()
 	m_tPlayer->t_TileDesEne = 100;
 
 	m_MapTile->init(32, 64, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag);
+	m_pOverlord->init(m_MapTile);
 	CAMERA->setCamPosY(CAMERA_MAX_Y);
 
 	m_imgTopBg = IMAGEMANAGER->addImage("inGameTopBG", "image/inGameImg/BG/InGame_Top_Bg.bmp", m_MapTile->gettileMaxValueX(), TOP_IMG_SIZE_Y);
@@ -172,6 +210,7 @@ void gameScene::release()
 	SAFE_DELETE(m_pEnemyMag);
 	SAFE_DELETE(m_pHeroMag);
 	SAFE_DELETE(m_pBulletMag);
+	SAFE_DELETE(m_pOverlord);
 }
 
 void gameScene::update()
@@ -180,6 +219,7 @@ void gameScene::update()
 	m_pHeroMag->update();
 	m_MapTile->update();
 	m_pBulletMag->update();
+	m_pOverlord->update();
 	RectCol();
 	CAMERA->update(0.0f, CAMERA_MAX_Y, m_MapTile->gettileMaxValueX() - WINSIZEX, m_MapTile->gettileMaxValueY() - WINSIZEY);
 	m_pUiMag->update();
@@ -194,6 +234,7 @@ void gameScene::render(HDC hdc)
 	m_pHeroMag->render(hdc);
 	m_pEnemyMag->render(hdc);
 	m_pBulletMag->render(hdc);
+	m_pOverlord->render(hdc);
 	EFFMANAGER->render(hdc);
 	OBJECTMANAGER->render(hdc);
 	m_pUiMag->render(hdc);

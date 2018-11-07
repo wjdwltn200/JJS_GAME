@@ -12,6 +12,7 @@
 #define MOUSE_FOINT_CANG_VALUE 10
 
 class bulletManager;
+class overlord;
 
 class gameScene : public scene
 {
@@ -26,6 +27,7 @@ private:
 	enemyManager * m_pEnemyMag;
 	heroManager * m_pHeroMag;
 	bulletManager * m_pBulletMag;
+	overlord * m_pOverlord;
 	char szText[256];
 
 public:

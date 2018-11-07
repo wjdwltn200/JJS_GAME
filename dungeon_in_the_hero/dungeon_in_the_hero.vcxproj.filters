@@ -101,6 +101,9 @@
     <ClCompile Include="bulletManager.cpp">
       <Filter>2DGameFramework\manager</Filter>
     </ClCompile>
+    <ClCompile Include="overlord.cpp">
+      <Filter>MainGame\subClass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h">
@@ -217,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="bulletManager.h">
       <Filter>2DGameFramework\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="overlord.h">
+      <Filter>MainGame\subClass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -476,6 +476,7 @@ void enemy::damge()
 {
 	if (m_tEnemyData.t_damgePoint <= 0) return;
 
+	MY_UTIL::HetSe();
 	int tempPoint = (m_tEnemyData.t_damgePoint - m_tEnemyData.t_defPoint);
 	if (tempPoint <= 0)
 		tempPoint = 1;
@@ -1140,6 +1141,9 @@ bool enemy::isHero(int eMoveArrow)
 		break;
 	}
 
+	int A;
+		bool B;
+
 	for (int i = 1; i < tempAttRange + 1; i++)
 	{
 		switch (m_tEnemyData.t_enumType)
@@ -1206,37 +1210,31 @@ bool enemy::isHero(int eMoveArrow)
 			switch (eMoveArrow)
 			{
 			case eMoveState::UP:
-				// 검색 방향
 				tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i;
-				// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
-				if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
-					m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
 				tempAttArrow = eMoveState::UP;
 				break;
 			case eMoveState::RIGHT:
 				tempMoveArrow = ((m_tEnemyData.t_tilePosX + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
-				if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
-					m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
 				tempAttArrow = eMoveState::RIGHT;
 				break;
 			case eMoveState::DOWN:
 				tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + i;
-				if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
-					m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
 				tempAttArrow = eMoveState::DOWN;
 				break;
 			case eMoveState::LEFT:
 				tempMoveArrow = ((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
-				if (((i == tempAttRange) && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
-					m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
 				tempAttArrow = eMoveState::LEFT;
 				break;
 			}
-			if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo != nullptr)
-				break;
 
-			break;
+			A = (i == tempAttRange);
+			B = m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive;
+			// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
+			if ((i == tempAttRange && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
+				m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
 		}
+		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo != nullptr)
+			break;
 	}
 
 	tagBullet tempBullet;
@@ -1244,6 +1242,8 @@ bool enemy::isHero(int eMoveArrow)
 	switch (m_tEnemyData.t_enumType)
 	{
 	case tagEnemyType::Lili:
+		MY_UTIL::HetSe(true, tagEnemyType::Lili);
+
 		//// 임시 bullet
 		tempBullet.t_isAilve = true;
 		tempBullet.t_img = IMAGEMANAGER->findImage("Bullet_0");
@@ -1276,6 +1276,7 @@ tagEnemyData * enemy::FlowerInfo()
 {
 	if (RANDOM->getInt(100) <= FlowerV2_SET_VALUE)
 	{
+		SOUNDMANAGER->play("Sound/SE/flower.wav");
 		tempEnemy.t_img_R = IMAGEMANAGER->findImage("Flower_00_R");
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("Flower_00_L");
 		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("Flower_00_RA");
@@ -1301,6 +1302,7 @@ tagEnemyData * enemy::FlowerInfo()
 	}
 	else
 	{
+		SOUNDMANAGER->play("Sound/SE/flowerV2.wav");
 		tempEnemy.t_img_R = IMAGEMANAGER->findImage("FlowerV2_00_R");
 		tempEnemy.t_img_L = IMAGEMANAGER->findImage("FlowerV2_00_L");
 		tempEnemy.t_img_RA = IMAGEMANAGER->findImage("FlowerV2_00_RA");
