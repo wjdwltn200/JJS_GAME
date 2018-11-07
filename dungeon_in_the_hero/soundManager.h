@@ -6,8 +6,8 @@
 
 #pragma comment(lib, "lib/fmodex_vc.lib")
 
-#define EXTRA_CHANNEL_BUFFER	5
-#define SOUND_BUFFER			10
+#define EXTRA_CHANNEL_BUFFER	10
+#define SOUND_BUFFER			30
 #define TOTAL_SOUND_BUFFER		SOUND_BUFFER + EXTRA_CHANNEL_BUFFER
 
 using namespace FMOD;

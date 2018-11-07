@@ -82,4 +82,52 @@ namespace MY_UTIL
 			}
 		}
 	}
+
+	void HetSe(bool isBase, int seType)
+	{
+		if (isBase)
+		{
+			switch (seType)
+			{
+			case Slime:
+				break;
+			case Flower:
+				break;
+			case FlowerV2:
+				break;
+			case Bug:
+				break;
+			case BugV2:
+				break;
+			case Lili:
+				SOUNDMANAGER->play("Sound/SE/LiliAtt.wav");
+				break;
+			case Demon:
+				break;
+			case Lizardman:
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			switch (RANDOM->getInt(3))
+			{
+			case 0:
+				SOUNDMANAGER->play("Sound/SE/Het_0.wav");
+				break;
+			case 1:
+				SOUNDMANAGER->play("Sound/SE/Het_1.wav");
+				break;
+			case 2:
+				SOUNDMANAGER->play("Sound/SE/Het_2.wav");
+				break;
+			default:
+				break;
+			}
+		}
+
+		
+	}
 }

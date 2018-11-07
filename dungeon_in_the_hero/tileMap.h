@@ -21,6 +21,8 @@
 #define TILE_LV_4 12
 #define TILE_LV_5 15
 
+#define TILE_OVERLORD_X 15
+#define TILE_OVERLORD_Y 4
 
 class uiPopup;
 class uiManager;
@@ -36,7 +38,7 @@ private:
 	};
 	enum eTileEnemy
 	{
-		NonEnemy ,Slime, Bug, Lizardman, Lili, Demon
+		NonEnemy ,Slime, Bug, Lizardman, Lili, Mamon ,Demon, Lady
 	};
 
 	SYNTHESIZE(TileInfo, m_tileset[2048], tile);

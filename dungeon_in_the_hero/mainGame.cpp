@@ -21,6 +21,7 @@ HRESULT mainGame::init()
 	SCENEMANAGER->init();
 	EFFMANAGER->init();
 	OBJECTMANAGER->init();
+	SOUNDMANAGER->init();
 
 	setBackBuffer();
 
@@ -65,6 +66,7 @@ void mainGame::release()
 	EFFMANAGER->release();
 
 	OBJECTMANAGER->release();
+	SOUNDMANAGER->release();
 
 	TXTDATA->releaseSingleton();
 	KEYMANAGER->releaseSingleton();
@@ -74,6 +76,7 @@ void mainGame::release()
 	CAMERA->releaseSingleton();
 	EFFMANAGER->releaseSingleton();
 	OBJECTMANAGER->releaseSingleton();
+	SOUNDMANAGER->releaseSingleton();
 }
 
 LRESULT mainGame::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
