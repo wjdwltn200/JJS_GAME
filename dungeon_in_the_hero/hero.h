@@ -19,6 +19,9 @@
 #define HERO_SKILL_HASTE_MS_POINT 30
 #define HERO_SKILL_HASTE_DALEY 600
 
+#define HERO_SKILL_ATK_0 10
+#define HERO_SKILL_ATK_0_ATK 10
+
 class tileMap;
 class aStarNode;
 

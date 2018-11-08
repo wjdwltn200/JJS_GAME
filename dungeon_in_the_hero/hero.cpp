@@ -630,8 +630,6 @@ bool hero::monActPattern()
 	// 공격중이 아닐 경우(m_isAttAct)
 	if (!m_isAttAct)
 	{
-
-
 		if (skill_Haling()) return true;
 		if (skill_AtkBuff()) return true;
 		if (skill_DefBuff()) return true;
@@ -654,26 +652,26 @@ bool hero::IsEnemy(int eMoveArrow)
 	case eMoveState::UP:
 		// 검색 방향
 		tempMoveArrow = (m_tHeroData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY - 1;
-		// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
-		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
 		break;
 	case eMoveState::RIGHT:
 		tempMoveArrow = ((m_tHeroData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY;
-		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
 		break;
 	case eMoveState::DOWN:
 		tempMoveArrow = (m_tHeroData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY + 1;
-		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
 		break;
 	case eMoveState::LEFT:
 		tempMoveArrow = ((m_tHeroData.t_tilePosX - 1) * m_pTileMapMag->getTileSizeY()) + m_tHeroData.t_tilePosY;
-		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
 		break;
 	}
 
+	// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
+	if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr) return false;
+
+
 	// 몬스터 정보가 있다면 자신의 공격력 만큼 해당 몬스터의 hp를 깍아낸다
 	m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_atkPoint;
-	EFFMANAGER->play("Skill_Atk_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+	EFFMANAGER->play("Hit_Eff_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+
 
 	// true로 반환
 	return true;
@@ -764,14 +762,15 @@ bool hero::attSys()
 
 void hero::buffIcon(HDC hdc)
 {
+#define SET_STATE_SIZE_Y 10.0f
 	int tempSizeY = 0;
 	int tempIconSize = m_tHeroData.t_img_state->getFrameHeight() * m_tHeroData.t_scale;
 
 	if (m_tHeroData.t_Skill.t_isAtkBuff)
 	{
 		m_tHeroData.t_img_state->frameRender(hdc,
-			(m_tHeroData.t_posX + (TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameWidth() * m_tHeroData.t_scale) / 2) - CAMERA->getCamPosX(),
-			((m_tHeroData.t_posY + TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameHeight() * m_tHeroData.t_scale) / 2) + (tempSizeY * tempIconSize) - CAMERA->getCamPosY(),
+			m_tHeroData.t_posX + TILE_SIZE - CAMERA->getCamPosX(),
+			(m_tHeroData.t_posY + TILE_SIZE / 2) + SET_STATE_SIZE_Y - (tempSizeY * tempIconSize) - CAMERA->getCamPosY(),
 			0, 1, m_tHeroData.t_scale);
 		tempSizeY++;
 
@@ -780,8 +779,8 @@ void hero::buffIcon(HDC hdc)
 	if (m_tHeroData.t_Skill.t_isDefBuff)
 	{
 		m_tHeroData.t_img_state->frameRender(hdc,
-			(m_tHeroData.t_posX + (TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameWidth() * m_tHeroData.t_scale) / 2) - CAMERA->getCamPosX(),
-			((m_tHeroData.t_posY + TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameHeight() * m_tHeroData.t_scale) / 2) + (tempSizeY * tempIconSize) - CAMERA->getCamPosY(),
+			m_tHeroData.t_posX + TILE_SIZE - CAMERA->getCamPosX(),
+			(m_tHeroData.t_posY + TILE_SIZE / 2) + SET_STATE_SIZE_Y - (tempSizeY * tempIconSize) - CAMERA->getCamPosY(),
 			1, 1, m_tHeroData.t_scale);
 		tempSizeY++;
 
@@ -790,8 +789,8 @@ void hero::buffIcon(HDC hdc)
 	if (m_tHeroData.t_Skill.t_isHasteBuff)
 	{
 		m_tHeroData.t_img_state->frameRender(hdc,
-			(m_tHeroData.t_posX + (TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameWidth() * m_tHeroData.t_scale) / 2) - CAMERA->getCamPosX(),
-			((m_tHeroData.t_posY + TILE_SIZE / 2) - (m_tHeroData.t_img->getFrameHeight() * m_tHeroData.t_scale) / 2) + (tempSizeY * tempIconSize) - CAMERA->getCamPosY(),
+			m_tHeroData.t_posX + TILE_SIZE - CAMERA->getCamPosX(),
+			(m_tHeroData.t_posY + TILE_SIZE / 2) + SET_STATE_SIZE_Y - (tempSizeY * tempIconSize) - CAMERA->getCamPosY(),
 			2, 1, m_tHeroData.t_scale);
 		tempSizeY++;
 

@@ -41,7 +41,7 @@ private:
 		NonEnemy ,Slime, Bug, Lizardman, Lili, Mamon ,Demon, Lady
 	};
 
-	SYNTHESIZE(TileInfo, m_tileset[2048], tile);
+	SYNTHESIZE(TileInfo, m_tileset[4096], tile);
 	SYNTHESIZE(int, m_tileSizeMaxX, tileMaxValueX);
 	SYNTHESIZE(int, m_tileSizeMaxY, tileMaxValueY);
 	SYNTHESIZE(bool, m_isTileClick, IsTileClivk);
