@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "utils.h"
+#include "tileMap.h"
 
 namespace MY_UTIL
 {
@@ -127,7 +128,12 @@ namespace MY_UTIL
 				break;
 			}
 		}
+	}
+	bool screenRender(float objX, float objY)
+	{
+		if (objX < -TILE_SIZE || objX > WINSIZEX) return true;
+		if (objY < -TILE_SIZE || objY > WINSIZEY) return true;
 
-		
+		return false;
 	}
 }

@@ -72,6 +72,11 @@ public:
 	void tileImgSet(int tileX, int tileY, HDC hdc, bool isShaking = false);
 	void tierSet(int tileNum);
 
+	void tileDesSys(int tileValue, int tileX, int tileY);
+
+	void tileDesSe();
+	void tileItemGet(int tileValue);
+
 	TileInfo * getTileSetPoint() { return m_tileset; }
 
 	tileMap();

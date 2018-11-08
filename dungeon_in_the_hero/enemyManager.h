@@ -34,9 +34,6 @@ public:
 	void update();
 	static bool comp(enemy* a, enemy* b);
 	void render(HDC hdc);
-
-	void tileXYsort();
-
 	void enemyDrop(tagEnemyData* enemyInfo);
 
 	vector<enemy*> getVecEnemy() { return m_vecEnemy; }

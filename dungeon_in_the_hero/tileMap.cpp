@@ -171,7 +171,6 @@ void tileMap::update()
 				m_tileset[x * m_tileSizeY + y].t_ShakingCount++;
 			}
 
-
 			//// 타일 상호작용
 			//// 타일 팝업 출력
 			RECT tempRc;
@@ -186,7 +185,6 @@ void tileMap::update()
 				m_pTilePopup->setXY(m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2, m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2 - TILE_POPUP_Y_SIZE);
 			}
 
-			
 			//// 타일 파괴
 			if (m_tileDesDaley <= 0 &&
 				!m_tileset[x * m_tileSizeY + y].t_isNetDes &&
@@ -200,35 +198,8 @@ void tileMap::update()
 				KEYMANAGER->isStayKeyDown(VK_LBUTTON) &&
 				(IntersectRect(&tempRc, &m_tileset[x * m_tileSizeY + y].t_rc, &g_MouseRc)))
 			{
-				m_pTilePopup->setIsAilve(false);
-				m_tileset[x * m_tileSizeY + y].t_isAlive = false;
-				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::RAND;
-				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
-				m_isTileClick = true;
-				m_pPlayer->t_TileDesEne--;
-				for (int i = 0; i < 6; i++)
-				{
-					OBJECTMANAGER->addTileDesObj(tagObjectType::TILE_DIS,
-						m_tileset[x * m_tileSizeY + y].t_rc.left + (TILE_SIZE / 2),
-						m_tileset[x * m_tileSizeY + y].t_rc.top + (TILE_SIZE / 2), m_tItemInfo);
-				}
-
-				if (RANDOM->getInt(100) <= 10)
-				{
-					SOUNDMANAGER->play("Sound/SE/getGam.wav");
-					
-					OBJECTMANAGER->addTileDesObj(tagObjectType::ITEM_JEWEL,
-						m_tileset[x * m_tileSizeY + y].t_rc.left + (TILE_SIZE / 2),
-						m_tileset[x * m_tileSizeY + y].t_rc.top + (TILE_SIZE / 2), dropItemSet(tagItemType::JEWEL));
-					m_pPlayer->t_TileDesEne += m_tItemInfo.t_frameY + 1;
-				}
-				else
-				{
-					monsSetDrop(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, (x * m_tileSizeY + y), x, y);
-					m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
-				}
-				EFFMANAGER->play("MousePointEFF", m_tileset[x * m_tileSizeY + y].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)), m_tileset[x * m_tileSizeY + y].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)));
-				m_tileDesDaley = TILE_DES_DALEY;
+				//// tile 파괴 함수
+				tileDesSys(x * m_tileSizeY + y, x, y);
 			}
 			//// 에너지 부족 타일 흔들기
 			else if ((
@@ -275,8 +246,8 @@ void tileMap::render(HDC hdc)
 			);
 
 			//// 타일 상태에 따른 렌더링
-			if (m_tileset[x * m_tileSizeY + y].t_rc.left < -TILE_SIZE || m_tileset[x * m_tileSizeY + y].t_rc.left > WINSIZEX) continue;
-			if (m_tileset[x * m_tileSizeY + y].t_rc.top < -TILE_SIZE || m_tileset[x * m_tileSizeY + y].t_rc.top > WINSIZEY) continue;
+			
+			if (MY_UTIL::screenRender(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top)) continue;
 
 			if (m_tileset[x * m_tileSizeY + y].t_isAlive)
 			{
@@ -335,10 +306,10 @@ void tileMap::render(HDC hdc)
 				//// 타일정보 디버깅 정보
 				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
-				sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_heroInfo);
-				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
-				//sprintf_s(szText, "%d", TestTileNum);
+				//sprintf_s(szText, "%d", m_tileset[x * m_tileSizeY + y].t_heroInfo);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
+				sprintf_s(szText, "%d", TestTileNum);
+				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top + 12.0f, szText, strlen(szText));
 				//sprintf_s(szText, "%d, %d", m_tileset[x * m_tileSizeY + y].t_isAlive, m_tileset[x * m_tileSizeY + y].t_isShaking);
@@ -390,6 +361,9 @@ void tileMap::keyInput()
 		tempHero.t_isAilve = true;
 		tempHero.t_currHp = 200;
 		tempHero.t_MaxHp = tempHero.t_currHp;
+		tempHero.t_currMana = 100;
+		tempHero.t_MaxMana = tempHero.t_currMana;
+
 		tempHero.t_posX = m_tileset[15 * m_tileSizeY + 0].t_rc.left + CAMERA->getCamPosX();
 		tempHero.t_posY = m_tileset[15 * m_tileSizeY + 0].t_rc.top + CAMERA->getCamPosY();
 		tempHero.t_tilePosX = 15;
@@ -398,8 +372,20 @@ void tileMap::keyInput()
 		tempHero.t_moveSpeed = 1.0f;
 		tempHero.t_moveDaley = 0;
 		tempHero.t_setTileMapNum = (15 * m_tileSizeY + 0);
+
+		tempHero.t_attType = tagHeroAttType::Near;
 		tempHero.t_atkPoint = 10;
 		tempHero.t_defPoint = 1;
+
+		memset(&tempHero.t_Inven, 0, sizeof(tempHero.t_Inven));
+		memset(&tempHero.t_Skill, 0, sizeof(tempHero.t_Skill));
+		tempHero.t_Skill.t_haling = true;
+		tempHero.t_Skill.t_AtkBuff = true;
+		tempHero.t_Skill.t_DefBuff= true;
+		tempHero.t_Skill.t_HasteBuff = true;
+
+
+
 
 		m_pHeroMag->heroDrop(&tempHero);
 	}
@@ -723,6 +709,66 @@ void tileMap::tierSet(int tileNum)
 	//	m_tileset[tileNum].t_tierValue = eTileEnemy::Demon;
 
 	return;
+}
+
+void tileMap::tileDesSys(int tileValue, int tileX, int tileY)
+{
+	m_pTilePopup->setIsAilve(false);
+	m_tileset[tileValue].t_isAlive = false;
+	m_tileset[tileValue].t_enumType = tagTileType::RAND;
+	m_tileset[tileValue].t_img = IMAGEMANAGER->findImage("TileSet");
+	m_isTileClick = true;
+	m_pPlayer->t_TileDesEne--;
+	for (int i = 0; i < 6; i++)
+	{
+		OBJECTMANAGER->addTileDesObj(tagObjectType::TILE_DIS,
+			m_tileset[tileValue].t_rc.left + (TILE_SIZE / 2),
+			m_tileset[tileValue].t_rc.top + (TILE_SIZE / 2), m_tItemInfo);
+	}
+
+	tileDesSe();
+	tileItemGet(tileValue);
+
+	monsSetDrop(m_tileset[tileValue].t_rc.left, m_tileset[tileValue].t_rc.top, (tileValue), tileX, tileY);
+	m_tileset[tileValue].t_ManaValue = -1;
+	EFFMANAGER->play("MousePointEFF", m_tileset[tileValue].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)), m_tileset[tileValue].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromIntTo(-5, 5)));
+
+
+
+	m_tileDesDaley = TILE_DES_DALEY;
+
+
+}
+
+void tileMap::tileDesSe()
+{
+	switch (RANDOM->getInt(3))
+	{
+	case 0:
+		SOUNDMANAGER->play("Sound/SE/Het_0.wav");
+		break;
+	case 1:
+		SOUNDMANAGER->play("Sound/SE/Het_1.wav");
+		break;
+	case 2:
+		SOUNDMANAGER->play("Sound/SE/Het_2.wav");
+		break;
+	default:
+		break;
+	}
+}
+
+void tileMap::tileItemGet(int tileValue)
+{
+	if (RANDOM->getInt(100) <= 10)
+	{
+		SOUNDMANAGER->play("Sound/SE/getGam.wav");
+
+		OBJECTMANAGER->addTileDesObj(tagObjectType::ITEM_JEWEL,
+			m_tileset[tileValue].t_rc.left + (TILE_SIZE / 2),
+			m_tileset[tileValue].t_rc.top + (TILE_SIZE / 2), dropItemSet(tagItemType::JEWEL));
+		m_pPlayer->t_TileDesEne += m_tItemInfo.t_frameY + 1;
+	}
 }
 
 tileMap::tileMap()

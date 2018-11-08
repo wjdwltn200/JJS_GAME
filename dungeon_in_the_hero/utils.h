@@ -10,5 +10,6 @@ namespace MY_UTIL
 	void FontDelete(HDC hdc);
 	void NumberPont(HDC hdc, int num, int maxNum, float posX, float posY, int CorType, float scale = 1.0f);
 	void HetSe(bool isBase = false, int seType = 0);
+	bool screenRender(float objX, float objY);
 }
 

@@ -16,6 +16,15 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/Impact1.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/getGam.wav", false, false);
 
+	// 타일 파괴 SE
+	SOUNDMANAGER->addSound("Sound/SE/TileDes_0.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/TileDes_1.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/TileDes_2.wav", false, false);
+
+	// 스킬 SE
+	SOUNDMANAGER->addSound("Sound/SE/Haling_0.wav", false, false);
+
+
 	// 피격 SE
 	SOUNDMANAGER->addSound("Sound/SE/Het_0.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Het_1.wav", false, false);
@@ -32,16 +41,20 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/Lizardman.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Lili.wav", false, false);
 
-
-
-
-
 	//// EffImgSet
 	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("MousePointEFF", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("Hit_Eff_0", "image/inGameImg/EFF/Hit_EFF_0.bmp", 133, 34, 133 / 4, 34/ 1, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("Mana_Eat_0", "image/inGameImg/EFF/MANA_EAT_EFF_0.bmp", 252, 36, 252/ 7, 36 / 1, 10, 10, 0.0f, true);
 	EFFMANAGER->addEffect("Mana_Eat_1", "image/inGameImg/EFF/MANA_EAT_EFF_1.bmp", 252, 36, 252 / 7, 36 / 1, 10, 10, 0.0f, true);
+
+	EFFMANAGER->addEffect("Haling_EFF_0", "image/inGameImg/EFF/Haling_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("AtkBuff_EFF_0", "image/inGameImg/EFF/AtkBuff_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("DefBuff_EFF_0", "image/inGameImg/EFF/DefBuff_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("Haste_Eff_0", "image/inGameImg/EFF/Haste_Eff_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
+
+	EFFMANAGER->addEffect("Skill_Atk_0", "image/inGameImg/EFF/Skill_Atk_0.bmp", 640, 64, 640 / 10, 64 / 1, 10, 10, 0.0f, true);
+
 
 
 	// 노란색
@@ -159,6 +172,7 @@ HRESULT gameScene::init()
 
 
 	//// player
+	IMAGEMANAGER->addImage("hero_state_00", "image/inGameImg/HERO/hero_state_00.bmp", 64, 8, 8, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("player_00", "image/inGameImg/HERO/Player.bmp", 72, 25, 4, 1, true, RGB(255, 0, 255));
 
 

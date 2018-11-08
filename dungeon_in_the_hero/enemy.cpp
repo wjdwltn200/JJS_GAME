@@ -781,8 +781,6 @@ void enemy::enemySetTxt(int enemyType)
 
 void enemy::movePattern()
 {
-
-
 	// 공격 여부는 이동하기 전에 행동하여 이동을 실시하지 않도록 해야한다
 	if (m_isAttAct)
 		m_isAttAct = false;
@@ -798,6 +796,7 @@ void enemy::movePattern()
 
 	//// 최초 행동 방향 저장
 	int tempMoveState = m_eMoveState;
+	int tempEnemySize = 0;
 	//// 이동 시 자신의 위치에 자신의 정보가 있다면 지워준다
 	switch (m_tEnemyData.t_enumType)
 	{
@@ -806,15 +805,17 @@ void enemy::movePattern()
 		{
 			for (int y = 0; y < 2; y++)
 			{
-				if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y]].t_enemyInfo == &m_tEnemyData)
-					m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y]].t_enemyInfo = nullptr;
+				tempEnemySize = (m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y];
+				if (m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo == &m_tEnemyData)
+					m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo = nullptr;
 			}
 		}
 
 		break;
 	default:
-		if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo == &m_tEnemyData)
-			m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
+		tempEnemySize = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY);
+		if (m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo == &m_tEnemyData)
+			m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo = nullptr;
 		break;
 	}
 
@@ -1141,9 +1142,6 @@ bool enemy::isHero(int eMoveArrow)
 		break;
 	}
 
-	int A;
-		bool B;
-
 	for (int i = 1; i < tempAttRange + 1; i++)
 	{
 		switch (m_tEnemyData.t_enumType)
@@ -1227,8 +1225,6 @@ bool enemy::isHero(int eMoveArrow)
 				break;
 			}
 
-			A = (i == tempAttRange);
-			B = m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive;
 			// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
 			if ((i == tempAttRange && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
 				m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;

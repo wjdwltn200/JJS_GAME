@@ -4,6 +4,21 @@
 #define IMG_TILE_SET_Y 5.0f
 #define HERO_MOVE_DALEY 30
 
+#define HERO_SKILL_HALING 30
+
+#define HERO_SKILL_ATKBUFF 20
+#define HERO_SKILL_ATKBUFF_POINT 5
+#define HERO_SKILL_ATKBUFF_DALEY 1200
+
+#define HERO_SKILL_DEFBUFF 20
+#define HERO_SKILL_DEFBUFF_POINT 3
+#define HERO_SKILL_DEFBUFF_DALEY 1200
+
+#define HERO_SKILL_HASTE 25
+#define HERO_SKILL_HASTE_SP_POINT 1.0f
+#define HERO_SKILL_HASTE_MS_POINT 30
+#define HERO_SKILL_HASTE_DALEY 600
+
 class tileMap;
 class aStarNode;
 
@@ -67,6 +82,16 @@ public:
 
 	void damge();
 	void setDamgePoint(int DamValue) { m_tHeroData.t_damgePoint = DamValue; }
+
+	void skill_count();
+	bool attSys();
+	
+	void buffIcon(HDC hdc);
+	bool skill_Atk_0();
+	bool skill_Haling();
+	bool skill_AtkBuff();
+	bool skill_DefBuff();
+	bool skill_Haste();
 
 	hero();
 	~hero();
