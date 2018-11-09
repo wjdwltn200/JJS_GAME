@@ -8,26 +8,16 @@ HRESULT bullet::init(tagBullet * bulletInfo)
 	//// bullet strect ÃÊ±âÈ­
 	memset(&m_tBulletInfo, 0, sizeof(m_tBulletInfo));
 
-	m_tBulletInfo.t_isAilve = bulletInfo->t_isAilve;
+	m_tBulletInfo = *bulletInfo;
 
-	m_tBulletInfo.t_img_Daed = bulletInfo->t_img_Daed;
 	m_tBulletInfo.t_img = bulletInfo->t_img;
 	m_ani.init(m_tBulletInfo.t_img->getWidth(), m_tBulletInfo.t_img->getHeight(), m_tBulletInfo.t_img->getFrameWidth(), m_tBulletInfo.t_img->getFrameHeight());
 	m_ani.setDefPlayFrame(false, true);
 	m_ani.setFPS(15);
 	m_ani.start();
 
-	m_tBulletInfo.t_atkPoint = bulletInfo->t_atkPoint;
-	m_tBulletInfo.t_moveSpeed = bulletInfo->t_moveSpeed;
-
-	m_tBulletInfo.t_moveArrow = bulletInfo->t_moveArrow;
-	m_tBulletInfo.t_posX = bulletInfo->t_posX;
-	m_tBulletInfo.t_posY = bulletInfo->t_posY;
-	m_tBulletInfo.t_range = bulletInfo->t_range;
-
 	m_tBulletInfo.t_alphaValue = 255;
-	m_tBulletInfo.t_rc = RectMake(0,0,0,0);
-	m_tBulletInfo.t_scale = bulletInfo->t_scale;
+	memset(&m_tBulletInfo.t_rc, 0, sizeof(m_tBulletInfo.t_rc));
 
 	return S_OK;
 }

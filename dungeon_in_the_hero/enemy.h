@@ -68,6 +68,7 @@ public:
 
 	void currHp();
 	void damge();
+	void setDamgePoint(int DamValue) { m_tEnemyData.t_damgePoint = DamValue; }
 	void moveSys();
 	bool moveRectCheck(int eMoveArrow);
 	bool moveRectCheckBig(int eMoveArrow);

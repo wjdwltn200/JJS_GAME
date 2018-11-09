@@ -4,6 +4,13 @@
 #define IMG_TILE_SET_Y 5.0f
 #define HERO_MOVE_DALEY 30
 
+#define HERO_SKILL_ARROWMAGIC 10
+#define HERO_SKILL_ATTOWMAGIC_DAMAGE 10
+
+#define HERO_SKILL_FIREWALL 50
+#define HERO_SKILL_FIREWALL_DAMAGE 100
+#define HERO_SKILL_FIREWALL_MOVE_DALEY 30
+
 #define HERO_SKILL_HALING 30
 
 #define HERO_SKILL_ATKBUFF 20
@@ -16,7 +23,7 @@
 
 #define HERO_SKILL_HASTE 25
 #define HERO_SKILL_HASTE_SP_POINT 1.0f
-#define HERO_SKILL_HASTE_MS_POINT 30
+#define HERO_SKILL_HASTE_MS_POINT 20
 #define HERO_SKILL_HASTE_DALEY 600
 
 #define HERO_SKILL_ATK_0 10
@@ -24,6 +31,7 @@
 
 class tileMap;
 class aStarNode;
+class bulletManager;
 
 class hero
 {
@@ -39,7 +47,7 @@ private:
 
 	enum eMoveState
 	{
-		UP, RIGHT, DOWN, LEFT, MOVE_NUM
+		UP, RIGHT, DOWN, LEFT, SKILL, MOVE_NUM
 	};
 	SYNTHESIZE(tagHeroData, m_tHeroData, tHeroData);
 	animation m_ani;
@@ -53,9 +61,10 @@ private:
 
 	tileMap * m_pTileMapMag;
 	aStarNode * m_pAStartNode;
+	bulletManager * m_pBulletMag;
 
 public:
-	HRESULT init(tagHeroData * heroInfo, tileMap * pTileMap);
+	HRESULT init(tagHeroData * heroInfo, tileMap * pTileMap, bulletManager * pBulletMag);
 	void release();
 	void update();
 	void render(HDC hdc);
@@ -90,11 +99,12 @@ public:
 	bool attSys();
 	
 	void buffIcon(HDC hdc);
-	bool skill_Atk_0();
+	bool skill_ArrowMagic();
 	bool skill_Haling();
 	bool skill_AtkBuff();
 	bool skill_DefBuff();
 	bool skill_Haste();
+	bool skill_FireWall();
 
 	hero();
 	~hero();

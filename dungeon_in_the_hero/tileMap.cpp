@@ -63,7 +63,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 			int tempY = (m_tileSizeY / 4);
 			if (y <= (tempY * 1))
 			{
-				m_tileset[x * m_tileSizeY + y].t_ManaValue = RANDOM->getFromIntTo(3, 20);
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = RANDOM->getFromIntTo(2, 20);
 			}
 			else if (y <= (tempY * 2))
 			{
@@ -356,12 +356,13 @@ void tileMap::keyInput()
 		tempHero.t_img_DA = IMAGEMANAGER->findImage("hero_00_DA");
 		tempHero.t_img_L = IMAGEMANAGER->findImage("hero_00_L");
 		tempHero.t_img_LA = IMAGEMANAGER->findImage("hero_00_LA");
+		tempHero.t_img_S = IMAGEMANAGER->findImage("hero_00_S");
 		tempHero.t_img_Dead = IMAGEMANAGER->findImage("hero_00_Dead");
 
 		tempHero.t_isAilve = true;
 		tempHero.t_currHp = 200;
 		tempHero.t_MaxHp = tempHero.t_currHp;
-		tempHero.t_currMana = 100;
+		tempHero.t_currMana = 1000;
 		tempHero.t_MaxMana = tempHero.t_currMana;
 
 		tempHero.t_posX = m_tileset[15 * m_tileSizeY + 0].t_rc.left + CAMERA->getCamPosX();
@@ -379,13 +380,12 @@ void tileMap::keyInput()
 
 		memset(&tempHero.t_Inven, 0, sizeof(tempHero.t_Inven));
 		memset(&tempHero.t_Skill, 0, sizeof(tempHero.t_Skill));
+		tempHero.t_Skill.t_fireWall = true;
+		//tempHero.t_Skill.t_ArrowMagic = true;
 		tempHero.t_Skill.t_haling = true;
-		tempHero.t_Skill.t_AtkBuff = true;
-		tempHero.t_Skill.t_DefBuff= true;
+		//tempHero.t_Skill.t_AtkBuff = true;
+		//tempHero.t_Skill.t_DefBuff= true;
 		tempHero.t_Skill.t_HasteBuff = true;
-
-
-
 
 		m_pHeroMag->heroDrop(&tempHero);
 	}
@@ -547,12 +547,12 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Lizardman_00_LA");
 		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Lizardman_00_Dead");
 
-		tempEnemy.t_currHp = 10;
+		tempEnemy.t_currHp = 65;
 		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 		tempEnemy.t_scale = 2.0f;
 		tempEnemy.t_moveSpeed = 0.5f;
 		tempEnemy.t_moveDaley = 0;
-		tempEnemy.t_atkPoint = 20;
+		tempEnemy.t_atkPoint = 8;
 		tempEnemy.t_defPoint = 3;
 		tempEnemy.t_FoodChainLv = 3;
 		tempEnemy.t_enumType = tagEnemyType::Lizardman;

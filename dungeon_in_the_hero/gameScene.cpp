@@ -5,6 +5,7 @@
 #include "bulletManager.h"
 #include "bullet.h"
 #include "hero.h"
+#include "enemy.h"
 #include "overlord.h"
 
 HRESULT gameScene::init()
@@ -50,10 +51,17 @@ HRESULT gameScene::init()
 
 	EFFMANAGER->addEffect("Haling_EFF_0", "image/inGameImg/EFF/Haling_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
 	EFFMANAGER->addEffect("AtkBuff_EFF_0", "image/inGameImg/EFF/AtkBuff_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("AtkBuff_EFF_1", "image/inGameImg/EFF/AtkBuff_EFF_1.bmp", 135, 27, 135 / 5, 27 / 1, 10, 10, 0.0f, true);
 	EFFMANAGER->addEffect("DefBuff_EFF_0", "image/inGameImg/EFF/DefBuff_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
 	EFFMANAGER->addEffect("Haste_Eff_0", "image/inGameImg/EFF/Haste_Eff_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
 
-	EFFMANAGER->addEffect("Skill_Atk_0", "image/inGameImg/EFF/Skill_Atk_0.bmp", 640, 64, 640 / 10, 64 / 1, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("ArrowMagic_EFF_0", "image/inGameImg/EFF/ArrowMagic_EFF_0.bmp", 319, 29, 319/ 11, 29 / 1, 30, 10, 0.0f, true);
+	EFFMANAGER->addEffect("FireWall_EFF_0", "image/inGameImg/EFF/FireWall_EFF_0.bmp", 620, 124, 620 / 10, 124 / 1, 15, 10, 0.0f, true);
+	EFFMANAGER->addEffect("FireWall_EFF_1", "image/inGameImg/EFF/FireWall_EFF_1.bmp", 238, 68, 238 / 7, 68 / 2, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("FireWall_EFF_2", "image/inGameImg/EFF/FireWall_EFF_2.bmp", 102 * 2, 50 * 2, 102 * 2/ 6, 50 * 2 / 1, 15, 10, 0.0f, true);
+	EFFMANAGER->addEffect("FireWall_EFF_3", "image/inGameImg/EFF/FireWall_EFF_3.bmp", 462, 97, 462 / 7, 97 / 1, 10, 30, 0.0f, true);
+
+
 
 
 
@@ -84,8 +92,10 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("TilePopup", "image/inGameImg/UI/TilePopup.bmp", 157, 95, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("EnemyPopup", "image/inGameImg/UI/EnemyPopup.bmp", 170, 110, 1, 1, true, RGB(255, 0, 255));
 
-	//// BuuletImgSet
+	//// BulletImgSet
 	IMAGEMANAGER->addImage("Bullet_0", "image/inGameImg/EFF/bullet_0.bmp", 104, 26, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bullet_1", "image/inGameImg/EFF/bullet_1.bmp", 108, 27, 4, 1, true, RGB(255, 0, 255));
+
 
 
 
@@ -158,17 +168,31 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("Mamon_00_Dead", "image/inGameImg/ENEMY/Mamon/Mamon_0_DEAD.bmp", 288, 180, 6, 4, true, RGB(255, 0, 255));
 
 	//// heroImgSet
-	IMAGEMANAGER->addImage("hero_00_U", "image/inGameImg/HERO/hero_0/hero_0_UP.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_R", "image/inGameImg/HERO/hero_0/hero_0_RIGHT.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_D", "image/inGameImg/HERO/hero_0/hero_0_DOWN.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_L", "image/inGameImg/HERO/hero_0/hero_0_LEFT.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	// hero_0
+	IMAGEMANAGER->addImage("hero_00_U", "image/inGameImg/HERO/hero_0/hero_0_UP.bmp", 54, 18, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_R", "image/inGameImg/HERO/hero_0/hero_0_RIGHT.bmp", 54, 18, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_D", "image/inGameImg/HERO/hero_0/hero_0_DOWN.bmp", 54, 18, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_L", "image/inGameImg/HERO/hero_0/hero_0_LEFT.bmp", 54, 18, 3, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_00_S", "image/inGameImg/HERO/hero_0/hero_0_Skill.bmp", 72, 18, 4, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("hero_00_Dead", "image/inGameImg/HERO/hero_0/hero_0_Dead.bmp", 72, 18, 4, 1, true, RGB(255, 0, 255));
-
 
 	IMAGEMANAGER->addImage("hero_00_UA", "image/inGameImg/HERO/hero_0/hero_0_UP_ATK.bmp", 72, 37, 4, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("hero_00_RA", "image/inGameImg/HERO/hero_0/hero_0_RIGHT_ATK.bmp", 140, 18, 4, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("hero_00_DA", "image/inGameImg/HERO/hero_0/hero_0_DOWN_ATK.bmp", 72, 37, 4, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("hero_00_LA", "image/inGameImg/HERO/hero_0/hero_0_LEFT_ATK.bmp", 140, 18, 4, 1, true, RGB(255, 0, 255));
+
+	// hero_1
+	IMAGEMANAGER->addImage("hero_01_U", "image/inGameImg/HERO/hero_1/hero_1_UP.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_R", "image/inGameImg/HERO/hero_1/hero_1_RIGHT.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_D", "image/inGameImg/HERO/hero_1/hero_1_DOWN.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_L", "image/inGameImg/HERO/hero_1/hero_1_LEFT.bmp", 36, 18, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_S", "image/inGameImg/HERO/hero_1/hero_1_Skill.bmp", 72, 18, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_Dead", "image/inGameImg/HERO/hero_1/hero_1_Dead.bmp", 72, 18, 4, 1, true, RGB(255, 0, 255));
+
+	IMAGEMANAGER->addImage("hero_01_UA", "image/inGameImg/HERO/hero_1/hero_1_UP_ATK.bmp", 72, 37, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_RA", "image/inGameImg/HERO/hero_1/hero_1_RIGHT_ATK.bmp", 140, 18, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_DA", "image/inGameImg/HERO/hero_1/hero_1_DOWN_ATK.bmp", 72, 37, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_01_LA", "image/inGameImg/HERO/hero_1/hero_1_LEFT_ATK.bmp", 140, 18, 4, 1, true, RGB(255, 0, 255));
 
 
 	//// player
@@ -201,7 +225,7 @@ HRESULT gameScene::init()
 
 	//// Hero 매니저 동적할당
 	m_pHeroMag = new heroManager;
-	m_pHeroMag->init(m_MapTile);
+	m_pHeroMag->init(m_MapTile, m_pBulletMag);
 
 	//// 플레이어 셋팅
 	m_tPlayer = new PlayerInfo;
@@ -314,16 +338,33 @@ void gameScene::RectCol()
 
 		for (iterHero = vHero.begin(); iterHero != vHero.end(); iterHero++)
 		{
-			RECT tempHero = (*iterHero)->gettHeroData().t_rc;
+			if (!(*iterHero)->gettHeroData().t_isAilve) continue;
 
+			RECT tempHero = (*iterHero)->gettHeroData().t_rc;
 			// enemy의 Bullet이 Hero와 충돌
 			if ((*iterBullet)->gettBulletInfo().t_isAilve &&
-				((*iterBullet)->gettBulletInfo().t_master == tagMaster::Enemy &&
+				(((*iterBullet)->gettBulletInfo().t_master == tagMaster::Enemy) &&
 				IntersectRect(&temp_rc, &tempBullet, &tempHero)))
 			{
 				(*iterHero)->setDamgePoint((*iterBullet)->gettBulletInfo().t_atkPoint);
 				(*iterBullet)->setIsAlive(false);
 				HitEff(tempHero.left, tempHero.top);
+			}
+		}
+
+		for (iterEnemy = vEnemy.begin(); iterEnemy != vEnemy.end(); iterEnemy++)
+		{
+			if (!(*iterEnemy)->gettEnemyData().t_isAilve) continue;
+
+			RECT tempEnemy = (*iterEnemy)->gettEnemyData().t_rc;
+			// Hero의 Bullet이 enemy와 충돌
+			if ((*iterBullet)->gettBulletInfo().t_isAilve &&
+				(((*iterBullet)->gettBulletInfo().t_master == tagMaster::Hero) &&
+					IntersectRect(&temp_rc, &tempBullet, &tempEnemy)))
+			{
+				(*iterEnemy)->setDamgePoint((*iterBullet)->gettBulletInfo().t_atkPoint);
+				(*iterBullet)->setIsAlive(false);
+				HitEff(tempEnemy.left, tempEnemy.top);
 			}
 		}
 	}
