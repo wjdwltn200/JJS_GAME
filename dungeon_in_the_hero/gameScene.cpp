@@ -24,7 +24,7 @@ HRESULT gameScene::init()
 
 	// 스킬 SE
 	SOUNDMANAGER->addSound("Sound/SE/Haling_0.wav", false, false);
-
+	SOUNDMANAGER->addSound("Sound/SE/FireWall_0.wav", false, false);
 
 	// 피격 SE
 	SOUNDMANAGER->addSound("Sound/SE/Het_0.wav", false, false);

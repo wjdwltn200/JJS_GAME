@@ -10,6 +10,9 @@ HRESULT tileMap::init(int tileX, int tileY,
 	PlayerInfo * playerData, uiManager * uiMagData,
 	enemyManager * pEnemyMag, heroManager * pHeroMag)
 {
+	//tileMap 초기화
+	memset(&m_tileset, 0, sizeof(m_tileset));
+
 	//// Enemy & Hero 매니저 주소 초기화
 	m_pEnemyMag = pEnemyMag;
 	m_pHeroMag = pHeroMag;
@@ -52,7 +55,6 @@ HRESULT tileMap::init(int tileX, int tileY,
 				TILE_SIZE,
 				TILE_SIZE
 			);
-
 			m_tileset[x * m_tileSizeY + y].t_setX = x;
 			m_tileset[x * m_tileSizeY + y].t_setY = y;
 			m_tileset[x * m_tileSizeY + y].t_enemyInfo = nullptr;
@@ -88,7 +90,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = 4;
 				m_tileset[x * m_tileSizeY + y].t_isStart = true;
-				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
+				m_tileset[x * m_tileSizeY + y].t_isNotDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::START;
 				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 			}
@@ -96,7 +98,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 			{
 				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 3);
-				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
+				m_tileset[x * m_tileSizeY + y].t_isNotDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::TOP;
 				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 			}
@@ -105,7 +107,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 3);
 				m_tileset[x * m_tileSizeY + y].t_isAlive = false;
-				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
+				m_tileset[x * m_tileSizeY + y].t_isNotDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::RAND;
 				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 			}
@@ -113,7 +115,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 			{
 				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 4);
-				m_tileset[x * m_tileSizeY + y].t_isNetDes = true;
+				m_tileset[x * m_tileSizeY + y].t_isNotDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::BLOCK_NON;
 				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
 			}
@@ -121,7 +123,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 			{
 				m_tileset[x * m_tileSizeY + y].t_img = IMAGEMANAGER->findImage("TileSet");
 				m_tileset[x * m_tileSizeY + y].t_setImg = RANDOM->getFromIntTo(0, 4);
-				m_tileset[x * m_tileSizeY + y].t_isNetDes = false;
+				m_tileset[x * m_tileSizeY + y].t_isNotDes = false;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::BLOCK;
 			}
 
@@ -187,7 +189,7 @@ void tileMap::update()
 
 			//// 타일 파괴
 			if (m_tileDesDaley <= 0 &&
-				!m_tileset[x * m_tileSizeY + y].t_isNetDes &&
+				!m_tileset[x * m_tileSizeY + y].t_isNotDes &&
 				m_pPlayer->t_TileDesEne > 0 &&
 				!m_isTileClick &&
 				m_tileset[x * m_tileSizeY + y].t_isAlive &&
@@ -203,7 +205,7 @@ void tileMap::update()
 			}
 			//// 에너지 부족 타일 흔들기
 			else if ((
-				(m_tileset[x * m_tileSizeY + y].t_isNetDes || m_pPlayer->t_TileDesEne <= 0 ) &&
+				(m_tileset[x * m_tileSizeY + y].t_isNotDes || m_pPlayer->t_TileDesEne <= 0 ) &&
 				!m_tileset[x * m_tileSizeY + y].t_isShaking &&
 				!m_isTileClick && (y > 0) &&
 				m_tileset[x * m_tileSizeY + y].t_isAlive &&

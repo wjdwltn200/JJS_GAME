@@ -787,6 +787,8 @@ void hero::skill_count()
 			}
 			// fireWall의 위치에 따른 타일 정보
 
+			bool tempActCheck = false;
+
 			for (int i = 0; i < m_tHeroData.t_Skill.t_fireWallData.t_tileSizeValue; i++)
 			{
 				if (m_tHeroData.t_Skill.t_fireWallData.t_moveArrow == eMoveState::UP ||
@@ -798,21 +800,31 @@ void hero::skill_count()
 						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
 							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
+						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							tempActCheck = true;
+						}
 					}
 					else
 					{
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
+						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							tempActCheck = true;
+						}
 						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
 							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
 
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX + i) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
+						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							tempActCheck = true;
+						}
 						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
 							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+
 					}
 				}
 				else if (m_tHeroData.t_Skill.t_fireWallData.t_moveArrow == eMoveState::LEFT || 
@@ -824,25 +836,38 @@ void hero::skill_count()
 						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
 							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
+						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							tempActCheck = true;
+						}
 					}
 					else
 					{
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY - i);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
+						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							tempActCheck = true;
+						}
 						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
 							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
 
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY + i);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
+						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							tempActCheck = true;
+						}
 						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
 							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+
 					}
 				}
 			}
 			m_tHeroData.t_Skill.t_fireWallData.t_tileSizeValue++;
+			if	(tempActCheck)
+				SOUNDMANAGER->play("Sound/SE/FireWall_0.wav");
+
 		}
 		m_tHeroData.t_Skill.t_fireWallData.t_actCount--;
 	}
