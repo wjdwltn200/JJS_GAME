@@ -349,8 +349,11 @@ void hero::currHp()
 	}
 	else if (m_isDead && !m_ani.getIsPlaying())
 	{
-		if (m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo == &m_tHeroData)
-			m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = nullptr;
+		int tempXY = (m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY);
+		if (m_pTileMapMag->HeroArrIsList(tempXY, &m_tHeroData))
+			m_pTileMapMag->HeroArrNullptrList(tempXY ,&m_tHeroData);
+		/*if (m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo == &m_tHeroData)
+			m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = nullptr;*/
 		Delete(true, true, true);
 		m_tHeroData.t_isAilve = false;
 	}
@@ -596,8 +599,10 @@ void hero::movePattern()
 		m_isAttAct = false;
 
 	//// 이동 시 자신의 위치에 자신의 정보가 있다면 지워준다
-	if (m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo == &m_tHeroData)
-		m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = nullptr;
+	if (m_pTileMapMag->HeroArrIsList((m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY), &m_tHeroData))
+		m_pTileMapMag->HeroArrNullptrList((m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY), &m_tHeroData);
+	//if (m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo == &m_tHeroData)
+	//	m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = nullptr;
 
 	//// enemyType에 맞춰 이동 패턴 적용
 	if (!monActPattern())
@@ -612,8 +617,9 @@ void hero::movePattern()
 			break;
 		}
 	}
-	//// tileMap 위치에 몬스터 정보 저장
-	m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = &m_tHeroData;
+	//// tileMap 위치에 hero 정보 저장
+	m_pTileMapMag->HeroArrInList((m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY), &m_tHeroData);
+	//m_pTileMapMag->getTileSetPoint()[(m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY)].t_heroInfo = &m_tHeroData;
 
 	//// 모션 재생
 	m_ani.start();
@@ -672,16 +678,21 @@ bool hero::IsEnemy(int eMoveArrow)
 		}
 
 		// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
-		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive ||
-			(i == tempArrowRange && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr)) return false;
+		//if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive ||
+		//	(i == tempArrowRange && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo == nullptr)) return false;
 
-		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo != nullptr) break;
+		if ((i == tempArrowRange && m_pTileMapMag->enemyArrOutList(tempMoveArrow) == nullptr ||
+			m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive)) return false;
+
+		if (m_pTileMapMag->enemyArrOutList(tempMoveArrow) != nullptr)
+			break;
 	}
 
 	if (tempCurrRange == 1) // 근접 공격
 	{
 		// 몬스터 정보가 있다면 자신의 공격력 만큼 해당 몬스터의 hp를 깍아낸다
-		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_atkPoint;
+		m_pTileMapMag->enemyArrOutList(tempMoveArrow)->t_damgePoint = m_tHeroData.t_atkPoint;
+		//m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_atkPoint;
 		EFFMANAGER->play("Hit_Eff_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 
 	}
@@ -797,8 +808,10 @@ void hero::skill_count()
 					if (i == 0) // 최초 예외 처리
 					{
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY);
-						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
-							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
+							m_pTileMapMag->HeroSkillAtk(tempFireWallArrow, &m_tHeroData);
+						//if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
+						//	m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
@@ -813,8 +826,8 @@ void hero::skill_count()
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
-						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
-							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
+							m_pTileMapMag->HeroSkillAtk(tempFireWallArrow, &m_tHeroData);
 
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX + i) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
@@ -822,8 +835,8 @@ void hero::skill_count()
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
-						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
-							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
+							m_pTileMapMag->HeroSkillAtk(tempFireWallArrow, &m_tHeroData);
 
 					}
 				}
@@ -833,8 +846,8 @@ void hero::skill_count()
 					if (i == 0) // 최초 예외 처리
 					{
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY);
-						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
-							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
+							m_pTileMapMag->HeroSkillAtk(tempFireWallArrow, &m_tHeroData);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
@@ -849,8 +862,8 @@ void hero::skill_count()
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
-						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
-							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
+							m_pTileMapMag->HeroSkillAtk(tempFireWallArrow, &m_tHeroData);
 
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY + i);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
@@ -858,8 +871,8 @@ void hero::skill_count()
 							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
-						if (m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo != nullptr)
-							m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
+						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
+							m_pTileMapMag->HeroSkillAtk(tempFireWallArrow, &m_tHeroData);
 
 					}
 				}

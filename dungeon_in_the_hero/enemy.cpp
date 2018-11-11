@@ -428,6 +428,7 @@ void enemy::currHp()
 		m_tEnemyData.t_img = m_tEnemyData.t_img_Dead;
 		m_ani.start();
 		m_tEnemyData.t_isDead = true;
+		int tempXY = 0;
 
 		switch (m_tEnemyData.t_enumType)
 		{
@@ -436,14 +437,21 @@ void enemy::currHp()
 			{
 				for (int y = 0; y < 2; y++)
 				{
-					if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y]].t_enemyInfo == &m_tEnemyData)
-						m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y]].t_enemyInfo = nullptr;
+					tempXY = (m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y];
+
+					if (m_pTileMapMag->enemyArrIsList(tempXY, &m_tEnemyData))
+						m_pTileMapMag->enemyArrNullptrList(tempXY, &m_tEnemyData);
+					/*if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y]].t_enemyInfo == &m_tEnemyData)
+						m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y]].t_enemyInfo = nullptr;*/
 				}
 			}
 			break;
 		default:
-			if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo == &m_tEnemyData)
-				m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
+			tempXY = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY);
+			if (m_pTileMapMag->enemyArrIsList(tempXY, &m_tEnemyData))
+				m_pTileMapMag->enemyArrNullptrList(tempXY, &m_tEnemyData);
+			//if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo == &m_tEnemyData)
+			//	m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = nullptr;
 			break;
 		}
 
@@ -796,7 +804,7 @@ void enemy::movePattern()
 
 	//// 최초 행동 방향 저장
 	int tempMoveState = m_eMoveState;
-	int tempEnemySize = 0;
+	int tempTileXY = 0;
 	//// 이동 시 자신의 위치에 자신의 정보가 있다면 지워준다
 	switch (m_tEnemyData.t_enumType)
 	{
@@ -805,17 +813,17 @@ void enemy::movePattern()
 		{
 			for (int y = 0; y < 2; y++)
 			{
-				tempEnemySize = (m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y];
-				if (m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo == &m_tEnemyData)
-					m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo = nullptr;
+				tempTileXY = (m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY) + enemySizeY[y];
+				if (m_pTileMapMag->enemyArrIsList(tempTileXY, &m_tEnemyData))
+					m_pTileMapMag->enemyArrNullptrList(tempTileXY, &m_tEnemyData);
 			}
 		}
 
 		break;
 	default:
-		tempEnemySize = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY);
-		if (m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo == &m_tEnemyData)
-			m_pTileMapMag->getTileSetPoint()[tempEnemySize].t_enemyInfo = nullptr;
+		tempTileXY = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY);
+		if (m_pTileMapMag->enemyArrIsList(tempTileXY, &m_tEnemyData))
+			m_pTileMapMag->enemyArrNullptrList(tempTileXY, &m_tEnemyData);
 		break;
 	}
 
@@ -959,7 +967,7 @@ void enemy::movePattern()
 		}
 	}
 	
-
+	//// tileMap 위치에 몬스터 정보 저장
 	switch (m_tEnemyData.t_enumType)
 	{
 	case tagEnemyType::Demon:
@@ -967,13 +975,14 @@ void enemy::movePattern()
 		{
 			for (int y = 0; y < 2; y++)
 			{
-				m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + enemySizeY[y])].t_enemyInfo = &m_tEnemyData;
+				tempTileXY = (m_tEnemyData.t_tilePosX + enemySizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + enemySizeY[y]);
+				m_pTileMapMag->enemyArrInList(tempTileXY, &m_tEnemyData);
 			}
 		}
 		break;
 	default:
-		//// tileMap 위치에 몬스터 정보 저장
-		m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY)].t_enemyInfo = &m_tEnemyData;
+		tempTileXY = (m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY);
+		m_pTileMapMag->enemyArrInList(tempTileXY, &m_tEnemyData);
 		break;
 	}
 
@@ -1080,15 +1089,8 @@ bool enemy::eatIsEnemy(int eMoveArrow)
 	}
 
 	// 몬스터 정보가 있다면 해당 enemy의 FoodChainLv 확인 자신이 더 높을 경우 먹는다
-	if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
-	{
-		// 해당 enemy의 최대 체력 만큼 체력을 회복한다
-		m_tEnemyData.t_currHp += m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_MaxHp;
-		// 해당 enemy의 체력은 0으로 만들어 죽도록 한다
-		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_currHp = 0;
-		// true로 반환
-		return true;
-	}
+	//if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_enemyInfo->t_FoodChainLv < m_tEnemyData.t_FoodChainLv)
+	m_pTileMapMag->enemyFoodChain(tempMoveArrow, &m_tEnemyData);
 
 	// 먹을 수 없는 경우 return false 한다
 	return false;
@@ -1226,10 +1228,11 @@ bool enemy::isHero(int eMoveArrow)
 			}
 
 			// 해당 위치에 enemy정보가 있을 경우 -> 없으면 return;
-			if ((i == tempAttRange && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
+			//if ((i == tempAttRange && m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo == nullptr) ||
+			if ((i == tempAttRange && m_pTileMapMag->HeroArrOutList(tempMoveArrow) == nullptr) ||
 				m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_isAlive) return false;
 		}
-		if (m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo != nullptr)
+		if (m_pTileMapMag->HeroArrOutList(tempMoveArrow) != nullptr)
 			break;
 	}
 
@@ -1256,7 +1259,8 @@ bool enemy::isHero(int eMoveArrow)
 	default:
 		// 기본형
 		// 용사가 있다면 용사에게 atkPoint 만큼 damgePoint를 누적 시킨다
-		m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo->t_damgePoint = m_tEnemyData.t_atkPoint;
+		//m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_heroInfo->t_damgePoint = m_tEnemyData.t_atkPoint;
+		m_pTileMapMag->HeroArrOutList(tempMoveArrow)->t_damgePoint = m_tEnemyData.t_atkPoint;
 		EFFMANAGER->play("Hit_Eff_0", m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempMoveArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 		break;
 	}

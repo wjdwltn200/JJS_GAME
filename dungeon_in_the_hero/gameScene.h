@@ -6,10 +6,7 @@
 #define TOP_IMG_SIZE_Y 300
 #define MOUSE_CURSOR_SET_SIZE 12
 
-#define MOUSE_FOINT_SET_X 30
-#define MOUSE_FOINT_SET_Y 20
-#define MOUSE_FOINT_SET_NUMSIZE 4
-#define MOUSE_FOINT_CANG_VALUE 10
+#define NUMBER_SCALE_VALUE 120
 
 class bulletManager;
 class overlord;
@@ -30,6 +27,9 @@ private:
 	overlord * m_pOverlord;
 	char szText[256];
 
+	int m_currTileDesEne;
+	float m_tileDesEneScale;
+
 public:
 	virtual HRESULT init();
 	virtual void release();
@@ -37,6 +37,8 @@ public:
 	virtual void render(HDC hdc);
 
 	void screenUi(HDC hdc);
+	void RD_UI(HDC hdc);
+	void MouseCur(HDC hdc);
 	void RectCol();
 	void HitEff(int x, int y);
 	

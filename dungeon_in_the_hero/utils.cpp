@@ -64,20 +64,22 @@ namespace MY_UTIL
 		int tempNumber = NULL;
 		int tempNumberCheck = 1;
 
+		int tempImgW = IMAGEMANAGER->findImage("NumberPont")->getFrameWidth();
+
 		for (int i = 0; i < maxNum; i++)
 		{
 			if (i == 0)
 			{
 				tempNumber = (num % 10) % 10;
 				IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-					tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * maxNum),
+					tempX - (tempImgW * scale) + ((tempImgW * scale) * maxNum),
 					tempY, tempNumber, CorType, scale);
 			}
 			else
 			{
 				tempNumber = (num % (tempNumberCheck * 100)) / (tempNumberCheck * 10);
 				IMAGEMANAGER->findImage("NumberPont")->frameRender(hdc,
-					tempX + ((IMAGEMANAGER->findImage("NumberPont")->getFrameWidth() * scale) * (maxNum - i)),
+					tempX - (tempImgW * scale) + ((tempImgW * scale) * (maxNum - i)),
 					tempY, tempNumber, CorType, scale);
 				tempNumberCheck *= 10;
 			}

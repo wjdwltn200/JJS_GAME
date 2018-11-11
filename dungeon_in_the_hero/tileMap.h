@@ -24,6 +24,8 @@
 #define TILE_OVERLORD_X 15
 #define TILE_OVERLORD_Y 4
 
+#define TILE_DES_SET_COUNT 10
+
 class uiPopup;
 class uiManager;
 class enemyManager;
@@ -41,7 +43,7 @@ private:
 		NonEnemy ,Slime, Bug, Lizardman, Lili, Mamon ,Demon, Lady
 	};
 
-	SYNTHESIZE(TileInfo, m_tileset[4096], tile);
+	SYNTHESIZE(TileInfo, m_tileset[2048], tile);
 	SYNTHESIZE(int, m_tileSizeMaxX, tileMaxValueX);
 	SYNTHESIZE(int, m_tileSizeMaxY, tileMaxValueY);
 	SYNTHESIZE(bool, m_isTileClick, IsTileClivk);
@@ -50,6 +52,8 @@ private:
 	char szText[256];
 
 	int m_tileDesDaley;
+	int m_tileDesCurr;
+	int m_tileDesCount;
 	PlayerInfo * m_pPlayer;
 	enemyManager * m_pEnemyMag;
 	heroManager * m_pHeroMag;
@@ -76,6 +80,23 @@ public:
 
 	void tileDesSe();
 	void tileItemGet(int tileValue);
+
+	void tileDesEneChag();
+
+	void enemyArrNullptrList(int tileMapValue, tagEnemyData * enemyData);
+	void enemyArrInList(int tileMapValue, tagEnemyData * enemyData);
+	bool enemyArrIsList(int tileMapValue, tagEnemyData * enemyData);
+	tagEnemyData * enemyArrOutList(int tileMapValue);
+	void enemyFoodChain(int tileMapValue, tagEnemyData * pEnemyDate);
+
+	void HeroArrNullptrList(int tileMapValue, tagHeroData * HeroData);
+	void HeroArrInList(int tileMapValue, tagHeroData * HeroData);
+	bool HeroArrIsList(int tileMapValue, tagHeroData * HeroData = nullptr);
+	tagHeroData * HeroArrOutList(int tileMapValue);
+
+	void HeroSkillAtk(int tileMapValue, tagHeroData * pHeroData);
+
+	bool tileCheck(int tileX, int tileY);
 
 	TileInfo * getTileSetPoint() { return m_tileset; }
 
