@@ -20,6 +20,8 @@
 #define TILE_LV_3 9
 #define TILE_LV_4 12
 #define TILE_LV_5 15
+#define TILE_LV_6 20
+
 
 #define TILE_OVERLORD_X 15
 #define TILE_OVERLORD_Y 4
@@ -30,6 +32,7 @@ class uiPopup;
 class uiManager;
 class enemyManager;
 class heroManager;
+class overlord;
 
 class tileMap
 {
@@ -59,12 +62,14 @@ private:
 	heroManager * m_pHeroMag;
 	uiManager * m_pUiMag;
 	uiPopup * m_pTilePopup;
+	overlord * m_pOverlord;
 	tagItemData m_tItemInfo;
 
 public:
 	HRESULT init(int tileX, int tileY,
 		PlayerInfo * playerData, uiManager * uiMagData,
-		enemyManager * pEnemyMag, heroManager * pHeroMag);
+		enemyManager * pEnemyMag, heroManager * pHeroMag,
+		overlord * pOverlord);
 	void release();
 	void update();
 	void render(HDC hdc);
@@ -74,7 +79,7 @@ public:
 	tagItemData dropItemSet(int itemType);
 	void monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY);
 	void tileImgSet(int tileX, int tileY, HDC hdc, bool isShaking = false);
-	void tierSet(int tileNum);
+	void tierSet(int tileX, int tileY);
 
 	void tileDesSys(int tileValue, int tileX, int tileY);
 
@@ -87,7 +92,8 @@ public:
 	void enemyArrInList(int tileMapValue, tagEnemyData * enemyData);
 	bool enemyArrIsList(int tileMapValue, tagEnemyData * enemyData);
 	tagEnemyData * enemyArrOutList(int tileMapValue);
-	void enemyFoodChain(int tileMapValue, tagEnemyData * pEnemyDate);
+	void enemyBackMove(int tileMapValue, tagHeroData * pHero);
+	bool enemyFoodChain(int tileMapValue, tagEnemyData * pEnemyDate);
 
 	void HeroArrNullptrList(int tileMapValue, tagHeroData * HeroData);
 	void HeroArrInList(int tileMapValue, tagHeroData * HeroData);
@@ -97,6 +103,10 @@ public:
 	void HeroSkillAtk(int tileMapValue, tagHeroData * pHeroData);
 
 	bool tileCheck(int tileX, int tileY);
+
+	bool DemonTileCheck(int tileX, int tileY);
+
+	bool LadyTileCheck(int tileX, int tileY);
 
 	TileInfo * getTileSetPoint() { return m_tileset; }
 

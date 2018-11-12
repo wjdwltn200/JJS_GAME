@@ -4,12 +4,15 @@
 #include "aStarNode.h"
 #include "aStarPathFinding.h"
 #include "bulletManager.h"
+#include "enemy.h"
+#include "overlord.h"
 
-HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * pBulletMag)
+HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * pBulletMag, overlord * pOverlord)
 {
 	//// 타일 맵 주소 초기화
 	m_pTileMapMag = pTileMag;
 	m_pBulletMag = pBulletMag;
+	m_pOverlord = pOverlord;
 
 	m_tHeroData = *heroInfo;
 	m_tHeroData.t_img_state = IMAGEMANAGER->findImage("hero_state_00");
@@ -33,7 +36,7 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * p
 	m_isMoveAct = false;
 	m_eMoveState = eMoveState::DOWN;
 
-	//aStarFind(m_pAStartNode->Create(20, 24), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
+	aStarFind(m_pAStartNode->Create(m_pOverlord->gettOverlord().t_tilePosX, m_pOverlord->gettOverlord().t_tilePosY), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
 	return S_OK;
 }
 
@@ -363,6 +366,24 @@ void hero::currHp()
 
 	if (m_tHeroData.t_currHp <= 0) // 죽음
 	{
+		int tempSizeX[5] = { -2 ,-1, 0, 1, 2 };
+		int tempSizeY[5] = { -2, -1, 0, 1, 2 };
+
+		for (int x = 0; x < 5; x++)
+		{
+			int tempXY = (m_tHeroData.t_tilePosX + tempSizeX[x]) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY);
+			m_pTileMapMag->enemyBackMove(tempXY, &m_tHeroData);
+
+			for (int y = 0; y < 5; y++)
+			{
+				if (x == 2 && y == 2) continue;
+				if (y == 2) continue;
+
+				int tempXY = (m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY + tempSizeY[y]);
+				m_pTileMapMag->enemyBackMove(tempXY, &m_tHeroData);
+			}
+		}
+
 		m_tHeroData.t_img = m_tHeroData.t_img_Dead;
 		m_ani.start();
 		m_isDead = true;
@@ -610,9 +631,9 @@ void hero::movePattern()
 		switch (m_tHeroData.t_enumType)
 		{
 		default: // 패턴이 없을 경우 랜덤 이동
-			//aStarMoveSys();
-			m_eMoveState = RANDOM->getFromIntTo(0, 3);
-			moveRectCheck(m_eMoveState);
+			aStarMoveSys();
+			//m_eMoveState = RANDOM->getFromIntTo(0, 3);
+			//moveRectCheck(m_eMoveState);
 			m_isMoveAct = true;
 			break;
 		}

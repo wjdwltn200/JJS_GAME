@@ -5,10 +5,13 @@
 #include "enemyManager.h"
 #include "heroManager.h"
 #include "animation.h"
+#include "enemy.h"
+#include "overlord.h"
 
 HRESULT tileMap::init(int tileX, int tileY,
 	PlayerInfo * playerData, uiManager * uiMagData,
-	enemyManager * pEnemyMag, heroManager * pHeroMag)
+	enemyManager * pEnemyMag, heroManager * pHeroMag,
+	overlord * pOverlord)
 {
 	//tileMap 초기화
 	memset(&m_tileset, 0, sizeof(m_tileset));
@@ -16,6 +19,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 	//// Enemy & Hero 매니저 주소 초기화
 	m_pEnemyMag = pEnemyMag;
 	m_pHeroMag = pHeroMag;
+	m_pOverlord = pOverlord;
 
 	//// UI 매니저 주소 초기화
 	m_pUiMag = uiMagData;
@@ -37,7 +41,6 @@ HRESULT tileMap::init(int tileX, int tileY,
 	m_tileSizeMaxX = tileX * TILE_SIZE;
 	m_tileSizeMaxY = tileY * TILE_SIZE;
 	IMAGEMANAGER->addImage("TileSet", "image/inGameImg/TILE/TileSet_Terrain.bmp", 160, 352, 5, 11, true, RGB(255, 0, 255));
-	
 	IMAGEMANAGER->addImage("TileShadow", "image/inGameImg/TILE/TileSet_Terrain_Shadow.bmp", 6, 32);
 
 	//// 타일 초기화
@@ -74,7 +77,7 @@ HRESULT tileMap::init(int tileX, int tileY,
 			int tempY = (m_tileSizeY / 4);
 			if (y <= (tempY * 1))
 			{
-				m_tileset[x * m_tileSizeY + y].t_ManaValue = RANDOM->getFromIntTo(2, 20);
+				m_tileset[x * m_tileSizeY + y].t_ManaValue = RANDOM->getFromIntTo(2, 4);
 			}
 			else if (y <= (tempY * 2))
 			{
@@ -169,7 +172,7 @@ void tileMap::update()
 		for (int y = 0; y < m_tileSizeY; y++)
 		{
 			//// 타일 manaValue 에 맞춰 tier 세팅
-			tierSet(x * m_tileSizeY + y);
+			tierSet(x, y);
 
 			//// 타일 흔들기
 			if (m_tileset[x * m_tileSizeY + y].t_ShakingCount >= TILE_SHAKING_COUNT)
@@ -186,6 +189,19 @@ void tileMap::update()
 			//// 타일 상호작용
 			//// 타일 팝업 출력
 			RECT tempRc;
+			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON) &&
+				m_pOverlord->getIsSetting() &&
+				(IntersectRect(&tempRc, &m_tileset[x * m_tileSizeY + y].t_rc, &g_MouseRc) &&
+				(tileCheck(x, y))))
+			{
+				m_pOverlord->setTileXY(
+					x,
+					y,
+					m_tileset[x * m_tileSizeY + y].t_rc.left,
+					m_tileset[x * m_tileSizeY + y].t_rc.top);
+			}
+
+
 			if (!m_pEnemyMag->getIsEnemyInfoPopup() &&
 				KEYMANAGER->isStayKeyDown(VK_RBUTTON) &&
 				(IntersectRect(&tempRc, &m_tileset[x * m_tileSizeY + y].t_rc, &g_MouseRc)))
@@ -310,10 +326,10 @@ void tileMap::render(HDC hdc)
 				);
 
 				//// 타일정보 디버깅 정보
-				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
-				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
-				sprintf_s(szText, "%d", (m_tileset[x * m_tileSizeY + y].t_enemyInfo[1]));
+				sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
 				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
+				//sprintf_s(szText, "%d", (m_tileset[x * m_tileSizeY + y].t_enemyInfo[1]));
+				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				//sprintf_s(szText, "%d", TestTileNum);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
@@ -352,6 +368,10 @@ void tileMap::keyInput()
 
 	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
 	{
+		SOUNDMANAGER->stop("Sound/BGM/BGM_UnStart.wav");
+		SOUNDMANAGER->play("Sound/BGM/BGM_GameStart.wav");
+		SOUNDMANAGER->play("Sound/BGM/BGM_HeroStart.wav");
+
 		//// 용사 임시 드롭
 		tagHeroData tempHero;
 		tempHero.t_img_U = IMAGEMANAGER->findImage("hero_01_U");
@@ -368,7 +388,7 @@ void tileMap::keyInput()
 		tempHero.t_isAilve = true;
 		tempHero.t_currHp = 200;
 		tempHero.t_MaxHp = tempHero.t_currHp;
-		tempHero.t_currMana = 1000;
+		tempHero.t_currMana = 300;
 		tempHero.t_MaxMana = tempHero.t_currMana;
 
 		tempHero.t_posX = m_tileset[15 * m_tileSizeY + 0].t_rc.left + CAMERA->getCamPosX();
@@ -387,11 +407,11 @@ void tileMap::keyInput()
 		memset(&tempHero.t_Inven, 0, sizeof(tempHero.t_Inven));
 		memset(&tempHero.t_Skill, 0, sizeof(tempHero.t_Skill));
 		tempHero.t_Skill.t_fireWall = true;
-		//tempHero.t_Skill.t_ArrowMagic = true;
+		tempHero.t_Skill.t_ArrowMagic = true;
 		tempHero.t_Skill.t_haling = true;
-		//tempHero.t_Skill.t_AtkBuff = true;
-		//tempHero.t_Skill.t_DefBuff= true;
-		//tempHero.t_Skill.t_HasteBuff = true;
+		tempHero.t_Skill.t_AtkBuff = true;
+		tempHero.t_Skill.t_DefBuff= true;
+		tempHero.t_Skill.t_HasteBuff = true;
 
 		m_pHeroMag->heroDrop(&tempHero);
 	}
@@ -560,7 +580,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_atkPoint = 8;
 		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_FoodChainLv = 3;
+		tempEnemy.t_FoodChainLv = 2;
 		tempEnemy.t_enumType = tagEnemyType::Lizardman;
 		
 	}
@@ -617,7 +637,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_atkPoint = 20;
 		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_FoodChainLv = 3;
+		tempEnemy.t_FoodChainLv = 4;
 		tempEnemy.t_enumType = tagEnemyType::Lady;
 	}
 	else if (tempTierValue == eTileEnemy::Demon)
@@ -635,7 +655,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_moveDaley = 0;
 		tempEnemy.t_atkPoint = 20;
 		tempEnemy.t_defPoint = 3;
-		tempEnemy.t_FoodChainLv = 3;
+		tempEnemy.t_FoodChainLv = 4;
 		tempEnemy.t_enumType = tagEnemyType::Demon;
 	}
 
@@ -673,46 +693,54 @@ void tileMap::tileImgSet(int posX, int posY, HDC hdc, bool isShaking)
 	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Lili)
 	{
 		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, 7, TILE_SCALE, false);
-
-		//for (int x = 0; x < 3; x++)
-		//{
-		//	for (int y = 0; y < 3; y++)
-		//	{
-		//		if (x == 1 && y == 1) break;
-
-		//		if (m_tileset[(posX + tileX[x]) * m_tileSizeY + (posY + tileY[y])].t_isAlive) return;
-
-		//		if (x == 2 && y == 2)
-		//			m_tileset[posX * m_tileSizeY + posY].t_img->frameRender(hdc,
-		//				m_tileset[posX * m_tileSizeY + posY].t_rc.left + tempX,
-		//				m_tileset[posX * m_tileSizeY + posY].t_rc.top,
-		//				RANDOM->getInt(4), 8, TILE_SCALE, false);
-		//	}
-		//}
+	}
+	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Mamon)
+	{
+		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, 8, TILE_SCALE, false);
+	}
+	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Lady)
+	{
+		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, 9, TILE_SCALE, false);
+	}
+	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Demon)
+	{
+		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, 10, TILE_SCALE, false);
+	}
+	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Lady)
+	{
+		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, 11, TILE_SCALE, false);
 	}
 
 	return;
 }
 
-void tileMap::tierSet(int tileNum)
+void tileMap::tierSet(int tileX, int tileY)
 {
-	if (m_tileset[tileNum].t_ManaValue >= TILE_LV_0)
-		m_tileset[tileNum].t_tierValue = eTileEnemy::NonEnemy;
+	int tempTileXY = tileX * m_tileSizeY + tileY;
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_0)
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::NonEnemy;
 
-	if (m_tileset[tileNum].t_ManaValue >= TILE_LV_1)
-		m_tileset[tileNum].t_tierValue = eTileEnemy::Slime;
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_1)
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::Slime;
 
-	if (m_tileset[tileNum].t_ManaValue >= TILE_LV_2)
-		m_tileset[tileNum].t_tierValue = eTileEnemy::Bug;
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_2)
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::Bug;
 
-	if (m_tileset[tileNum].t_ManaValue >= TILE_LV_3)
-		m_tileset[tileNum].t_tierValue = eTileEnemy::Lizardman;
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_3)
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::Lizardman;
 
-	if (m_tileset[tileNum].t_ManaValue >= TILE_LV_4)
-		m_tileset[tileNum].t_tierValue = eTileEnemy::Lili;
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_4)
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::Lili;
 
-	//if (m_tileset[tileNum].t_ManaValue >= TILE_LV_4)
-	//	m_tileset[tileNum].t_tierValue = eTileEnemy::Demon;
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_5)
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::Mamon;
+
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_6 && LadyTileCheck(tileX, tileY))
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::Lady;
+
+	if (m_tileset[tempTileXY].t_ManaValue >= TILE_LV_6 && DemonTileCheck(tileX, tileY))
+		m_tileset[tempTileXY].t_tierValue = eTileEnemy::Demon;
+
 
 	return;
 }
@@ -846,7 +874,19 @@ tagEnemyData * tileMap::enemyArrOutList(int tileMapValue)
 	return nullptr;
 }
 
-void tileMap::enemyFoodChain(int tileMapValue, tagEnemyData * pEnemyDate)
+void tileMap::enemyBackMove(int tileMapValue, tagHeroData * pHero)
+{
+	for (int i = 0; i < ENEMY_INFO_ARR; i++)
+	{
+		if (m_tileset[tileMapValue].t_enemyInfo[i] == nullptr) continue;
+
+		m_tileset[tileMapValue].t_enemyInfo[i]->t_pEnemy->backMoveArrow(pHero->t_tilePosX, pHero->t_tilePosY);
+	}
+
+	return;
+}
+
+bool tileMap::enemyFoodChain(int tileMapValue, tagEnemyData * pEnemyDate)
 {
 	for (int i = 0; i < ENEMY_INFO_ARR; i++)
 	{
@@ -856,10 +896,11 @@ void tileMap::enemyFoodChain(int tileMapValue, tagEnemyData * pEnemyDate)
 		{
 			m_tileset[tileMapValue].t_enemyInfo[i]->t_currHp = 0;
 			pEnemyDate->t_currHp += m_tileset[tileMapValue].t_enemyInfo[i]->t_MaxHp;
+			return true;
 		}
 	}
 
-	return;
+	return false;
 }
 
 void tileMap::HeroArrNullptrList(int tileMapValue, tagHeroData * HeroData)
@@ -941,6 +982,47 @@ bool tileMap::tileCheck(int tileX, int tileY)
 
 	return false;
 }
+
+bool tileMap::DemonTileCheck(int tileX, int tileY)
+{
+	int tempX[3] = { -1, 0, 1 };
+	int tempY[3] = { -1, 0, 1 };
+
+	for (int x = 0; x < 3; x++)
+	{
+		for (int y = 0; y < 3; y++)
+		{
+			if (x == 1 && y == 1) continue;
+			if (m_tileset[(tileX + tempX[x]) * m_tileSizeY + (tileY + tempY[y])].t_isAlive) return false;
+		}
+	}
+
+	return true;
+}
+
+bool tileMap::LadyTileCheck(int tileX, int tileY)
+{
+	int tempX[3] = { -1, 0, 1 };
+	int tempY[3] = { -1, 0, 1 };
+
+	for (int y = 0; y < 3; y++)
+	{
+		for (int x = 0; x < 3; x++)
+		{
+			if (y == 1 && x == 1) continue;
+
+			if (y == 1 && x != 1)
+				if (m_tileset[(tileX + tempX[x])* m_tileSizeY + (tileY + tempY[y])].t_isAlive) return false;
+			if (y != 1 && x == 1)
+				if (m_tileset[(tileX + tempX[x])* m_tileSizeY + (tileY + tempY[y])].t_isAlive) return false;
+			if (y != 1 && x != 1)
+				if (!m_tileset[(tileX + tempX[x])* m_tileSizeY + (tileY + tempY[y])].t_isAlive) return false;
+		}
+	}
+
+	return true;
+}
+
 
 tileMap::tileMap()
 {

@@ -11,13 +11,14 @@ private:
 	
 	tileMap * m_pTileMap;
 
-	bool m_isSetting;
+	SYNTHESIZE(bool, m_isSetting, IsSetting);
 
 public:
 	HRESULT init(tileMap * pTileMap);
 	void release();
 	void update();
 	void render(HDC hdc);
+	void setTileXY(int tileX, int tileY, float posX, float posY);
 
 	overlord();
 	~overlord();

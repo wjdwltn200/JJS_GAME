@@ -4,6 +4,8 @@
 
 HRESULT uiPopup::init(image * img, float posX, float posY, int DesDaley)
 {
+	AddFontResourceA("Maplestory_Light.ttf");
+
 	m_isAilve = true;
 	m_img = img;
 	m_imgSizeX = NULL;

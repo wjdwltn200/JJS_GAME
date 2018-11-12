@@ -47,7 +47,7 @@ namespace MY_UTIL
 
 	void FontOption(HDC hdc ,int FontSize, int FontBold)
 	{
-		g_hFont = CreateFont(FontSize, 0, 0, 0, FontBold, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, "모리스9");
+		g_hFont = CreateFont(FontSize, 0, 0, 0, FontBold, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_ROMAN, "메이플스토리");
 		g_OldFont = (HFONT)SelectObject(hdc, g_hFont);
 	}
 

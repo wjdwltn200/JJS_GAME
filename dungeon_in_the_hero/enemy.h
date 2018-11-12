@@ -5,9 +5,13 @@
 #define ENEMY_DIE_DALEY 60
 #define ENEMY_ACT_DALEY 120
 
-#define ENEMY_FLOWER_MANA 7
+#define ENEMY_FLOWER_MANA 5
 
-#define FlowerV2_SET_VALUE 80
+
+#define Flower_SET_RANDOM 50
+#define FlowerV2_SET_RANDOM 90
+
+#define BugV2_SET 3
 
 class tileMap;
 class enemyManager;
@@ -38,6 +42,10 @@ private:
 	bool m_isMoveAct;
 	bool m_isAttAct;
 	int m_aStarDepValue;
+	SYNTHESIZE(int, m_backMoveArrow, BackMoveArrow);
+	SYNTHESIZE(int, m_backValue, BackValue);
+	SYNTHESIZE(bool, m_isBackMove, IsBackMove);
+	float m_fBackMoveSpeed;
 
 	tileMap * m_pTileMapMag;
 	enemyManager * m_pEnemyMag;
@@ -71,6 +79,7 @@ public:
 	void setDamgePoint(int DamValue) { m_tEnemyData.t_damgePoint = DamValue; }
 	void moveSys();
 	bool moveRectCheck(int eMoveArrow);
+	bool backMoveCheck(int eMoveArrow);
 	bool moveRectCheckBig(int eMoveArrow);
 	bool moveIsRect(int eMoveArrow);
 	bool tileManaChg(int eMoveArrow, int manaValue);
@@ -78,7 +87,10 @@ public:
 
 	void enemySetTxt(int enemyType);
 	void movePattern();
+	void isBackMove(int isBackMove);
 	void isDieTileMana();
+
+	void backMoveArrow(int heroX, int heroY);
 
 	bool eatActPattern();
 	bool eatIsEnemy(int eMoveArrow);

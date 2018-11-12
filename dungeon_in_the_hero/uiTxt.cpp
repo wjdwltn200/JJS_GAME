@@ -37,7 +37,7 @@ void uiTxt::update()
 
 void uiTxt::render(HDC hdc)
 {
-	//AddFontResourceA("BMHANNAAir_ttf.ttf");
+
 
 	// 데미지 표기
 	SetBkMode(hdc, TRANSPARENT);

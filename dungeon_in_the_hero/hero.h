@@ -32,6 +32,7 @@
 class tileMap;
 class aStarNode;
 class bulletManager;
+class overlord;
 
 class hero
 {
@@ -62,9 +63,10 @@ private:
 	tileMap * m_pTileMapMag;
 	aStarNode * m_pAStartNode;
 	bulletManager * m_pBulletMag;
+	overlord * m_pOverlord;
 
 public:
-	HRESULT init(tagHeroData * heroInfo, tileMap * pTileMap, bulletManager * pBulletMag);
+	HRESULT init(tagHeroData * heroInfo, tileMap * pTileMap, bulletManager * pBulletMag, overlord * pOverlord);
 	void release();
 	void update();
 	void render(HDC hdc);

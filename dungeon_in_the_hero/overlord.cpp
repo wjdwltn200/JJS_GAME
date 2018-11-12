@@ -41,14 +41,7 @@ void overlord::update()
 	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON) &&
 		(IntersectRect(&tempRc, &m_tOverlord.t_rc, &g_MouseRc)))
 	{
-		if (m_isSetting)
-		{
-			m_isSetting = false;
-		}
-		else
-		{
-			m_isSetting = true;
-		}
+		m_isSetting = true;
 	}
 
 	m_ani.frameUpdate();
@@ -105,6 +98,17 @@ void overlord::render(HDC hdc)
 		sprintf_s(szText, "%d,%d", m_tOverlord.t_tilePosX, m_tOverlord.t_tilePosY);
 		TextOut(hdc, m_tOverlord.t_posX - CAMERA->getCamPosX(), m_tOverlord.t_posY - CAMERA->getCamPosY(), szText, strlen(szText));
 	}
+}
+
+void overlord::setTileXY(int tileX, int tileY, float posX, float posY)
+{
+	m_tOverlord.t_tilePosX = tileX;
+	m_tOverlord.t_tilePosY = tileY;
+	m_tOverlord.t_posX = posX + CAMERA->getCamPosX();
+	m_tOverlord.t_posY = posY + CAMERA->getCamPosY();
+
+	m_isSetting = false;
+	return;
 }
 
 overlord::overlord()

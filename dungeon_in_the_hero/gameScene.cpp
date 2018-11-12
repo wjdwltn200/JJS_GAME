@@ -12,7 +12,9 @@ HRESULT gameScene::init()
 {
 	//// SoundSet
 	//SOUNDMANAGER->addSound("Sound/BGM/BGM_UnStart.wav", true, true);
-	//SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.5f);
+
+	//SOUNDMANAGER->addSound("Sound/BGM/BGM_GameStart.wav", false, false);
+	//SOUNDMANAGER->addSound("Sound/BGM/BGM_HeroStart.wav", true, true);
 
 	SOUNDMANAGER->addSound("Sound/SE/Impact1.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/getGam.wav", false, false);
@@ -41,6 +43,9 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/flowerV2.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Lizardman.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Lili.wav", false, false);
+
+	SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav");
+
 
 	//// EffImgSet
 	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 100, 0.0f, true);
@@ -252,7 +257,7 @@ HRESULT gameScene::init()
 
 	//// Hero 매니저 동적할당
 	m_pHeroMag = new heroManager;
-	m_pHeroMag->init(m_MapTile, m_pBulletMag);
+	m_pHeroMag->init(m_MapTile, m_pBulletMag, m_pOverlord);
 
 	//// 플레이어 셋팅
 	m_tPlayer = new PlayerInfo;
@@ -261,7 +266,7 @@ HRESULT gameScene::init()
 	m_tileDesEneScale = 4.0f;
 
 
-	m_MapTile->init(32, 64, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag);
+	m_MapTile->init(32, 64, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag, m_pOverlord);
 	m_pOverlord->init(m_MapTile);
 	CAMERA->setCamPosY(CAMERA_MAX_Y);
 
