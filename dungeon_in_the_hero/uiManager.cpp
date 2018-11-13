@@ -51,6 +51,8 @@ void uiManager::render(HDC hdc)
 	for (m_PopupIter = m_vecUiPopup.begin(); m_PopupIter != m_vecUiPopup.end(); m_PopupIter++)
 	{
 		if (!(*m_PopupIter)->getIsAilve()) continue;
+		if ((*m_PopupIter)->getImg() == NULL) continue;
+
 
 		(*m_PopupIter)->render(hdc);
 	}

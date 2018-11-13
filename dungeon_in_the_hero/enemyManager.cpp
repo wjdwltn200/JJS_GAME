@@ -9,6 +9,7 @@ HRESULT enemyManager::init(tileMap * pTileMag, uiManager * pUiMag, bulletManager
 
 	m_isAliveVec = 0;
 	m_maxTileY = 0;
+	m_enemyPower = 0;
 
 	for (int i = 0; i < SET_ENEMY_VEC; i++)
 	{
@@ -38,8 +39,8 @@ void enemyManager::release()
 void enemyManager::update()
 {
 	int tempIsAlive = 0;
-
 	m_maxTileY = 0;
+	m_enemyPower = 0;
 	m_isEnemyInfoPopup = false;
 	for (m_iter = m_vecEnemy.begin(); m_iter != m_vecEnemy.end(); m_iter++)
 	{
@@ -49,6 +50,8 @@ void enemyManager::update()
 		(*m_iter)->update();
 		if ((*m_iter)->gettEnemyData().t_tilePosY >= m_maxTileY)
 			m_maxTileY = (*m_iter)->gettEnemyData().t_tilePosY;
+
+		m_enemyPower += (*m_iter)->gettEnemyData().t_powerValue;
 	}
 	m_isAliveVec = tempIsAlive;
 }

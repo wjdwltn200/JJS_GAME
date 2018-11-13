@@ -33,17 +33,22 @@ class uiManager;
 class enemyManager;
 class heroManager;
 class overlord;
+class hero;
 
 class tileMap
 {
 private:
 	enum tagTileType
 	{
-		START, TOP, BLOCK, RAND, BLOCK_NON, END_NUM
+		START, GROUND, TOP, BLOCK, RAND, BLOCK_NON, END_NUM
 	};
 	enum eTileEnemy
 	{
 		NonEnemy ,Slime, Bug, Lizardman, Lili, Mamon ,Demon, Lady
+	};
+	enum eTileLv
+	{
+		tGround, tWall, tBrick, tFloor, tNoEnemy, tSlime, tBug, tLizardman, tLili, tMamon, tDemon, tLady
 	};
 
 	SYNTHESIZE(TileInfo, m_tileset[2048], tile);
@@ -64,6 +69,10 @@ private:
 	uiPopup * m_pTilePopup;
 	overlord * m_pOverlord;
 	tagItemData m_tItemInfo;
+
+	list<hero*>	m_vecHeroList;
+	list<hero*>::iterator m_iterHeroList;
+	bool m_isHeroStart;
 
 public:
 	HRESULT init(int tileX, int tileY,
@@ -101,12 +110,12 @@ public:
 	tagHeroData * HeroArrOutList(int tileMapValue);
 
 	void HeroSkillAtk(int tileMapValue, tagHeroData * pHeroData);
-
 	bool tileCheck(int tileX, int tileY);
-
 	bool DemonTileCheck(int tileX, int tileY);
-
 	bool LadyTileCheck(int tileX, int tileY);
+
+
+	void heroStart(int tileValue);
 
 	TileInfo * getTileSetPoint() { return m_tileset; }
 

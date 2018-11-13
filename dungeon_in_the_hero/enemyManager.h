@@ -26,7 +26,7 @@ private:
 	int m_isAliveVec;
 	int m_maxTileY;
 
-
+	SYNTHESIZE(int, m_enemyPower, EnemyPower);
 
 public:
 	HRESULT init(tileMap * pTileMag, uiManager * pUiMag, bulletManager * pBulletMag);

@@ -11,13 +11,15 @@
 HRESULT gameScene::init()
 {
 	//// SoundSet
-	//SOUNDMANAGER->addSound("Sound/BGM/BGM_UnStart.wav", true, true);
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_UnStart.wav", true, true);
 
-	//SOUNDMANAGER->addSound("Sound/BGM/BGM_GameStart.wav", false, false);
-	//SOUNDMANAGER->addSound("Sound/BGM/BGM_HeroStart.wav", true, true);
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_GameStart.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_HeroStart.wav", true, true);
 
 	SOUNDMANAGER->addSound("Sound/SE/Impact1.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/getGam.wav", false, false);
+
+	SOUNDMANAGER->addSound("Sound/SE/HeroOpen_0.wav", false, false);
 
 	// 타일 파괴 SE
 	SOUNDMANAGER->addSound("Sound/SE/TileDes_0.wav", false, false);
@@ -44,11 +46,11 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/Lizardman.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Lili.wav", false, false);
 
-	SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav");
+	//SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.3f);
 
 
 	//// EffImgSet
-	EFFMANAGER->addEffect("tileDes", "image/inGameImg/EFF/Tile_Des.bmp", 512, 384, 512 / 4, 384 / 3, 15, 100, 0.0f, true);
+	EFFMANAGER->addEffect("hero_Start", "image/inGameImg/EFF/hero_Start.bmp", 512, 384, 512 / 4, 384 / 3, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("MousePointEFF", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 100, 0.0f, true);
 	EFFMANAGER->addEffect("Hit_Eff_0", "image/inGameImg/EFF/Hit_EFF_0.bmp", 133, 34, 133 / 4, 34/ 1, 15, 5, 0.0f, true);
 	EFFMANAGER->addEffect("Mana_Eat_0", "image/inGameImg/EFF/MANA_EAT_EFF_0.bmp", 252, 36, 252/ 7, 36 / 1, 10, 10, 0.0f, true);
@@ -63,8 +65,10 @@ HRESULT gameScene::init()
 	EFFMANAGER->addEffect("ArrowMagic_EFF_0", "image/inGameImg/EFF/ArrowMagic_EFF_0.bmp", 319, 29, 319/ 11, 29 / 1, 30, 10, 0.0f, true);
 	EFFMANAGER->addEffect("FireWall_EFF_0", "image/inGameImg/EFF/FireWall_EFF_0.bmp", 620, 124, 620 / 10, 124 / 1, 15, 10, 0.0f, true);
 	EFFMANAGER->addEffect("FireWall_EFF_1", "image/inGameImg/EFF/FireWall_EFF_1.bmp", 238, 68, 238 / 7, 68 / 2, 10, 10, 0.0f, true);
-	EFFMANAGER->addEffect("FireWall_EFF_2", "image/inGameImg/EFF/FireWall_EFF_2.bmp", 102 * 2, 50 * 2, 102 * 2/ 6, 50 * 2 / 1, 15, 10, 0.0f, true);
+	EFFMANAGER->addEffect("FireWall_EFF_3", "image/inGameImg/EFF/FireWall_EFF_2.bmp", 102, 100, 102 / 6, 100 / 1, 15, 10, 0.0f, true);
 	EFFMANAGER->addEffect("FireWall_EFF_3", "image/inGameImg/EFF/FireWall_EFF_3.bmp", 462, 97, 462 / 7, 97 / 1, 10, 30, 0.0f, true);
+	EFFMANAGER->addEffect("FireWall_EFF_4", "image/inGameImg/EFF/FireWall_EFF_4.bmp", 528, 66, 528 / 8, 66 / 1, 10, 30, 0.0f, true);
+
 
 
 
@@ -86,6 +90,7 @@ HRESULT gameScene::init()
 	//EFFMANAGER->addEffect("Enemy_Eat_R", "image/inGameImg/EFF/EAT_EFF_R.bmp", 238, 34, 238 / 7, 34 / 1, 30, 10, 0.0f, true);
 
 	//// UiImgSet
+	IMAGEMANAGER->addImage("Title_Chang", "image/UI_Img/Title_Chang.bmp", WINSIZEX, WINSIZEY, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("mousePoint", "image/inGameImg/UI/MousePoint.bmp", 112, 49, 2, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("NumberPont", "image/inGameImg/UI/NumberPont.bmp", 80, 60, 10, 6, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("DesPowerTxt", "image/inGameImg/UI/DesPower.bmp", 118, 41, 1, 1, true, RGB(255, 0, 255));
@@ -174,6 +179,7 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("Mamon_00_Dead", "image/inGameImg/ENEMY/Mamon/Mamon_0_DEAD.bmp", 288, 180, 6, 4, true, RGB(255, 0, 255));
 
 	//// heroImgSet
+
 	// hero_0
 	IMAGEMANAGER->addImage("hero_00_U", "image/inGameImg/HERO/hero_0/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("hero_00_R", "image/inGameImg/HERO/hero_0/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
@@ -272,6 +278,8 @@ HRESULT gameScene::init()
 
 	m_imgTopBg = IMAGEMANAGER->addImage("inGameTopBG", "image/inGameImg/BG/InGame_Top_Bg.bmp", m_MapTile->gettileMaxValueX(), TOP_IMG_SIZE_Y);
 
+	m_isScreenChange = true;
+	m_screenChangeValue = 255;
 
 	return S_OK;
 }
@@ -299,6 +307,13 @@ void gameScene::update()
 	m_pUiMag->update();
 	OBJECTMANAGER->update();
 	EFFMANAGER->update();
+
+	if (m_isScreenChange && m_screenChangeValue >= 0)
+	{
+		m_screenChangeValue -= 5;
+		if (m_screenChangeValue <= 5)
+			m_isScreenChange = false;
+	}
 }
 
 void gameScene::render(HDC hdc)
@@ -328,6 +343,9 @@ void gameScene::render(HDC hdc)
 		sprintf_s(szText, "PlayerEne : %d", m_tPlayer->t_TileDesEne);
 		TextOut(hdc, WINSIZEX - 120, 70, szText, strlen(szText));
 	}
+
+	if (m_screenChangeValue)
+		IMAGEMANAGER->findImage("Title_Chang")->alphaRender(hdc, m_screenChangeValue);
 }
 
 void gameScene::screenUi(HDC hdc)
@@ -363,7 +381,7 @@ void gameScene::RD_UI(HDC hdc)
 		m_tileDesEneScale = 5.0f;
 	}
 	// 군사력
-	MY_UTIL::NumberPont(hdc, 12345, 5, WINSIZEX - 180.0f, WINSIZEY - 50.0f, 1, 4.0f);
+	MY_UTIL::NumberPont(hdc, m_pEnemyMag->getEnemyPower(), 5, WINSIZEX - 180.0f, WINSIZEY - 50.0f, 0, 4.0f);
 }
 
 void gameScene::MouseCur(HDC hdc)

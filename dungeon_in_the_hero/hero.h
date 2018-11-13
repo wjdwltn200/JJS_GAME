@@ -9,7 +9,7 @@
 
 #define HERO_SKILL_FIREWALL 50
 #define HERO_SKILL_FIREWALL_DAMAGE 100
-#define HERO_SKILL_FIREWALL_MOVE_DALEY 30
+#define HERO_SKILL_FIREWALL_MOVE_DALEY 20
 
 #define HERO_SKILL_HALING 30
 
@@ -82,6 +82,8 @@ public:
 	bool aStarIsRect(int x, int y);
 
 	void currHp();
+	bool enemyCheckRange();
+	bool enemyCheckSquare();
 	void moveSys();
 	bool moveRectCheck(int eMoveArrow);
 	bool moveIsRect(int eMoveArrow);

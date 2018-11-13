@@ -1402,6 +1402,8 @@ tagEnemyData * enemy::FlowerInfo()
 		tempEnemy.t_FoodChainLv = 0;
 		tempEnemy.t_currMana = 2;
 		tempEnemy.t_enumType = tagEnemyType::Flower;
+		tempEnemy.t_powerValue = 10;
+
 	}
 	else
 	{
@@ -1428,6 +1430,8 @@ tagEnemyData * enemy::FlowerInfo()
 		tempEnemy.t_FoodChainLv = 2;
 		tempEnemy.t_currMana = 5;
 		tempEnemy.t_enumType = tagEnemyType::FlowerV2;
+		tempEnemy.t_powerValue = 25;
+
 	}
 
 
@@ -1486,6 +1490,7 @@ tagEnemyData * enemy::BugV2()
 	tempEnemy.t_FoodChainLv = 2;
 	tempEnemy.t_currMana = 0;
 	tempEnemy.t_enumType = tagEnemyType::BugV2;
+	tempEnemy.t_powerValue = 35;
 
 	return &tempEnemy;
 }

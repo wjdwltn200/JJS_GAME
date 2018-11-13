@@ -30,6 +30,9 @@ private:
 	int m_currTileDesEne;
 	float m_tileDesEneScale;
 
+	bool m_isScreenChange;
+	int m_screenChangeValue;
+
 public:
 	virtual HRESULT init();
 	virtual void release();
