@@ -29,6 +29,9 @@
 #define HERO_SKILL_ATK_0 10
 #define HERO_SKILL_ATK_0_ATK 10
 
+#define ASTAR_DALEY 600
+#define ASTAR_VALUE 20
+
 class tileMap;
 class aStarNode;
 class bulletManager;
@@ -60,6 +63,9 @@ private:
 	int m_aStarDepValue;
 	bool m_isDead;
 
+	int m_aStarDaley;
+	int m_aStarValue;
+
 	tileMap * m_pTileMapMag;
 	aStarNode * m_pAStartNode;
 	bulletManager * m_pBulletMag;
@@ -70,6 +76,8 @@ public:
 	void release();
 	void update();
 	void render(HDC hdc);
+
+	void aStarSys();
 
 	int aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode);
 	void aStarRoute();

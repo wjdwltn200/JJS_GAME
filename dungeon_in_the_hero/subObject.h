@@ -11,7 +11,7 @@
 #define JEWEL_DIS_DELAY 120
 #define JEWEL_DIS_MOVE_POWER 5.0f
 #define JEWEL_DIS_COL_POWER 0.0f
-#define JEWEL_DIS_SET_X 10.0f
+#define JEWEL_DIS_SET_X 40.0f
 
 class animation;
 

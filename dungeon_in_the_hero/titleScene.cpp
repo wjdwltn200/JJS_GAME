@@ -59,10 +59,16 @@ void titleScene::update()
 	}
 
 	if (KEYMANAGER->isOnceKeyDown(VK_LEFT) && (m_ImgChangValue != tagTITLE_BUTTON::T_BUTTON_GAMESTART))
+	{
 		m_ImgChangValue--;
+		SOUNDMANAGER->play("Sound/SE/Button_0.wav");
+	}
 
 	if (KEYMANAGER->isOnceKeyDown(VK_RIGHT) && (m_ImgChangValue != tagTITLE_BUTTON::T_BUTTON_EXIT))
+	{
 		m_ImgChangValue++;
+		SOUNDMANAGER->play("Sound/SE/Button_0.wav");
+	}
 }
 
 void titleScene::render(HDC hdc)

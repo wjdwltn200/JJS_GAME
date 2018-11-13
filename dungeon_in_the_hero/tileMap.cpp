@@ -34,6 +34,8 @@ HRESULT tileMap::init(int tileX, int tileY,
 	m_tileDesCurr = 0;
 	m_tileDesCount = 0;
 	m_isHeroStart = false;
+	m_HeroStartDaley = 0;
+	m_gameState = eGameState::GameReady;
 
 	//// 타일 초기화 셋팅
 	m_tileDesDaley = 0;
@@ -44,6 +46,12 @@ HRESULT tileMap::init(int tileX, int tileY,
 	IMAGEMANAGER->addImage("TileSet", "image/inGameImg/TILE/TileSet_Terrain.bmp", 160, 384, 5, 12, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("hero_Start_Door", "image/inGameImg/HERO/Hero_start_tile.bmp", 66, 32, 2, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TileShadow", "image/inGameImg/TILE/TileSet_Terrain_Shadow.bmp", 6, 32);
+
+	//// list 초기화
+	for (int i = 0; i < 10; i++)
+	{
+		m_vecHeroList.push_back(nullptr);
+	}
 
 	//// 타일 초기화
 	for (int x = 0; x < m_tileSizeX; x++)
@@ -165,6 +173,7 @@ void tileMap::release()
 void tileMap::update()
 {
 	tileDesEneChag();
+	heroStartSys();
 	keyInput();
 
 	if (m_tileDesDaley <= 0)
@@ -207,6 +216,9 @@ void tileMap::update()
 					y,
 					m_tileset[x * m_tileSizeY + y].t_rc.left,
 					m_tileset[x * m_tileSizeY + y].t_rc.top);
+
+				SOUNDMANAGER->stop("Sound/BGM/BGM_UnStart.wav");
+				m_gameState = eGameState::GameGo;
 			}
 
 
@@ -277,15 +289,10 @@ void tileMap::render(HDC hdc)
 
 			//// 타일 상태에 따른 렌더링
 			
-			if (MY_UTIL::screenRender(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top)) continue;
-
-
-
 			if (m_isHeroStart && (m_tileset[x * m_tileSizeY + y].t_enumType == tagTileType::START))
 				heroStart(x * m_tileSizeY + y);
 
-			
-
+			if (MY_UTIL::screenRender(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top)) continue;
 
 			if (m_tileset[x * m_tileSizeY + y].t_enumType == tagTileType::START)
 				m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 0, TILE_SCALE, false);
@@ -383,59 +390,238 @@ void tileMap::keyInput()
 		CAMERA->setCamPosX(CAMERA->getCamPosX() - 3.0f);
 	if (KEYMANAGER->isStayKeyDown('D'))
 		CAMERA->setCamPosX(CAMERA->getCamPosX() + 3.0f);
+}
 
-	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
+void tileMap::heroStartSys()
+{
+	// eGameState::GameReady
+	if (KEYMANAGER->isOnceKeyDown(VK_SPACE) && (m_gameState == eGameState::GameReady))
 	{
+		m_gameState = eGameState::GameGetSet;
 		m_isHeroStart = true;
+		m_HeroStartDaley = 1;
 
-		SOUNDMANAGER->stop("Sound/BGM/BGM_UnStart.wav");
 		SOUNDMANAGER->play("Sound/BGM/BGM_GameStart.wav");
-		//SOUNDMANAGER->play("Sound/BGM/BGM_HeroStart.wav");
 
-		//// 용사 임시 드롭
-		tagHeroData tempHero;
-		tempHero.t_img_U = IMAGEMANAGER->findImage("hero_01_U");
-		tempHero.t_img_UA = IMAGEMANAGER->findImage("hero_01_UA");
-		tempHero.t_img_R = IMAGEMANAGER->findImage("hero_01_R");
-		tempHero.t_img_RA = IMAGEMANAGER->findImage("hero_01_RA");
-		tempHero.t_img_D = IMAGEMANAGER->findImage("hero_01_D");
-		tempHero.t_img_DA = IMAGEMANAGER->findImage("hero_01_DA");
-		tempHero.t_img_L = IMAGEMANAGER->findImage("hero_01_L");
-		tempHero.t_img_LA = IMAGEMANAGER->findImage("hero_01_LA");
-		tempHero.t_img_S = IMAGEMANAGER->findImage("hero_01_S");
-		tempHero.t_img_Dead = IMAGEMANAGER->findImage("hero_01_Dead");
-
-		tempHero.t_isAilve = true;
-		tempHero.t_currHp = 200;
-		tempHero.t_MaxHp = tempHero.t_currHp;
-		tempHero.t_currMana = 300;
-		tempHero.t_MaxMana = tempHero.t_currMana;
-
-		tempHero.t_posX = m_tileset[15 * m_tileSizeY + 0].t_rc.left + CAMERA->getCamPosX();
-		tempHero.t_posY = m_tileset[15 * m_tileSizeY + 0].t_rc.top + CAMERA->getCamPosY();
-		tempHero.t_tilePosX = 15;
-		tempHero.t_tilePosY = 0;
-		tempHero.t_scale = 2.0f;
-		tempHero.t_moveSpeed = 3.0f;
-		tempHero.t_moveDaley = 0;
-		tempHero.t_setTileMapNum = (15 * m_tileSizeY + 0);
-
-		tempHero.t_attType = tagHeroAttType::Near;
-		tempHero.t_atkPoint = 10;
-		tempHero.t_defPoint = 1;
-
-		memset(&tempHero.t_Inven, 0, sizeof(tempHero.t_Inven));
-		memset(&tempHero.t_Skill, 0, sizeof(tempHero.t_Skill));
-		tempHero.t_Skill.t_fireWall = true;
-		//tempHero.t_Skill.t_ArrowMagic = true;
-		tempHero.t_Skill.t_haling = true;
-		tempHero.t_Skill.t_AtkBuff = true;
-		tempHero.t_Skill.t_DefBuff= true;
-		tempHero.t_Skill.t_HasteBuff = true;
-
-		m_pHeroMag->heroDrop(&tempHero);
+		heroSetting(heroSet(eHeroClass::Alchemist));
+		heroSetting(heroSet(eHeroClass::Alchemist));
+		heroSetting(heroSet(eHeroClass::Alchemist));
 	}
 
+	// eGameState::GameGetSet
+
+	// eGameState::GameGo
+	heroListStart(); 
+}
+
+
+void tileMap::heroListStart()
+{
+	if (m_gameState != eGameState::GameGo) return;
+	if(!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_HeroStart.wav"))
+		SOUNDMANAGER->play("Sound/BGM/BGM_HeroStart.wav");
+
+	if (m_HeroStartDaley > 0)
+		m_HeroStartDaley--;
+
+	if (m_HeroStartDaley <= 0)
+	{
+		for (m_iterHeroList = m_vecHeroList.begin(); m_iterHeroList != m_vecHeroList.end(); m_iterHeroList++)
+		{
+			if ((*m_iterHeroList) == nullptr) continue;
+			m_pHeroMag->heroDrop((*m_iterHeroList));
+			delete (*m_iterHeroList);
+			(*m_iterHeroList) = nullptr;
+			m_HeroStartDaley = HERO_START_DALEY;
+			return;
+		}
+	}
+}
+
+
+tagHeroData * tileMap::heroSet(int heroClass)
+{
+	tagHeroData * tempHero = new tagHeroData;
+	// 기본 세팅
+	tempHero->t_isAilve = true;
+	memset(&tempHero->t_Inven, 0, sizeof(tempHero->t_Inven));
+	memset(&tempHero->t_Skill, 0, sizeof(tempHero->t_Skill));
+	tempHero->t_posX = m_tileset[15 * m_tileSizeY + 0].t_rc.left + CAMERA->getCamPosX();
+	tempHero->t_posY = m_tileset[15 * m_tileSizeY + 0].t_rc.top + CAMERA->getCamPosY();
+	tempHero->t_tilePosX = 15;
+	tempHero->t_tilePosY = 0;
+	tempHero->t_scale = 2.0f;
+	tempHero->t_setTileMapNum = (15 * m_tileSizeY + 0);
+	tempHero->t_moveDaley = 0;
+	tempHero->t_enumType = heroClass;
+
+	switch (heroClass)
+	{
+	case eHeroClass::hero_0:
+		tempHero->t_img_U = IMAGEMANAGER->findImage("hero_U");
+		tempHero->t_img_UA = IMAGEMANAGER->findImage("hero_UA");
+		tempHero->t_img_R = IMAGEMANAGER->findImage("hero_R");
+		tempHero->t_img_RA = IMAGEMANAGER->findImage("hero_RA");
+		tempHero->t_img_D = IMAGEMANAGER->findImage("hero_D");
+		tempHero->t_img_DA = IMAGEMANAGER->findImage("hero_DA");
+		tempHero->t_img_L = IMAGEMANAGER->findImage("hero_L");
+		tempHero->t_img_LA = IMAGEMANAGER->findImage("hero_LA");
+		tempHero->t_img_S = IMAGEMANAGER->findImage("hero_S");
+		tempHero->t_img_Dead = IMAGEMANAGER->findImage("hero_Dead");
+
+		tempHero->t_currHp = BaseHp;
+		tempHero->t_currMana = BaseMana;
+		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_attType = tagHeroAttType::Near;
+		tempHero->t_atkPoint = BaseAtkPoint;
+		tempHero->t_defPoint = BaseDefPoint;
+
+		//tempHero->t_Skill.t_fireWall = true;
+		//tempHero->t_Skill.t_ArrowMagic = true;
+		//tempHero->t_Skill.t_haling = true;
+		//tempHero->t_Skill.t_AtkBuff = true;
+		//tempHero->t_Skill.t_DefBuff = true;
+		//tempHero->t_Skill.t_HasteBuff = true;
+
+		break;
+	case eHeroClass::Alchemist:
+		tempHero->t_img_U = IMAGEMANAGER->findImage("Alchemist_U");
+		tempHero->t_img_UA = IMAGEMANAGER->findImage("Alchemist_UA");
+		tempHero->t_img_R = IMAGEMANAGER->findImage("Alchemist_R");
+		tempHero->t_img_RA = IMAGEMANAGER->findImage("Alchemist_RA");
+		tempHero->t_img_D = IMAGEMANAGER->findImage("Alchemist_D");
+		tempHero->t_img_DA = IMAGEMANAGER->findImage("Alchemist_DA");
+		tempHero->t_img_L = IMAGEMANAGER->findImage("Alchemist_L");
+		tempHero->t_img_LA = IMAGEMANAGER->findImage("Alchemist_LA");
+		tempHero->t_img_S = IMAGEMANAGER->findImage("Alchemist_S");
+		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Alchemist_Dead");
+
+		tempHero->t_currHp = BaseHp;
+		tempHero->t_currMana = BaseMana + 1000;
+		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_attType = tagHeroAttType::Near;
+		tempHero->t_atkPoint = BaseAtkPoint;
+		tempHero->t_defPoint = BaseDefPoint;
+
+		tempHero->t_Skill.t_fireWall = true;
+		tempHero->t_Skill.t_ArrowMagic = true;
+		tempHero->t_Skill.t_haling = true;
+		tempHero->t_Skill.t_AtkBuff = true;
+		tempHero->t_Skill.t_DefBuff = true;
+		tempHero->t_Skill.t_HasteBuff = true;
+
+		break;
+	case eHeroClass::Bard:
+		tempHero->t_img_U = IMAGEMANAGER->findImage("Bard_U");
+		tempHero->t_img_UA = IMAGEMANAGER->findImage("Bard_UA");
+		tempHero->t_img_R = IMAGEMANAGER->findImage("Bard_R");
+		tempHero->t_img_RA = IMAGEMANAGER->findImage("Bard_RA");
+		tempHero->t_img_D = IMAGEMANAGER->findImage("Bard_D");
+		tempHero->t_img_DA = IMAGEMANAGER->findImage("Bard_DA");
+		tempHero->t_img_L = IMAGEMANAGER->findImage("Bard_L");
+		tempHero->t_img_LA = IMAGEMANAGER->findImage("Bard_LA");
+		tempHero->t_img_S = IMAGEMANAGER->findImage("Bard_S");
+		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Bard_Dead");
+
+		tempHero->t_currHp = BaseHp;
+		tempHero->t_currMana = BaseMana;
+		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_attType = tagHeroAttType::Near;
+		tempHero->t_atkPoint = BaseAtkPoint;
+		tempHero->t_defPoint = BaseDefPoint;
+
+		//tempHero->t_Skill.t_fireWall = true;
+		//tempHero->t_Skill.t_ArrowMagic = true;
+		//tempHero->t_Skill.t_haling = true;
+		//tempHero->t_Skill.t_AtkBuff = true;
+		//tempHero->t_Skill.t_DefBuff = true;
+		//tempHero->t_Skill.t_HasteBuff = true;
+		break;
+	case eHeroClass::Theif:
+		tempHero->t_img_U = IMAGEMANAGER->findImage("Theif_U");
+		tempHero->t_img_UA = IMAGEMANAGER->findImage("Theif_UA");
+		tempHero->t_img_R = IMAGEMANAGER->findImage("Theif_R");
+		tempHero->t_img_RA = IMAGEMANAGER->findImage("Theif_RA");
+		tempHero->t_img_D = IMAGEMANAGER->findImage("Theif_D");
+		tempHero->t_img_DA = IMAGEMANAGER->findImage("Theif_DA");
+		tempHero->t_img_L = IMAGEMANAGER->findImage("Theif_L");
+		tempHero->t_img_LA = IMAGEMANAGER->findImage("Theif_LA");
+		tempHero->t_img_S = IMAGEMANAGER->findImage("Theif_S");
+		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Theif_Dead");
+
+		tempHero->t_currHp = BaseHp;
+		tempHero->t_currMana = BaseMana;
+		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_attType = tagHeroAttType::Near;
+		tempHero->t_atkPoint = BaseAtkPoint;
+		tempHero->t_defPoint = BaseDefPoint;
+
+		//tempHero->t_Skill.t_fireWall = true;
+		//tempHero->t_Skill.t_ArrowMagic = true;
+		//tempHero->t_Skill.t_haling = true;
+		//tempHero->t_Skill.t_AtkBuff = true;
+		//tempHero->t_Skill.t_DefBuff = true;
+		//tempHero->t_Skill.t_HasteBuff = true;
+		break;
+	case eHeroClass::Warriors:
+		tempHero->t_img_U = IMAGEMANAGER->findImage("Warriors_U");
+		tempHero->t_img_UA = IMAGEMANAGER->findImage("Warriors_UA");
+		tempHero->t_img_R = IMAGEMANAGER->findImage("Warriors_R");
+		tempHero->t_img_RA = IMAGEMANAGER->findImage("Warriors_RA");
+		tempHero->t_img_D = IMAGEMANAGER->findImage("Warriors_D");
+		tempHero->t_img_DA = IMAGEMANAGER->findImage("Warriors_DA");
+		tempHero->t_img_L = IMAGEMANAGER->findImage("Warriors_L");
+		tempHero->t_img_LA = IMAGEMANAGER->findImage("Warriors_LA");
+		tempHero->t_img_S = IMAGEMANAGER->findImage("Warriors_S");
+		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Warriors_Dead");
+
+		tempHero->t_currHp = BaseHp;
+		tempHero->t_currMana = BaseMana;
+		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_attType = tagHeroAttType::Near;
+		tempHero->t_atkPoint = BaseAtkPoint;
+		tempHero->t_defPoint = BaseDefPoint;
+
+		//tempHero->t_Skill.t_fireWall = true;
+		//tempHero->t_Skill.t_ArrowMagic = true;
+		//tempHero->t_Skill.t_haling = true;
+		//tempHero->t_Skill.t_AtkBuff = true;
+		//tempHero->t_Skill.t_DefBuff = true;
+		//tempHero->t_Skill.t_HasteBuff = true;
+		break;
+	case eHeroClass::Wizard:
+		tempHero->t_img_U = IMAGEMANAGER->findImage("Wizard_U");
+		tempHero->t_img_UA = IMAGEMANAGER->findImage("Wizard_UA");
+		tempHero->t_img_R = IMAGEMANAGER->findImage("Wizard_R");
+		tempHero->t_img_RA = IMAGEMANAGER->findImage("Wizard_RA");
+		tempHero->t_img_D = IMAGEMANAGER->findImage("Wizard_D");
+		tempHero->t_img_DA = IMAGEMANAGER->findImage("Wizard_DA");
+		tempHero->t_img_L = IMAGEMANAGER->findImage("Wizard_L");
+		tempHero->t_img_LA = IMAGEMANAGER->findImage("Wizard_LA");
+		tempHero->t_img_S = IMAGEMANAGER->findImage("Wizard_S");
+		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Wizard_Dead");
+
+		tempHero->t_currHp = BaseHp;
+		tempHero->t_currMana = BaseMana;
+		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_attType = tagHeroAttType::Near;
+		tempHero->t_atkPoint = BaseAtkPoint;
+		tempHero->t_defPoint = BaseDefPoint;
+
+		//tempHero->t_Skill.t_fireWall = true;
+		//tempHero->t_Skill.t_ArrowMagic = true;
+		//tempHero->t_Skill.t_haling = true;
+		//tempHero->t_Skill.t_AtkBuff = true;
+		//tempHero->t_Skill.t_DefBuff = true;
+		//tempHero->t_Skill.t_HasteBuff = true;
+		break;
+	}
+
+	tempHero->t_MaxHp = tempHero->t_currHp;
+	tempHero->t_MaxMana = tempHero->t_currMana;
+
+	return tempHero;
+	
 }
 
 void tileMap::tileSetTxt(int tileType, int tileNum)
@@ -1073,6 +1259,16 @@ void tileMap::heroStart(int tileValue)
 		{
 				m_tileset[x * m_tileSizeY + y].t_isShaking = true;
 		}
+	}
+}
+
+void tileMap::heroSetting(tagHeroData * heroData)
+{
+	for (m_iterHeroList = m_vecHeroList.begin(); m_iterHeroList != m_vecHeroList.end(); m_iterHeroList++)
+	{
+		if ((*m_iterHeroList) != nullptr) continue;
+		(*m_iterHeroList) = heroData;
+		break;
 	}
 }
 

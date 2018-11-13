@@ -14,55 +14,24 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	m_pEnemyMag = pEnemyMag;
 	m_pBulletMag = pBulletMag;
 
+	m_tEnemyData = *enemyInfo;
 	m_tEnemyData.t_pEnemy = this;
 
 	m_tEnemyData.t_isDead = false;
-	m_tEnemyData.t_isAilve = enemyInfo->t_isAilve;
-	m_tEnemyData.t_posX = enemyInfo->t_posX;
-	m_tEnemyData.t_posY = enemyInfo->t_posY;
-	m_tEnemyData.t_tilePosX = enemyInfo->t_tilePosX;
-	m_tEnemyData.t_tilePosY = enemyInfo->t_tilePosY;
-
 	m_tEnemyData.t_moveEndX = m_tEnemyData.t_posX;
 	m_tEnemyData.t_moveEndY = m_tEnemyData.t_posY;
-
-	m_tEnemyData.t_img_R = enemyInfo->t_img_R;
-	m_tEnemyData.t_img_L = enemyInfo->t_img_L;
-	m_tEnemyData.t_img_RA = enemyInfo->t_img_RA;
-	m_tEnemyData.t_img_LA = enemyInfo->t_img_LA;
-	m_tEnemyData.t_img_Dead = enemyInfo->t_img_Dead;
-
-	m_tEnemyData.t_img = enemyInfo->t_img_L;
-	m_tEnemyData.t_scale = enemyInfo->t_scale;
 	m_tEnemyData.t_alphaValue = enemyInfo->t_alphaValue = 255;
+	m_tEnemyData.t_img = m_tEnemyData.t_img_L;
 	m_ani.init(m_tEnemyData.t_img->getWidth(), m_tEnemyData.t_img->getHeight(), m_tEnemyData.t_img->getFrameWidth(), m_tEnemyData.t_img->getFrameHeight());
 	m_ani.setDefPlayFrame(false, false);
 	m_ani.setFPS(15);
 
 	m_tEnemyData.t_damgePoint = 0;
-	m_tEnemyData.t_currHp = enemyInfo->t_currHp;
-	m_tEnemyData.t_MaxHp = enemyInfo->t_MaxHp;
-	m_tEnemyData.t_currDef = enemyInfo->t_currDef;
-
-	m_tEnemyData.t_moveSpeed = enemyInfo->t_moveSpeed;
 	m_tEnemyData.t_moveMaxSpeed = m_tEnemyData.t_moveSpeed;
-	m_tEnemyData.t_moveDaley = enemyInfo->t_moveDaley;
-
-	m_tEnemyData.t_atkPoint = enemyInfo->t_atkPoint;
-	m_tEnemyData.t_attType = enemyInfo->t_attType;
-	m_tEnemyData.t_atkDaley = enemyInfo->t_atkDaley;
-
-	m_tEnemyData.t_defPoint = enemyInfo->t_defPoint;
-
 	m_tEnemyData.t_DieCountDaley = ENEMY_DIE_DALEY;
 	m_tEnemyData.t_setTileMapNum = enemyInfo->t_setTileMapNum;
-
 	m_tEnemyData.t_EatValue = 0;
-	m_tEnemyData.t_FoodChainLv = enemyInfo->t_FoodChainLv;
-	m_tEnemyData.t_currMana = enemyInfo->t_currMana;
-
 	m_tEnemyData.t_rc = RectMakeCenter(m_tEnemyData.t_posX, m_tEnemyData.t_posY, m_tEnemyData.t_img->getFrameWidth(), m_tEnemyData.t_img->getFrameHeight());
-	m_tEnemyData.t_enumType = enemyInfo->t_enumType;
 
 	m_moveDaley = m_tEnemyData.t_moveDaley;
 	m_aStarDepValue = 0;

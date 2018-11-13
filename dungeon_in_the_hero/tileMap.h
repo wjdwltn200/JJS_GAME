@@ -28,6 +28,14 @@
 
 #define TILE_DES_SET_COUNT 10
 
+#define HERO_START_DALEY 120
+#define BaseMoveSpeed 1.0f
+#define BaseHp 100
+#define BaseMana 100
+#define BaseAtkPoint 5
+#define BaseDefPoint 0
+
+
 class uiPopup;
 class uiManager;
 class enemyManager;
@@ -50,6 +58,11 @@ private:
 	{
 		tGround, tWall, tBrick, tFloor, tNoEnemy, tSlime, tBug, tLizardman, tLili, tMamon, tDemon, tLady
 	};
+	enum eHeroClass
+	{
+		hero_0, Warriors, Wizard, Alchemist, Theif, Bard
+	};
+
 
 	SYNTHESIZE(TileInfo, m_tileset[2048], tile);
 	SYNTHESIZE(int, m_tileSizeMaxX, tileMaxValueX);
@@ -70,9 +83,12 @@ private:
 	overlord * m_pOverlord;
 	tagItemData m_tItemInfo;
 
-	list<hero*>	m_vecHeroList;
-	list<hero*>::iterator m_iterHeroList;
+	list<tagHeroData*>	m_vecHeroList;
+	list<tagHeroData*>::iterator m_iterHeroList;
 	bool m_isHeroStart;
+	int m_HeroStartDaley = HERO_START_DALEY;
+
+	SYNTHESIZE(int, m_gameState, GameState);
 
 public:
 	HRESULT init(int tileX, int tileY,
@@ -84,6 +100,9 @@ public:
 	void render(HDC hdc);
 
 	void keyInput();
+	void heroStartSys();
+	void heroListStart();
+	tagHeroData * heroSet(int heroClass);
 	void tileSetTxt(int tileType, int tileNum);
 	tagItemData dropItemSet(int itemType);
 	void monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY);
@@ -91,10 +110,8 @@ public:
 	void tierSet(int tileX, int tileY);
 
 	void tileDesSys(int tileValue, int tileX, int tileY);
-
 	void tileDesSe();
 	void tileItemGet(int tileValue);
-
 	void tileDesEneChag();
 
 	void enemyArrNullptrList(int tileMapValue, tagEnemyData * enemyData);
@@ -114,9 +131,8 @@ public:
 	bool DemonTileCheck(int tileX, int tileY);
 	bool LadyTileCheck(int tileX, int tileY);
 
-
 	void heroStart(int tileValue);
-
+	void heroSetting(tagHeroData * heroData);
 	TileInfo * getTileSetPoint() { return m_tileset; }
 
 	tileMap();

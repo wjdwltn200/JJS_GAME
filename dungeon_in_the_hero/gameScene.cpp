@@ -20,6 +20,8 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/getGam.wav", false, false);
 
 	SOUNDMANAGER->addSound("Sound/SE/HeroOpen_0.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Overlord_0.wav", false, false);
+
 
 	// 타일 파괴 SE
 	SOUNDMANAGER->addSound("Sound/SE/TileDes_0.wav", false, false);
@@ -46,8 +48,6 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/Lizardman.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Lili.wav", false, false);
 
-	//SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.3f);
-
 
 	//// EffImgSet
 	EFFMANAGER->addEffect("hero_Start", "image/inGameImg/EFF/hero_Start.bmp", 512, 384, 512 / 4, 384 / 3, 15, 100, 0.0f, true);
@@ -60,6 +60,7 @@ HRESULT gameScene::init()
 	EFFMANAGER->addEffect("AtkBuff_EFF_0", "image/inGameImg/EFF/AtkBuff_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
 	EFFMANAGER->addEffect("AtkBuff_EFF_1", "image/inGameImg/EFF/AtkBuff_EFF_1.bmp", 135, 27, 135 / 5, 27 / 1, 10, 10, 0.0f, true);
 	EFFMANAGER->addEffect("DefBuff_EFF_0", "image/inGameImg/EFF/DefBuff_EFF_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
+	EFFMANAGER->addEffect("DefBuff_EFF_1", "image/inGameImg/EFF/DefBuff_EFF_1.bmp", 462, 66, 462/ 7, 66 / 1, 10, 10, 0.0f, true);
 	EFFMANAGER->addEffect("Haste_Eff_0", "image/inGameImg/EFF/Haste_Eff_0.bmp", 507, 56, 507 / 13, 56 / 1, 10, 10, 0.0f, true);
 
 	EFFMANAGER->addEffect("ArrowMagic_EFF_0", "image/inGameImg/EFF/ArrowMagic_EFF_0.bmp", 319, 29, 319/ 11, 29 / 1, 30, 10, 0.0f, true);
@@ -68,11 +69,6 @@ HRESULT gameScene::init()
 	EFFMANAGER->addEffect("FireWall_EFF_3", "image/inGameImg/EFF/FireWall_EFF_2.bmp", 102, 100, 102 / 6, 100 / 1, 15, 10, 0.0f, true);
 	EFFMANAGER->addEffect("FireWall_EFF_3", "image/inGameImg/EFF/FireWall_EFF_3.bmp", 462, 97, 462 / 7, 97 / 1, 10, 30, 0.0f, true);
 	EFFMANAGER->addEffect("FireWall_EFF_4", "image/inGameImg/EFF/FireWall_EFF_4.bmp", 528, 66, 528 / 8, 66 / 1, 10, 30, 0.0f, true);
-
-
-
-
-
 
 	// 노란색
 	EFFMANAGER->addEffect("EXP_EFF_1", "image/inGameImg/EFF/EXP_EFF_1.bmp", 238, 34, 238 / 7, 34 / 1, 15, 5, 0.0f, true);
@@ -87,9 +83,12 @@ HRESULT gameScene::init()
 
 
 	EFFMANAGER->addEffect("Enemy_Eat", "image/inGameImg/EFF/EAT_EFF.bmp", 238, 34, 238 / 7, 34 / 1, 30, 10, 0.0f, true);
-	//EFFMANAGER->addEffect("Enemy_Eat_R", "image/inGameImg/EFF/EAT_EFF_R.bmp", 238, 34, 238 / 7, 34 / 1, 30, 10, 0.0f, true);
 
 	//// UiImgSet
+	IMAGEMANAGER->addImage("TileDesEne", "image/inGameImg/UI/TileDesEne.bmp", 93, 37, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("EnemyPower", "image/inGameImg/UI/EnemyPower.bmp", 112, 42, true, RGB(255, 0, 255));
+
+
 	IMAGEMANAGER->addImage("Title_Chang", "image/UI_Img/Title_Chang.bmp", WINSIZEX, WINSIZEY, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("mousePoint", "image/inGameImg/UI/MousePoint.bmp", 112, 49, 2, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("NumberPont", "image/inGameImg/UI/NumberPont.bmp", 80, 60, 10, 6, true, RGB(255, 0, 255));
@@ -106,9 +105,6 @@ HRESULT gameScene::init()
 	//// BulletImgSet
 	IMAGEMANAGER->addImage("Bullet_0", "image/inGameImg/EFF/bullet_0.bmp", 104, 26, 4, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("Bullet_1", "image/inGameImg/EFF/bullet_1.bmp", 108, 27, 4, 1, true, RGB(255, 0, 255));
-
-
-
 
 	//마왕 공주
 	IMAGEMANAGER->addImage("Overlord", "image/inGameImg/ENEMY/Overlord_0.bmp", 72, 25, 4, 1, true, RGB(255, 0, 255));
@@ -180,57 +176,83 @@ HRESULT gameScene::init()
 
 	//// heroImgSet
 
-	// hero_0
-	IMAGEMANAGER->addImage("hero_00_U", "image/inGameImg/HERO/hero_0/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_R", "image/inGameImg/HERO/hero_0/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_D", "image/inGameImg/HERO/hero_0/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_L", "image/inGameImg/HERO/hero_0/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_S", "image/inGameImg/HERO/hero_0/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_Dead", "image/inGameImg/HERO/hero_0/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	// hero
+	IMAGEMANAGER->addImage("hero_U", "image/inGameImg/HERO/hero/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_R", "image/inGameImg/HERO/hero/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_D", "image/inGameImg/HERO/hero/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_L", "image/inGameImg/HERO/hero/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_S", "image/inGameImg/HERO/hero/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_Dead", "image/inGameImg/HERO/hero/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
-	IMAGEMANAGER->addImage("hero_00_UA", "image/inGameImg/HERO/hero_0/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_RA", "image/inGameImg/HERO/hero_0/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_DA", "image/inGameImg/HERO/hero_0/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_00_LA", "image/inGameImg/HERO/hero_0/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_UA", "image/inGameImg/HERO/hero/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_RA", "image/inGameImg/HERO/hero/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_DA", "image/inGameImg/HERO/hero/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("hero_LA", "image/inGameImg/HERO/hero/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
-	// hero_1
-	IMAGEMANAGER->addImage("hero_01_U", "image/inGameImg/HERO/hero_1/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_R", "image/inGameImg/HERO/hero_1/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_D", "image/inGameImg/HERO/hero_1/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_L", "image/inGameImg/HERO/hero_1/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_S", "image/inGameImg/HERO/hero_1/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_Dead", "image/inGameImg/HERO/hero_1/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	// Warriors
+	IMAGEMANAGER->addImage("Warriors_U", "image/inGameImg/HERO/Warriors/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_R", "image/inGameImg/HERO/Warriors/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_D", "image/inGameImg/HERO/Warriors/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_L", "image/inGameImg/HERO/Warriors/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_S", "image/inGameImg/HERO/Warriors/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_Dead", "image/inGameImg/HERO/Warriors/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
-	IMAGEMANAGER->addImage("hero_01_UA", "image/inGameImg/HERO/hero_1/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_RA", "image/inGameImg/HERO/hero_1/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_DA", "image/inGameImg/HERO/hero_1/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_01_LA", "image/inGameImg/HERO/hero_1/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_UA", "image/inGameImg/HERO/Warriors/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_RA", "image/inGameImg/HERO/Warriors/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_DA", "image/inGameImg/HERO/Warriors/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Warriors_LA", "image/inGameImg/HERO/Warriors/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
-	// hero_2
-	IMAGEMANAGER->addImage("hero_02_U", "image/inGameImg/HERO/hero_2/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_R", "image/inGameImg/HERO/hero_2/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_D", "image/inGameImg/HERO/hero_2/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_L", "image/inGameImg/HERO/hero_2/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_S", "image/inGameImg/HERO/hero_2/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_Dead", "image/inGameImg/HERO/hero_2/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	// Wizard
+	IMAGEMANAGER->addImage("Wizard_U", "image/inGameImg/HERO/Wizard/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_R", "image/inGameImg/HERO/Wizard/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_D", "image/inGameImg/HERO/Wizard/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_L", "image/inGameImg/HERO/Wizard/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_S", "image/inGameImg/HERO/Wizard/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_Dead", "image/inGameImg/HERO/Wizard/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
-	IMAGEMANAGER->addImage("hero_02_UA", "image/inGameImg/HERO/hero_2/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_RA", "image/inGameImg/HERO/hero_2/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_DA", "image/inGameImg/HERO/hero_2/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_02_LA", "image/inGameImg/HERO/hero_2/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_UA", "image/inGameImg/HERO/Wizard/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_RA", "image/inGameImg/HERO/Wizard/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_DA", "image/inGameImg/HERO/Wizard/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Wizard_LA", "image/inGameImg/HERO/Wizard/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
-	// hero_3
-	IMAGEMANAGER->addImage("hero_03_U", "image/inGameImg/HERO/hero_3/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_R", "image/inGameImg/HERO/hero_3/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_D", "image/inGameImg/HERO/hero_3/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_L", "image/inGameImg/HERO/hero_3/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_S", "image/inGameImg/HERO/hero_3/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_Dead", "image/inGameImg/HERO/hero_3/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	// Theif
+	IMAGEMANAGER->addImage("Theif_U", "image/inGameImg/HERO/Theif/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_R", "image/inGameImg/HERO/Theif/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_D", "image/inGameImg/HERO/Theif/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_L", "image/inGameImg/HERO/Theif/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_S", "image/inGameImg/HERO/Theif/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_Dead", "image/inGameImg/HERO/Theif/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
-	IMAGEMANAGER->addImage("hero_03_UA", "image/inGameImg/HERO/hero_3/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_RA", "image/inGameImg/HERO/hero_3/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_DA", "image/inGameImg/HERO/hero_3/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("hero_03_LA", "image/inGameImg/HERO/hero_3/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_UA", "image/inGameImg/HERO/Theif/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_RA", "image/inGameImg/HERO/Theif/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_DA", "image/inGameImg/HERO/Theif/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Theif_LA", "image/inGameImg/HERO/Theif/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+
+	// Bard
+	IMAGEMANAGER->addImage("Bard_U", "image/inGameImg/HERO/Bard/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_R", "image/inGameImg/HERO/Bard/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_D", "image/inGameImg/HERO/Bard/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_L", "image/inGameImg/HERO/Bard/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_S", "image/inGameImg/HERO/Bard/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_Dead", "image/inGameImg/HERO/Bard/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+
+	IMAGEMANAGER->addImage("Bard_UA", "image/inGameImg/HERO/Bard/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_RA", "image/inGameImg/HERO/Bard/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_DA", "image/inGameImg/HERO/Bard/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Bard_LA", "image/inGameImg/HERO/Bard/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+
+	// Bard
+	IMAGEMANAGER->addImage("Alchemist_U", "image/inGameImg/HERO/Alchemist/UP.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_R", "image/inGameImg/HERO/Alchemist/RIGHT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_D", "image/inGameImg/HERO/Alchemist/DOWN.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_L", "image/inGameImg/HERO/Alchemist/LEFT.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_S", "image/inGameImg/HERO/Alchemist/Skill.bmp", 40, 20, 2, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_Dead", "image/inGameImg/HERO/Alchemist/Dead.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+
+	IMAGEMANAGER->addImage("Alchemist_UA", "image/inGameImg/HERO/Alchemist/UP_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_RA", "image/inGameImg/HERO/Alchemist/RIGHT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_DA", "image/inGameImg/HERO/Alchemist/DOWN_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Alchemist_LA", "image/inGameImg/HERO/Alchemist/LEFT_ATK.bmp", 80, 20, 4, 1, true, RGB(255, 0, 255));
 
 
 	//// player
@@ -269,7 +291,8 @@ HRESULT gameScene::init()
 	m_tPlayer = new PlayerInfo;
 	m_tPlayer->t_TileDesEne = 100;
 	m_currTileDesEne = m_tPlayer->t_TileDesEne;
-	m_tileDesEneScale = 4.0f;
+	m_tileDesEneScale = TILE_DES_ENE_SET_SCALE;
+	m_EnemyPowerValueScale = ENEMY_POWER_VALUE;
 
 
 	m_MapTile->init(32, 64, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag, m_pOverlord);
@@ -356,32 +379,35 @@ void gameScene::screenUi(HDC hdc)
 
 void gameScene::RD_UI(HDC hdc)
 {
-
-	//// 채굴 파워 UI
-	//if (m_tPlayer->t_TileDesEne <= 10)
-	//{
-	//	MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, 4, WINSIZEX - 150.0f, WINSIZEY - 120.0f, 1, 4.0f);
-	//}
-	//else
-	//{
-		//MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, 4, WINSIZEX - 150.0f, WINSIZEY - 120.0f, 2, 4.0f);
-	//}
-
-	//IMAGEMANAGER->findImage("DesPowerTxt")->frameRender(hdc, 100, 100, 1, 1, 0.5f);
 	// 채굴 파워
+	IMAGEMANAGER->findImage("TileDesEne")->render(hdc, WINSIZEX - 220.0f, WINSIZEY - 178.0f);
 	MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, 4, WINSIZEX - 150.0f, WINSIZEY - 120.0f, 2, m_tileDesEneScale);
-	if (m_tileDesEneScale > 4.0f)
-	{
+	if (m_tileDesEneScale > TILE_DES_ENE_SET_SCALE)
 		m_tileDesEneScale -= 0.1f;
-	}
 
 	if (m_currTileDesEne != m_tPlayer->t_TileDesEne)
 	{
 		m_currTileDesEne = m_tPlayer->t_TileDesEne;
-		m_tileDesEneScale = 5.0f;
+		m_tileDesEneScale = (TILE_DES_ENE_SET_SCALE + 1.0f);
 	}
+
+
 	// 군사력
-	MY_UTIL::NumberPont(hdc, m_pEnemyMag->getEnemyPower(), 5, WINSIZEX - 180.0f, WINSIZEY - 50.0f, 0, 4.0f);
+	IMAGEMANAGER->findImage("EnemyPower")->render(hdc, WINSIZEX - 300.0f, WINSIZEY - 120.0f);
+	if (m_EnemyPowerValueScale > ENEMY_POWER_VALUE)
+	{
+		m_EnemyPowerValueScale -= 0.1f;
+		if (m_EnemyPowerValueScale < ENEMY_POWER_VALUE)
+			m_EnemyPowerValueScale = ENEMY_POWER_VALUE;
+	}
+
+	MY_UTIL::NumberPont(hdc, m_pEnemyMag->getEnemyPower(), 5, WINSIZEX - 215.0f, WINSIZEY - 50.0f, 5, m_EnemyPowerValueScale);
+	if (m_currEnemyPowerValue != m_pEnemyMag->getEnemyPower())
+	{
+		m_currEnemyPowerValue = m_pEnemyMag->getEnemyPower();
+		m_EnemyPowerValueScale = (ENEMY_POWER_VALUE + 1.0f);
+	}
+
 }
 
 void gameScene::MouseCur(HDC hdc)

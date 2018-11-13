@@ -37,8 +37,16 @@ void overlord::release()
 
 void overlord::update()
 {
+
+	if (!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_GameStart.wav") &&
+		(m_pTileMap->getGameState() == eGameState::GameGetSet) &&
+		!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_UnStart.wav"))
+		SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.5f);
+
 	RECT tempRc;
-	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON) &&
+	if (!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_GameStart.wav") &&
+		(m_pTileMap->getGameState() == eGameState::GameGetSet) &&
+		KEYMANAGER->isOnceKeyDown(VK_RBUTTON) &&
 		(IntersectRect(&tempRc, &m_tOverlord.t_rc, &g_MouseRc)))
 	{
 		m_isSetting = true;

@@ -38,6 +38,8 @@ void enemyManager::release()
 
 void enemyManager::update()
 {
+	if ((m_pTileMap->getGameState() == eGameState::GameGetSet)) return;
+
 	int tempIsAlive = 0;
 	m_maxTileY = 0;
 	m_enemyPower = 0;

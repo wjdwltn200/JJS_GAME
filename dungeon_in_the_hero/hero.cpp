@@ -36,6 +36,9 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * p
 	m_isMoveAct = false;
 	m_eMoveState = eMoveState::DOWN;
 
+	// 최초 마왕 위치 설정
+	m_aStarDaley = ASTAR_DALEY;
+	m_aStarValue = ASTAR_VALUE;
 	aStarFind(m_pAStartNode->Create(m_pOverlord->gettOverlord().t_tilePosX, m_pOverlord->gettOverlord().t_tilePosY), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
 	return S_OK;
 }
@@ -48,6 +51,7 @@ void hero::update()
 {
 	if (!m_tHeroData.t_isAilve) return;
 
+	aStarSys();
 	skill_count();
 	damge();
 	moveSys();
@@ -120,6 +124,16 @@ void hero::render(HDC hdc)
 	}
 }
 
+void hero::aStarSys()
+{
+	m_aStarDaley--;
+	if (m_aStarDaley > 0) return;
+
+	m_aStarDaley = ASTAR_DALEY;
+	m_aStarValue = RANDOM->getFromIntTo(3, 6);
+	aStarFind(m_pAStartNode->Create(m_pOverlord->gettOverlord().t_tilePosX, m_pOverlord->gettOverlord().t_tilePosY), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
+}
+
 int hero::aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode)
 {
 	int tempTileX = m_tHeroData.t_tilePosX;
@@ -159,6 +173,8 @@ int hero::aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode)
 
 void hero::aStarRoute()
 {
+	if (m_vecRoute.size() == 0) return;
+
 	if (m_vecRoute.size() != 0)
 	{
 		aStarNode * tempStar;
@@ -172,13 +188,12 @@ void hero::aStarRoute()
 			if (tempStar->getDepth() == 0)
 				break;
 		}
-
 	}
 }
 
 bool hero::aStarFind(aStarNode * endXY, aStarNode * node)
 {
-	Delete(true, true);
+	Delete(true, true, true);
 
 	// 임시 aStar 생성
 	aStarNode * tempNode = node->Clone();
@@ -228,7 +243,7 @@ bool hero::aStarFind(aStarNode * endXY, aStarNode * node)
 	}
 	 
 	// 못찾았을 경우
-	Delete(true, true);
+	Delete(true, true, true);
 
 	return false;
 }
@@ -677,9 +692,16 @@ void hero::movePattern()
 		switch (m_tHeroData.t_enumType)
 		{
 		default: // 패턴이 없을 경우 랜덤 이동
-			aStarMoveSys();
-			//m_eMoveState = RANDOM->getFromIntTo(0, 3);
-			//moveRectCheck(m_eMoveState);
+			if (m_aStarValue > 0)
+			{
+				m_aStarValue--;
+				aStarMoveSys();
+			}
+			else
+			{
+				m_eMoveState = RANDOM->getFromIntTo(0, 3);
+				moveRectCheck(m_eMoveState);
+			}
 			m_isMoveAct = true;
 			break;
 		}
@@ -1114,7 +1136,7 @@ bool hero::skill_DefBuff()
 		m_tHeroData.t_defPoint += HERO_SKILL_DEFBUFF_POINT;
 
 		SOUNDMANAGER->play("Sound/SE/Haling_0.wav");
-		EFFMANAGER->play("DefBuff_EFF_0",
+		EFFMANAGER->play("DefBuff_EFF_1",
 			m_tHeroData.t_posX - CAMERA->getCamPosX() + (TILE_SIZE / 2),
 			m_tHeroData.t_posY - CAMERA->getCamPosY() + (TILE_SIZE / 2));
 

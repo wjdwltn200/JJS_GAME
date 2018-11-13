@@ -8,6 +8,11 @@
 
 #define NUMBER_SCALE_VALUE 120
 
+#define TILE_DES_ENE_SET_SCALE 4.0f
+
+#define ENEMY_POWER_VALUE 5.0f
+
+
 class bulletManager;
 class overlord;
 
@@ -29,6 +34,10 @@ private:
 
 	int m_currTileDesEne;
 	float m_tileDesEneScale;
+
+	int m_currEnemyPowerValue;
+	float m_EnemyPowerValueScale;
+
 
 	bool m_isScreenChange;
 	int m_screenChangeValue;
