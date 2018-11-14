@@ -17,7 +17,7 @@ public:
 	void update();
 	void render(HDC hdc);
 
-	void addHitTxt(float dam, float posX, float posY);
+	void addTxtBox(image * img, string txt, bool isMove, int txtCol);
 	uiPopup * addPopup(image * img, float posX, float posY, int DesDaley);
 
 	uiManager();

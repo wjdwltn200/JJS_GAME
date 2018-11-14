@@ -19,7 +19,7 @@ private:
 	gameScene * m_pinGameScene;
 	titleScene * m_pTitleScene;
 
-	
+	image * m_screenCamImg;
 
 public:
 	HRESULT init();

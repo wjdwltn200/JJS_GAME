@@ -14,7 +14,10 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/BGM/BGM_UnStart.wav", true, true);
 
 	SOUNDMANAGER->addSound("Sound/BGM/BGM_GameStart.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_GameReady.wav", true, true);
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_GameWin.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/BGM/BGM_HeroStart.wav", true, true);
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_OverlordGet.wav", true, true);
 
 	SOUNDMANAGER->addSound("Sound/SE/Impact1.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/getGam.wav", false, false);
@@ -47,6 +50,19 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/flowerV2.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Lizardman.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Lili.wav", false, false);
+
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Wizard_A.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Wizard_S.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Wizard_D.wav", false, false);
+
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_D_A.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_D_S.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_D_D.wav", false, false);
+
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_D.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_D.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_D.wav", false, false);
+
 
 
 	//// EffImgSet
@@ -85,11 +101,17 @@ HRESULT gameScene::init()
 	EFFMANAGER->addEffect("Enemy_Eat", "image/inGameImg/EFF/EAT_EFF.bmp", 238, 34, 238 / 7, 34 / 1, 30, 10, 0.0f, true);
 
 	//// UiImgSet
+	IMAGEMANAGER->addImage("CamScreen", "image/inGameImg/UI/CamScreen.bmp", 200, 200, 1, 1, true, RGB(255, 0, 255));
+
+	IMAGEMANAGER->addImage("GameStart", "image/inGameImg/UI/GameStart.bmp", 320, 69, 1, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("StageTxt", "image/inGameImg/UI/StageTxt.bmp", 182, 45, 1, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("HeroTimer", "image/inGameImg/UI/HeroTimer.bmp", 218, 37, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TileDesEne", "image/inGameImg/UI/TileDesEne.bmp", 93, 37, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("EnemyPower", "image/inGameImg/UI/EnemyPower.bmp", 112, 42, true, RGB(255, 0, 255));
 
 
 	IMAGEMANAGER->addImage("Title_Chang", "image/UI_Img/Title_Chang.bmp", WINSIZEX, WINSIZEY, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("HeroScreenTxt", "image/UI_Img/Title_Chang.bmp", 500, 100, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("mousePoint", "image/inGameImg/UI/MousePoint.bmp", 112, 49, 2, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("NumberPont", "image/inGameImg/UI/NumberPont.bmp", 80, 60, 10, 6, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("DesPowerTxt", "image/inGameImg/UI/DesPower.bmp", 118, 41, 1, 1, true, RGB(255, 0, 255));
@@ -99,7 +121,8 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("TileSet_Terrain_DesSet_2", "image/inGameImg/EFF/TileSet_Terrain_DesSet2.bmp", 23, 22, 1, 1, true, RGB(255, 0, 255));
 
 	IMAGEMANAGER->addImage("Item_Jewel", "image/inGameImg/EFF/Item_JewelSet.bmp", 75, 105, 5, 7, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addImage("TilePopup", "image/inGameImg/UI/TilePopup.bmp", 157, 95, 1, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("PickMePopup", "image/inGameImg/UI/PickMe.bmp", 179, 69, 1, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("TilePopup", "image/inGameImg/UI/TilePopup.bmp", 170, 110, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("EnemyPopup", "image/inGameImg/UI/EnemyPopup.bmp", 170, 110, 1, 1, true, RGB(255, 0, 255));
 
 	//// BulletImgSet
@@ -108,6 +131,8 @@ HRESULT gameScene::init()
 
 	//마왕 공주
 	IMAGEMANAGER->addImage("Overlord", "image/inGameImg/ENEMY/Overlord_0.bmp", 72, 25, 4, 1, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("Overlord_1", "image/inGameImg/ENEMY/Overlord_1.bmp", 72, 25, 4, 1, true, RGB(255, 0, 255));
+
 
 	//슬라임
 	IMAGEMANAGER->addImage("Slime_00_R", "image/inGameImg/ENEMY/Slime/Slime_0_RIGHT.bmp",442, 20, 13, 1, true, RGB(255, 0, 255));
@@ -285,7 +310,7 @@ HRESULT gameScene::init()
 
 	//// Hero 매니저 동적할당
 	m_pHeroMag = new heroManager;
-	m_pHeroMag->init(m_MapTile, m_pBulletMag, m_pOverlord);
+	m_pHeroMag->init(m_MapTile, m_pBulletMag, m_pOverlord, m_pUiMag);
 
 	//// 플레이어 셋팅
 	m_tPlayer = new PlayerInfo;
@@ -295,7 +320,7 @@ HRESULT gameScene::init()
 	m_EnemyPowerValueScale = ENEMY_POWER_VALUE;
 
 
-	m_MapTile->init(32, 64, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag, m_pOverlord);
+	m_MapTile->init(32, 42, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag, m_pOverlord);
 	m_pOverlord->init(m_MapTile);
 	CAMERA->setCamPosY(CAMERA_MAX_Y);
 
@@ -303,6 +328,9 @@ HRESULT gameScene::init()
 
 	m_isScreenChange = true;
 	m_screenChangeValue = 255;
+
+	m_imgScreenCam = new image;
+	m_imgScreenCam->init(WINSIZEX, WINSIZEY);
 
 	return S_OK;
 }
@@ -352,6 +380,8 @@ void gameScene::render(HDC hdc)
 	m_pUiMag->render(hdc);
 	screenUi(hdc);
 
+	IMAGEMANAGER->findImage("CamScreen")->screenRender(hdc, 10, 500);
+
 	if (g_saveData.gisTest)
 	{
 		SetBkMode(hdc, TRANSPARENT);
@@ -374,7 +404,33 @@ void gameScene::render(HDC hdc)
 void gameScene::screenUi(HDC hdc)
 {
 	RD_UI(hdc);
+	CU_UI(hdc);
 	MouseCur(hdc);
+}
+
+void gameScene::CU_UI(HDC hdc)
+{
+	IMAGEMANAGER->findImage("StageTxt")->frameRender(
+		hdc,
+		(IMAGEMANAGER->findImage("StageTxt")->getWidth() / 2) + 10.0f,
+		(IMAGEMANAGER->findImage("StageTxt")->getHeight() / 2) + 10.0f, 1, 1, 1.0f);
+	IMAGEMANAGER->findImage("HeroTimer")->frameRender(
+		hdc,
+		(IMAGEMANAGER->findImage("HeroTimer")->getWidth() / 2) + 10.0f,
+		(IMAGEMANAGER->findImage("HeroTimer")->getHeight() / 2) + 60.0f, 1, 1, 1.0f);
+	
+	int tempNumSize = 1;
+	if (m_MapTile->getStageValue() > 10) tempNumSize++;
+		
+	MY_UTIL::NumberPont(hdc, m_MapTile->getStageValue(), tempNumSize, IMAGEMANAGER->findImage("StageTxt")->getWidth() + 40.0f, 32.0f, 2, 4.0f);
+
+	// 초
+	int tempNumColr = 2;
+	if (m_MapTile->getStageTimer() <= 100)
+		tempNumColr = 1;
+
+	MY_UTIL::NumberPont(hdc, m_MapTile->getStageTimer() / 60, 3, IMAGEMANAGER->findImage("HeroTimer")->getWidth() + 30.0f, 75.0f, tempNumColr, 4.0f);
+
 }
 
 void gameScene::RD_UI(HDC hdc)

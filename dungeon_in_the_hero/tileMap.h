@@ -6,7 +6,7 @@
 
 #define TILE_ALPHA_VALUE 155
 #define TILE_SHAKING_COUNT 20
-#define TILE_DES_DALEY 10
+#define TILE_DES_DALEY 5
 
 #define POPUP_COUNT 1
 #define TILE_POPUP_Y_SIZE 64.0f
@@ -73,7 +73,7 @@ private:
 	char szText[256];
 
 	int m_tileDesDaley;
-	int m_tileDesCurr;
+	SYNTHESIZE(int, m_tileDesCurr, TileDesCurr);
 	int m_tileDesCount;
 	PlayerInfo * m_pPlayer;
 	enemyManager * m_pEnemyMag;
@@ -88,7 +88,14 @@ private:
 	bool m_isHeroStart;
 	int m_HeroStartDaley = HERO_START_DALEY;
 
+	float m_fStartPopup;
+
+	SYNTHESIZE(int, m_startTileX, StartTileX);
+	SYNTHESIZE(int, m_startTileY, StartTileY);
+
 	SYNTHESIZE(int, m_gameState, GameState);
+	SYNTHESIZE(int, m_stageTimer, StageTimer);
+	SYNTHESIZE(int, m_stageValue, StageValue);
 
 public:
 	HRESULT init(int tileX, int tileY,
@@ -111,7 +118,7 @@ public:
 
 	void tileDesSys(int tileValue, int tileX, int tileY);
 	void tileDesSe();
-	void tileItemGet(int tileValue);
+	void tileItemGet(int tileValue, bool isGet = false);
 	void tileDesEneChag();
 
 	void enemyArrNullptrList(int tileMapValue, tagEnemyData * enemyData);

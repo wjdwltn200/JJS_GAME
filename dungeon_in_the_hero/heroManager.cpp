@@ -2,11 +2,12 @@
 #include "heroManager.h"
 #include "hero.h"
 
-HRESULT heroManager::init(tileMap * pTileMag, bulletManager * pBulletMag, overlord * pOverlord)
+HRESULT heroManager::init(tileMap * pTileMag, bulletManager * pBulletMag, overlord * pOverlord, uiManager * pUiMag)
 {
-	 m_pTileMag = pTileMag;
-	 m_pBulletMag = pBulletMag;
-	 m_pOverlord = pOverlord;
+	m_pUiMag = pUiMag;
+	m_pTileMag = pTileMag;
+	m_pBulletMag = pBulletMag;
+	m_pOverlord = pOverlord;
 	return S_OK;
 }
 
@@ -41,12 +42,12 @@ void heroManager::heroDrop(tagHeroData * enemyInfo)
 	{
 		if ((*m_iter)->gettHeroData().t_isAilve) continue;
 
-		(*m_iter)->init(enemyInfo, m_pTileMag , m_pBulletMag, m_pOverlord);
+		(*m_iter)->init(enemyInfo, m_pTileMag , m_pBulletMag, m_pOverlord, m_pUiMag);
 		return;
 	}
 
 	hero * tempHero = new hero;
-	tempHero->init(enemyInfo, m_pTileMag, m_pBulletMag, m_pOverlord);
+	tempHero->init(enemyInfo, m_pTileMag, m_pBulletMag, m_pOverlord, m_pUiMag);
 	m_vecHero.push_back(tempHero);
 }
 

@@ -23,19 +23,20 @@
 
 #define HERO_SKILL_HASTE 25
 #define HERO_SKILL_HASTE_SP_POINT 1.0f
-#define HERO_SKILL_HASTE_MS_POINT 20
+#define HERO_SKILL_HASTE_MS_POINT 10
 #define HERO_SKILL_HASTE_DALEY 600
 
 #define HERO_SKILL_ATK_0 10
 #define HERO_SKILL_ATK_0_ATK 10
 
 #define ASTAR_DALEY 600
-#define ASTAR_VALUE 20
+#define ASTAR_VALUE 30
 
 class tileMap;
 class aStarNode;
 class bulletManager;
 class overlord;
+class uiManager;
 
 class hero
 {
@@ -66,17 +67,21 @@ private:
 	int m_aStarDaley;
 	int m_aStarValue;
 
+	bool m_isOverlordGet;
+
+	uiManager * m_pUiMag;
 	tileMap * m_pTileMapMag;
 	aStarNode * m_pAStartNode;
 	bulletManager * m_pBulletMag;
 	overlord * m_pOverlord;
 
 public:
-	HRESULT init(tagHeroData * heroInfo, tileMap * pTileMap, bulletManager * pBulletMag, overlord * pOverlord);
+	HRESULT init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * pBulletMag, overlord * pOverlord, uiManager * pUiMag);
 	void release();
 	void update();
 	void render(HDC hdc);
 
+	void overlordGet();
 	void aStarSys();
 
 	int aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode);
@@ -109,7 +114,9 @@ public:
 
 	void skill_count();
 	bool attSys();
-	
+
+	void heroTxtBox(image * img, string txt, int txtCol);
+
 	void buffIcon(HDC hdc);
 	bool skill_ArrowMagic();
 	bool skill_Haling();

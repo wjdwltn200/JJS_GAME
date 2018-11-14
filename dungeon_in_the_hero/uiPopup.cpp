@@ -91,12 +91,12 @@ void uiPopup::render(HDC hdc)
 	{
 		MY_UTIL::FontOption(hdc, 14, 1000);
 		sprintf_s(temp, "%d", m_tTxtInfo.t_TileMana);
-		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 17.0f, m_fPosY - CAMERA->getCamPosY() + 63.0f, temp, strlen(temp));
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 25.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
 		MY_UTIL::FontDelete(hdc);
 
 		MY_UTIL::FontOption(hdc, 14, 1000);
 		sprintf_s(temp, "%s", m_tTxtInfo.t_TileEnemyName.c_str());
-		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 60.0f, m_fPosY - CAMERA->getCamPosY() + 63.0f, temp, strlen(temp));
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 70.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
 		MY_UTIL::FontDelete(hdc);
 	}
 }

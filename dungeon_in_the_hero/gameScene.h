@@ -19,6 +19,8 @@ class overlord;
 class gameScene : public scene
 {
 private:
+	image * m_imgScreenCam;
+
 	image * m_imgTopBg;
 	image * m_imgMidBg;
 	image * m_imgMouseCur;
@@ -49,6 +51,7 @@ public:
 	virtual void render(HDC hdc);
 
 	void screenUi(HDC hdc);
+	void CU_UI(HDC hdc);
 	void RD_UI(HDC hdc);
 	void MouseCur(HDC hdc);
 	void RectCol();

@@ -7,7 +7,7 @@
 void mainGame::setBackBuffer()
 {
 	m_pBackBuffer = new image;
-	m_pBackBuffer->init(WINSIZEX, WINSIZEY);
+	m_pBackBuffer->init(WINSIZEX * 2, WINSIZEY * 2);
 }
 
 HRESULT mainGame::init()
@@ -142,8 +142,6 @@ void mainGame::update()
 void mainGame::render()
 {
 	HDC backDC = m_pBackBuffer->getMemDC();
-
-
 
 
 

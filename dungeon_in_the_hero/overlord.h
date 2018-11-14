@@ -12,6 +12,10 @@ private:
 	tileMap * m_pTileMap;
 
 	SYNTHESIZE(bool, m_isSetting, IsSetting);
+	SYNTHESIZE(int, m_heroValue, HeroValue);
+
+	bool m_isGameEnd;
+	float m_popupMoveY;
 
 public:
 	HRESULT init(tileMap * pTileMap);
@@ -19,6 +23,8 @@ public:
 	void update();
 	void render(HDC hdc);
 	void setTileXY(int tileX, int tileY, float posX, float posY);
+	void setIsGet(bool isGet) { m_tOverlord.t_isGet = isGet; }
+
 
 	overlord();
 	~overlord();

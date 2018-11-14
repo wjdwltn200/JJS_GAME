@@ -60,6 +60,7 @@ private:
 	// 알파 블렌드
 	BLENDFUNCTION	m_blendFunc;	// 알파 블렌드를 위한 정보
 	LPIMAGE_INFO	m_pBlendImage;	// 알파 블렌드를 사용하기 위한 중간 이미지
+	LPIMAGE_INFO	m_pCamImage;	// 캠 스크린 전용 이미지
 
 public:
 	image();
@@ -81,6 +82,8 @@ public:
 
 
 	void release();
+
+	void screenRender(HDC hdc, int destX, int destY);
 
 	// 렌더
 	void render(HDC hdc, int destX, int destY);

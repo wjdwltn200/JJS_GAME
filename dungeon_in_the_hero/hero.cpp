@@ -6,13 +6,16 @@
 #include "bulletManager.h"
 #include "enemy.h"
 #include "overlord.h"
+#include "uiManager.h"
 
-HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * pBulletMag, overlord * pOverlord)
+HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * pBulletMag, overlord * pOverlord, uiManager * pUiMag)
 {
 	//// 타일 맵 주소 초기화
+	m_pUiMag = pUiMag;
 	m_pTileMapMag = pTileMag;
 	m_pBulletMag = pBulletMag;
 	m_pOverlord = pOverlord;
+
 
 	m_tHeroData = *heroInfo;
 	m_tHeroData.t_img_state = IMAGEMANAGER->findImage("hero_state_00");
@@ -32,9 +35,29 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * p
 	m_aStarDepValue = 0;
 	m_isDead = false;
 	m_isAttAct = false;
+	m_isOverlordGet = false;
 
 	m_isMoveAct = false;
 	m_eMoveState = eMoveState::DOWN;
+
+	switch (RANDOM->getFromIntTo(1, 5))
+	{
+	case 1:
+		heroTxtBox(m_tHeroData.t_img_D, "이몸 등장!", eTxtBoxColor::Red);
+		break;
+	case 2:
+		heroTxtBox(m_tHeroData.t_img_D, "출발해보실까~!", eTxtBoxColor::Red);
+		break;
+	case 3:
+		heroTxtBox(m_tHeroData.t_img_D, "마왕 나왓!!!", eTxtBoxColor::Red);
+		break;
+	case 4:
+		heroTxtBox(m_tHeroData.t_img_D, "다 돈 때문에 하는거라구~", eTxtBoxColor::Red);
+		break;
+	case 5:
+		heroTxtBox(m_tHeroData.t_img_D, "들어갑니다~", eTxtBoxColor::Red);
+		break;
+	}
 
 	// 최초 마왕 위치 설정
 	m_aStarDaley = ASTAR_DALEY;
@@ -51,6 +74,7 @@ void hero::update()
 {
 	if (!m_tHeroData.t_isAilve) return;
 
+	overlordGet();
 	aStarSys();
 	skill_count();
 	damge();
@@ -65,7 +89,7 @@ void hero::render(HDC hdc)
 
 	m_ani.init(m_tHeroData.t_img->getWidth(), m_tHeroData.t_img->getHeight(), m_tHeroData.t_img->getFrameWidth(), m_tHeroData.t_img->getFrameHeight());
 	m_ani.setDefPlayFrame(false, false);
-	m_ani.setFPS(10);
+	m_ani.setFPS(5);
 
 	if (m_tHeroData.t_Skill.t_isHasteBuff)
 		m_ani.setFPS(HERO_SKILL_HASTE_MS_POINT);
@@ -124,13 +148,76 @@ void hero::render(HDC hdc)
 	}
 }
 
+void hero::overlordGet()
+{
+	if (m_isDead) return;
+
+	if (m_isOverlordGet && m_pOverlord->gettOverlord().t_isGet)
+		m_pOverlord->setTileXY(
+			m_tHeroData.t_tilePosX,
+			m_tHeroData.t_tilePosY,
+			m_tHeroData.t_rc.left,
+			m_tHeroData.t_rc.top - TILE_SIZE);
+
+	if ((m_pOverlord->gettOverlord().t_tilePosX == m_tHeroData.t_tilePosX) &&
+		(m_pOverlord->gettOverlord().t_tilePosY == m_tHeroData.t_tilePosY) &&
+		!m_pOverlord->gettOverlord().t_isGet)
+	{
+		m_pTileMapMag->setGameState(eGameState::OverlordGet);
+
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(m_tHeroData.t_img_S, "우하핫, 찾았다!", eTxtBoxColor::Red);
+			break;
+		case 2:
+			heroTxtBox(m_tHeroData.t_img_S, "이제 난 대박이야!!", eTxtBoxColor::Red);
+			break;
+		case 3:
+			heroTxtBox(m_tHeroData.t_img_S, "여기있었구나 마왕!", eTxtBoxColor::Red);
+			break;
+		case 4:
+			heroTxtBox(m_tHeroData.t_img_S, "이제 돌아가보실까~", eTxtBoxColor::Red);
+			break;
+		case 5:
+			heroTxtBox(m_tHeroData.t_img_S, "이몸이 용사라고!", eTxtBoxColor::Red);
+			break;
+		}
+
+		m_isOverlordGet = true;
+		m_pOverlord->setIsGet(true);
+		
+		aStarFind(m_pAStartNode->Create(m_pTileMapMag->getStartTileX(), m_pTileMapMag->getStartTileY() + 1), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
+	}
+}
+
 void hero::aStarSys()
 {
 	m_aStarDaley--;
 	if (m_aStarDaley > 0) return;
+	if (m_isOverlordGet) return;
+	if (m_isDead) return;
+
+
+	switch (RANDOM->getFromIntTo(1, 5))
+	{
+	case 1:
+		heroTxtBox(m_tHeroData.t_img_S, "킁킁.. 거기구낫!", eTxtBoxColor::Red);
+		break;
+	case 2:
+		heroTxtBox(m_tHeroData.t_img_S, "이쪽인가..?!", eTxtBoxColor::Red);
+		break;
+	case 3:
+		heroTxtBox(m_tHeroData.t_img_S, "악의 기운이 느껴져!!", eTxtBoxColor::Red);
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
+	}
 
 	m_aStarDaley = ASTAR_DALEY;
-	m_aStarValue = RANDOM->getFromIntTo(3, 6);
+	m_aStarValue = RANDOM->getFromIntTo(10, 20);
 	aStarFind(m_pAStartNode->Create(m_pOverlord->gettOverlord().t_tilePosX, m_pOverlord->gettOverlord().t_tilePosY), m_pAStartNode->Create(m_tHeroData.t_tilePosX, m_tHeroData.t_tilePosY));
 }
 
@@ -165,7 +252,7 @@ int hero::aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode)
 
 		if (aStarIsRect(cx, cy)) continue;
 		vecNode->push_back(m_pAStartNode->Create(cx, cy));
-		EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.top + TILE_SIZE / 2);
+		//EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[cx * m_pTileMapMag->getTileSizeY() + cy].t_rc.top + TILE_SIZE / 2);
 	}
 
 	return sizeof(vecNode);
@@ -173,7 +260,8 @@ int hero::aStarisMove(aStarNode * pos, list<aStarNode*>* vecNode)
 
 void hero::aStarRoute()
 {
-	if (m_vecRoute.size() == 0) return;
+	m_iterRoute = m_vecRoute.begin();
+	if ((*m_iterRoute) == nullptr) return;
 
 	if (m_vecRoute.size() != 0)
 	{
@@ -367,7 +455,34 @@ void hero::currHp()
 	}
 	else if (m_isDead && !m_ani.getIsPlaying())
 	{
-		int tempXY = (m_tHeroData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_tilePosY);
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(m_tHeroData.t_img_Dead, "여기까지 인가..!", eTxtBoxColor::Red);
+			break;
+		case 2:
+			heroTxtBox(m_tHeroData.t_img_Dead, "으갸갸갸갹!!", eTxtBoxColor::Red);
+			break;
+		case 3:
+			heroTxtBox(m_tHeroData.t_img_Dead, "인생역적의 꿈이..", eTxtBoxColor::Red);
+			break;
+		case 4:
+			heroTxtBox(m_tHeroData.t_img_Dead, "연애도 못해보고..", eTxtBoxColor::Red);
+			break;
+		case 5:
+			heroTxtBox(m_tHeroData.t_img_Dead, "으악!! 마왕!!!", eTxtBoxColor::Red);
+			break;
+		}
+
+		// 용사 사망 시 마왕 heroValue 감소하여 클리어 여부 체크
+		int tempXY = m_tHeroData.t_tilePosX * m_pTileMapMag->getTileSizeY() + m_tHeroData.t_tilePosY;
+		m_pOverlord->setHeroValue(m_pOverlord->getHeroValue() - 1);
+		m_pTileMapMag->setTileDesCurr(m_pTileMapMag->getTileDesCurr() + 25);
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	m_pTileMapMag->tileItemGet(tempXY, true);
+		//}
+
 		if (m_pTileMapMag->HeroArrIsList(tempXY, &m_tHeroData))
 			m_pTileMapMag->HeroArrNullptrList(tempXY ,&m_tHeroData);
 		Delete(true, true, true);
@@ -392,6 +507,21 @@ void hero::currHp()
 				m_pTileMapMag->enemyBackMove(tempXY, &m_tHeroData);
 			}
 		}
+
+		if (m_isOverlordGet)
+		{
+			m_pTileMapMag->setGameState(eGameState::GameGo);
+			m_pOverlord->setIsGet(false);
+			m_isOverlordGet = false;
+
+			m_pOverlord->setTileXY(
+				m_tHeroData.t_tilePosX,
+				m_tHeroData.t_tilePosY,
+				m_tHeroData.t_rc.left,
+				m_tHeroData.t_rc.top);
+		}
+		
+
 
 		m_tHeroData.t_img = m_tHeroData.t_img_Dead;
 		m_ani.start();
@@ -647,7 +777,7 @@ void hero::aStarMoveSys()
 			m_eMoveState = eMoveState::LEFT;
 		}
 
-		EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[x * m_pTileMapMag->getTileSizeY() + y].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[x * m_pTileMapMag->getTileSizeY() + y].t_rc.top + TILE_SIZE / 2);
+		//EFFMANAGER->play("MousePointEFF", m_pTileMapMag->getTileSetPoint()[x * m_pTileMapMag->getTileSizeY() + y].t_rc.left + TILE_SIZE / 2, m_pTileMapMag->getTileSetPoint()[x * m_pTileMapMag->getTileSizeY() + y].t_rc.top + TILE_SIZE / 2);
 	}
 }
 
@@ -692,7 +822,7 @@ void hero::movePattern()
 		switch (m_tHeroData.t_enumType)
 		{
 		default: // 패턴이 없을 경우 랜덤 이동
-			if (m_aStarValue > 0)
+			if (m_aStarValue > 0 || m_isOverlordGet)
 			{
 				m_aStarValue--;
 				aStarMoveSys();
@@ -902,7 +1032,7 @@ void hero::skill_count()
 						//	m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_enemyInfo->t_damgePoint = m_tHeroData.t_Skill.t_fireWallData.t_damage;
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
-							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							EFFMANAGER->play("FireWall_EFF_4", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
 					}
@@ -911,7 +1041,7 @@ void hero::skill_count()
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
-							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							EFFMANAGER->play("FireWall_EFF_4", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
 						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
@@ -920,7 +1050,7 @@ void hero::skill_count()
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX + i) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
-							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							EFFMANAGER->play("FireWall_EFF_4", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
 						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
@@ -938,7 +1068,7 @@ void hero::skill_count()
 							m_pTileMapMag->HeroSkillAtk(tempFireWallArrow, &m_tHeroData);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
-							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							EFFMANAGER->play("FireWall_EFF_4", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
 					}
@@ -947,7 +1077,7 @@ void hero::skill_count()
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY - i);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
-							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							EFFMANAGER->play("FireWall_EFF_4", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
 						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
@@ -956,7 +1086,7 @@ void hero::skill_count()
 						tempFireWallArrow = (m_tHeroData.t_Skill.t_fireWallData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tHeroData.t_Skill.t_fireWallData.t_tilePosY + i);
 						if (!m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_isAlive)
 						{
-							EFFMANAGER->play("FireWall_EFF_3", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
+							EFFMANAGER->play("FireWall_EFF_4", m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.left + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)), m_pTileMapMag->getTileSetPoint()[tempFireWallArrow].t_rc.top + TILE_SIZE / 2 + (RANDOM->getFromFloatTo(-3.0f, 3.0f)));
 							tempActCheck = true;
 						}
 						if (m_pTileMapMag->enemyArrOutList(tempFireWallArrow) != nullptr)
@@ -1009,6 +1139,12 @@ bool hero::attSys()
 		}
 	}
 	return false;
+}
+
+void hero::heroTxtBox(image * img, string txt, int txtCol)
+{
+	string temp = txt;
+	m_pUiMag->addTxtBox(img, temp, true, txtCol);
 }
 
 void hero::buffIcon(HDC hdc)
@@ -1075,6 +1211,26 @@ bool hero::skill_Haling()
 
 	if (m_tHeroData.t_currHp <= m_tHeroData.t_MaxHp / 2)
 	{
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(m_tHeroData.t_img_S, "회복은 기본이지!", eTxtBoxColor::Green);
+			break;
+		case 2:
+			heroTxtBox(m_tHeroData.t_img_S, "상쾌한 이 기분~", eTxtBoxColor::Green);
+			break;
+		case 3:
+			heroTxtBox(m_tHeroData.t_img_S, "아직 멀었다구!", eTxtBoxColor::Green);
+			break;
+		case 4:
+			heroTxtBox(m_tHeroData.t_img_S, "우오오옷!!", eTxtBoxColor::Green);
+			break;
+		case 5:
+			heroTxtBox(m_tHeroData.t_img_S, "앙~ 기모딱!", eTxtBoxColor::Green);
+			break;
+		}
+
+
 		SOUNDMANAGER->play("Sound/SE/Haling_0.wav");
 		EFFMANAGER->play("Haling_EFF_0",
 			m_tHeroData.t_posX - CAMERA->getCamPosX() + (TILE_SIZE / 2),
@@ -1101,6 +1257,26 @@ bool hero::skill_AtkBuff()
 	if (m_tHeroData.t_Skill.t_AtkCount <= 0 &&
 		!m_tHeroData.t_Skill.t_isAtkBuff)
 	{
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(m_tHeroData.t_img_S, "공격력 상승!", eTxtBoxColor::Red);
+			break;
+		case 2:
+			heroTxtBox(m_tHeroData.t_img_S, "힘이 올랐다!", eTxtBoxColor::Red);
+			break;
+		case 3:
+			heroTxtBox(m_tHeroData.t_img_S, "한번 더 덤벼보라구!", eTxtBoxColor::Red);
+			break;
+		case 4:
+			heroTxtBox(m_tHeroData.t_img_S, "아자아자자잣!", eTxtBoxColor::Red);
+			break;
+		case 5:
+			heroTxtBox(m_tHeroData.t_img_S, "힘이 넘친다구!!", eTxtBoxColor::Red);
+			break;
+		}
+
+
 		m_tHeroData.t_Skill.t_isAtkBuff = true;
 		m_tHeroData.t_Skill.t_AtkCount = HERO_SKILL_ATKBUFF_DALEY;
 		m_tHeroData.t_atkPoint += HERO_SKILL_ATKBUFF_POINT;
@@ -1131,6 +1307,25 @@ bool hero::skill_DefBuff()
 	if (m_tHeroData.t_Skill.t_DefCount <= 0 &&
 		!m_tHeroData.t_Skill.t_isDefBuff)
 	{
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(m_tHeroData.t_img_S, "땅의 정령이여!", eTxtBoxColor::Green);
+			break;
+		case 2:
+			heroTxtBox(m_tHeroData.t_img_S, "바위처럼 단단하게!", eTxtBoxColor::Green);
+			break;
+		case 3:
+			heroTxtBox(m_tHeroData.t_img_S, "뚫을 수 없을껄?!", eTxtBoxColor::Green);
+			break;
+		case 4:
+			heroTxtBox(m_tHeroData.t_img_S, "하나도 안아파!", eTxtBoxColor::Green);
+			break;
+		case 5:
+			heroTxtBox(m_tHeroData.t_img_S, "견딜 수 있어!", eTxtBoxColor::Green);
+			break;
+		}
+
 		m_tHeroData.t_Skill.t_isDefBuff = true;
 		m_tHeroData.t_Skill.t_DefCount = HERO_SKILL_ATKBUFF_DALEY;
 		m_tHeroData.t_defPoint += HERO_SKILL_DEFBUFF_POINT;
@@ -1158,9 +1353,29 @@ bool hero::skill_Haste()
 	if (!enemyCheckSquare()) return false;
 
 
+
 	if (m_tHeroData.t_Skill.t_HasteCount <= 0 &&
 		!m_tHeroData.t_Skill.t_isHasteBuff)
 	{
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(m_tHeroData.t_img_S, "헤이스트!!", eTxtBoxColor::White);
+			break;
+		case 2:
+			heroTxtBox(m_tHeroData.t_img_S, "호다닥!", eTxtBoxColor::White);
+			break;
+		case 3:
+			heroTxtBox(m_tHeroData.t_img_S, "바람의 정령이여!", eTxtBoxColor::White);
+			break;
+		case 4:
+			heroTxtBox(m_tHeroData.t_img_S, "바람처럼 샤샥!", eTxtBoxColor::White);
+			break;
+		case 5:
+			heroTxtBox(m_tHeroData.t_img_S, "날 막아보시지!!", eTxtBoxColor::White);
+			break;
+		}
+
 		m_tHeroData.t_Skill.t_isHasteBuff = true;
 		m_tHeroData.t_Skill.t_HasteCount = HERO_SKILL_HASTE_DALEY;
 		m_tHeroData.t_moveSpeed += HERO_SKILL_HASTE_SP_POINT;
@@ -1191,6 +1406,25 @@ bool hero::skill_FireWall()
 
 	if (!enemyCheckRange()) return false;
 
+	switch (RANDOM->getFromIntTo(1, 5))
+	{
+	case 1:
+		heroTxtBox(m_tHeroData.t_img_S, "이거나 먹어랏!!", eTxtBoxColor::Purple);
+		break;
+	case 2:
+		heroTxtBox(m_tHeroData.t_img_S, "이건 어때!?", eTxtBoxColor::Purple);
+		break;
+	case 3:
+		heroTxtBox(m_tHeroData.t_img_S, "마법을 쓸줄 아는 나", eTxtBoxColor::Purple);
+		break;
+	case 4:
+		heroTxtBox(m_tHeroData.t_img_S, "실험 대상이 되줄래?", eTxtBoxColor::Purple);
+		break;
+	case 5:
+		heroTxtBox(m_tHeroData.t_img_S, "마법학교 수석이라구!", eTxtBoxColor::Purple);
+		break;
+	}
+
 	m_tHeroData.t_Skill.t_isFireWall = true;
 	m_tHeroData.t_Skill.t_fireWallData.t_actValue = 5;
 	m_tHeroData.t_Skill.t_fireWallData.t_tileSizeValue = 1;
@@ -1203,7 +1437,7 @@ bool hero::skill_FireWall()
 	m_tHeroData.t_Skill.t_fireWallData.t_actCount = HERO_SKILL_FIREWALL_MOVE_DALEY;
 
 	SOUNDMANAGER->play("Sound/SE/Haling_0.wav");
-	EFFMANAGER->play("Haste_Eff_0",
+	EFFMANAGER->play("AtkBuff_EFF_1",
 		m_tHeroData.t_posX - CAMERA->getCamPosX() + (TILE_SIZE / 2),
 		m_tHeroData.t_posY - CAMERA->getCamPosY() + (TILE_SIZE / 2));
 

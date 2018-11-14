@@ -36,6 +36,17 @@ HRESULT tileMap::init(int tileX, int tileY,
 	m_isHeroStart = false;
 	m_HeroStartDaley = 0;
 	m_gameState = eGameState::GameReady;
+	m_stageTimer = 5 * (60 * 60);
+	m_stageValue = 1;
+	m_fStartPopup = 10.0f;
+
+
+	m_startTileX = 0;
+	m_startTileY = 0;
+
+	if (m_gameState == eGameState::GameReady &&
+		!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_GameReady.wav"))
+		SOUNDMANAGER->play("Sound/BGM/BGM_GameReady.wav");
 
 	//// 타일 초기화 셋팅
 	m_tileDesDaley = 0;
@@ -117,6 +128,10 @@ HRESULT tileMap::init(int tileX, int tileY,
 				m_tileset[x * m_tileSizeY + y].t_isNotDes = true;
 				m_tileset[x * m_tileSizeY + y].t_enumType = tagTileType::START;
 				m_tileset[x * m_tileSizeY + y].t_ManaValue = -1;
+				
+				m_startTileX = x;
+				m_startTileY = y;
+
 			}
 			else if (x <= m_tileSizeX && y == 0)
 			{
@@ -206,7 +221,9 @@ void tileMap::update()
 			//// 타일 상호작용
 			//// 타일 팝업 출력
 			RECT tempRc;
-			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON) &&
+			// 마왕 내려놓기
+			if (((m_gameState == eGameState::GameGetSet)) &&
+				KEYMANAGER->isStayKeyDown(VK_LBUTTON) &&
 				m_pOverlord->getIsSetting() &&
 				(IntersectRect(&tempRc, &m_tileset[x * m_tileSizeY + y].t_rc, &g_MouseRc) &&
 				(tileCheck(x, y))))
@@ -234,7 +251,8 @@ void tileMap::update()
 			}
 
 			//// 타일 파괴
-			if (m_tileDesDaley <= 0 &&
+			if ((m_gameState != eGameState::GameGetSet) &&
+				m_tileDesDaley <= 0 &&
 				!m_tileset[x * m_tileSizeY + y].t_isNotDes &&
 				m_pPlayer->t_TileDesEne > 0 &&
 				!m_isTileClick &&
@@ -292,10 +310,24 @@ void tileMap::render(HDC hdc)
 			if (m_isHeroStart && (m_tileset[x * m_tileSizeY + y].t_enumType == tagTileType::START))
 				heroStart(x * m_tileSizeY + y);
 
-			if (MY_UTIL::screenRender(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top)) continue;
+			//if (MY_UTIL::screenRender(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top)) continue;
 
 			if (m_tileset[x * m_tileSizeY + y].t_enumType == tagTileType::START)
-				m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, 0, TILE_SCALE, false);
+			{
+				m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, 1, 0, TILE_SCALE, false);
+
+				if (m_gameState == eGameState::GameReady)
+				{
+					m_fStartPopup -= 0.5f;
+					if (m_fStartPopup <= 0.0f)
+						m_fStartPopup = 10.0f;
+					
+					IMAGEMANAGER->findImage("GameStart")->render(hdc,
+						m_tileset[x * m_tileSizeY + y].t_rc.left - (IMAGEMANAGER->findImage("GameStart")->getWidth() / 2) + (TILE_SIZE / 2),
+						m_tileset[x * m_tileSizeY + y].t_rc.top - (IMAGEMANAGER->findImage("GameStart")->getHeight() / 2) - (TILE_SIZE) - 20.0f + m_fStartPopup);
+					m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, 0, 0, TILE_SCALE, false);
+				}
+			}
 
 			if (m_tileset[x * m_tileSizeY + y].t_enumType == tagTileType::GROUND)
 				m_tileset[x * m_tileSizeY + y].t_img->frameRender(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, m_tileset[x * m_tileSizeY + y].t_setImg, eTileLv::tGround, TILE_SCALE, false);
@@ -383,34 +415,55 @@ void tileMap::keyInput()
 
 	//// 키 입력 기준 카메라 이동
 	if (KEYMANAGER->isStayKeyDown('W'))
-		CAMERA->setCamPosY(CAMERA->getCamPosY() - 3.0f);
+		CAMERA->setCamPosY(CAMERA->getCamPosY() - 10.0f);
 	if (KEYMANAGER->isStayKeyDown('S'))
-		CAMERA->setCamPosY(CAMERA->getCamPosY() + 3.0f);
+		CAMERA->setCamPosY(CAMERA->getCamPosY() + 10.0f);
 	if (KEYMANAGER->isStayKeyDown('A'))
-		CAMERA->setCamPosX(CAMERA->getCamPosX() - 3.0f);
+		CAMERA->setCamPosX(CAMERA->getCamPosX() - 10.0f);
 	if (KEYMANAGER->isStayKeyDown('D'))
-		CAMERA->setCamPosX(CAMERA->getCamPosX() + 3.0f);
+		CAMERA->setCamPosX(CAMERA->getCamPosX() + 10.0f);
 }
 
 void tileMap::heroStartSys()
 {
-	// eGameState::GameReady
-	if (KEYMANAGER->isOnceKeyDown(VK_SPACE) && (m_gameState == eGameState::GameReady))
+	if (m_stageTimer > 0)
+		m_stageTimer--;
+
+	if (KEYMANAGER->isOnceKeyDown(VK_SPACE))
+		m_stageTimer = 0;
+
+	if (m_stageTimer <= 0 && (m_gameState == eGameState::GameReady))
 	{
 		m_gameState = eGameState::GameGetSet;
 		m_isHeroStart = true;
 		m_HeroStartDaley = 1;
+		m_pOverlord->setHeroValue(0);
 
+		SOUNDMANAGER->stop("Sound/BGM/BGM_GameReady.wav");
 		SOUNDMANAGER->play("Sound/BGM/BGM_GameStart.wav");
 
-		heroSetting(heroSet(eHeroClass::Alchemist));
-		heroSetting(heroSet(eHeroClass::Alchemist));
-		heroSetting(heroSet(eHeroClass::Alchemist));
+		switch (m_stageValue)
+		{
+		case 1:
+			heroSetting(heroSet(eHeroClass::Alchemist));
+			break;
+		case 2:
+			heroSetting(heroSet(eHeroClass::Warriors));
+			break;
+		case 3:
+			heroSetting(heroSet(eHeroClass::Wizard));
+			break;
+		case 4:
+			heroSetting(heroSet(eHeroClass::Alchemist));
+			heroSetting(heroSet(eHeroClass::Warriors));
+			break;
+		case 5:
+			heroSetting(heroSet(eHeroClass::Alchemist));
+			heroSetting(heroSet(eHeroClass::Warriors));
+			heroSetting(heroSet(eHeroClass::Wizard));
+			break;
+		}
 	}
-
-	// eGameState::GameGetSet
-
-	// eGameState::GameGo
 	heroListStart(); 
 }
 
@@ -429,6 +482,7 @@ void tileMap::heroListStart()
 		for (m_iterHeroList = m_vecHeroList.begin(); m_iterHeroList != m_vecHeroList.end(); m_iterHeroList++)
 		{
 			if ((*m_iterHeroList) == nullptr) continue;
+
 			m_pHeroMag->heroDrop((*m_iterHeroList));
 			delete (*m_iterHeroList);
 			(*m_iterHeroList) = nullptr;
@@ -441,6 +495,8 @@ void tileMap::heroListStart()
 
 tagHeroData * tileMap::heroSet(int heroClass)
 {
+	// 용사 개수만큼 마왕 heroValue 충전
+	m_pOverlord->setHeroValue(m_pOverlord->getHeroValue() + 1);
 	tagHeroData * tempHero = new tagHeroData;
 	// 기본 세팅
 	tempHero->t_isAilve = true;
@@ -469,19 +525,19 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("hero_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("hero_Dead");
 
-		tempHero->t_currHp = BaseHp;
-		tempHero->t_currMana = BaseMana;
-		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_currHp = BaseHp + 200;
+		tempHero->t_currMana = BaseMana + 300;
+		tempHero->t_moveSpeed = BaseMoveSpeed + 1.0f;
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint;
-		tempHero->t_defPoint = BaseDefPoint;
+		tempHero->t_atkPoint = BaseAtkPoint + 5;
+		tempHero->t_defPoint = BaseDefPoint + 3;
 
-		//tempHero->t_Skill.t_fireWall = true;
-		//tempHero->t_Skill.t_ArrowMagic = true;
-		//tempHero->t_Skill.t_haling = true;
-		//tempHero->t_Skill.t_AtkBuff = true;
-		//tempHero->t_Skill.t_DefBuff = true;
-		//tempHero->t_Skill.t_HasteBuff = true;
+		tempHero->t_Skill.t_fireWall = true;
+		tempHero->t_Skill.t_ArrowMagic = true;
+		tempHero->t_Skill.t_haling = true;
+		tempHero->t_Skill.t_AtkBuff = true;
+		tempHero->t_Skill.t_DefBuff = true;
+		tempHero->t_Skill.t_HasteBuff = true;
 
 		break;
 	case eHeroClass::Alchemist:
@@ -496,18 +552,18 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Alchemist_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Alchemist_Dead");
 
-		tempHero->t_currHp = BaseHp;
-		tempHero->t_currMana = BaseMana + 1000;
-		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_currHp = BaseHp + 50;
+		tempHero->t_currMana = BaseMana + 100;
+		tempHero->t_moveSpeed = BaseMoveSpeed + 0.5f;
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint;
-		tempHero->t_defPoint = BaseDefPoint;
+		tempHero->t_atkPoint = BaseAtkPoint - 2;
+		tempHero->t_defPoint = BaseDefPoint + 1;
 
 		tempHero->t_Skill.t_fireWall = true;
 		tempHero->t_Skill.t_ArrowMagic = true;
 		tempHero->t_Skill.t_haling = true;
-		tempHero->t_Skill.t_AtkBuff = true;
-		tempHero->t_Skill.t_DefBuff = true;
+		//tempHero->t_Skill.t_AtkBuff = true;
+		//tempHero->t_Skill.t_DefBuff = true;
 		tempHero->t_Skill.t_HasteBuff = true;
 
 		break;
@@ -575,18 +631,18 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Warriors_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Warriors_Dead");
 
-		tempHero->t_currHp = BaseHp;
-		tempHero->t_currMana = BaseMana;
-		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_currHp = BaseHp + 150;
+		tempHero->t_currMana = BaseMana + 50;
+		tempHero->t_moveSpeed = BaseMoveSpeed + 0.3f;
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint;
-		tempHero->t_defPoint = BaseDefPoint;
+		tempHero->t_atkPoint = BaseAtkPoint + 3;
+		tempHero->t_defPoint = BaseDefPoint + 2;
 
 		//tempHero->t_Skill.t_fireWall = true;
 		//tempHero->t_Skill.t_ArrowMagic = true;
 		//tempHero->t_Skill.t_haling = true;
-		//tempHero->t_Skill.t_AtkBuff = true;
-		//tempHero->t_Skill.t_DefBuff = true;
+		tempHero->t_Skill.t_AtkBuff = true;
+		tempHero->t_Skill.t_DefBuff = true;
 		//tempHero->t_Skill.t_HasteBuff = true;
 		break;
 	case eHeroClass::Wizard:
@@ -601,19 +657,19 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Wizard_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Wizard_Dead");
 
-		tempHero->t_currHp = BaseHp;
-		tempHero->t_currMana = BaseMana;
-		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_currHp = BaseHp + 50;
+		tempHero->t_currMana = BaseMana + 200;
+		tempHero->t_moveSpeed = BaseMoveSpeed + 0.2f;
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint;
+		tempHero->t_atkPoint = BaseAtkPoint - 2;
 		tempHero->t_defPoint = BaseDefPoint;
 
-		//tempHero->t_Skill.t_fireWall = true;
-		//tempHero->t_Skill.t_ArrowMagic = true;
-		//tempHero->t_Skill.t_haling = true;
+		tempHero->t_Skill.t_fireWall = true;
+		tempHero->t_Skill.t_ArrowMagic = true;
+		tempHero->t_Skill.t_haling = true;
 		//tempHero->t_Skill.t_AtkBuff = true;
 		//tempHero->t_Skill.t_DefBuff = true;
-		//tempHero->t_Skill.t_HasteBuff = true;
+		tempHero->t_Skill.t_HasteBuff = true;
 		break;
 	}
 
@@ -1007,9 +1063,9 @@ void tileMap::tileDesSe()
 	}
 }
 
-void tileMap::tileItemGet(int tileValue)
+void tileMap::tileItemGet(int tileValue, bool isGet)
 {
-	if (RANDOM->getInt(100) <= 10)
+	if (RANDOM->getInt(100) <= 10 || isGet)
 	{
 		SOUNDMANAGER->play("Sound/SE/getGam.wav");
 
@@ -1017,7 +1073,6 @@ void tileMap::tileItemGet(int tileValue)
 			m_tileset[tileValue].t_rc.left + (TILE_SIZE / 2),
 			m_tileset[tileValue].t_rc.top + (TILE_SIZE / 2), dropItemSet(tagItemType::JEWEL));
 		m_tileDesCurr += m_tItemInfo.t_frameY + 1;
-		//m_pPlayer->t_TileDesEne += m_tItemInfo.t_frameY + 1;
 	}
 }
 
@@ -1245,7 +1300,6 @@ void tileMap::heroStart(int tileValue)
 	EFFMANAGER->play("hero_Start",
 		(m_tileset[tileValue].t_rc.left) + (TILE_SIZE / 2),
 		(m_tileset[tileValue].t_rc.top) + (TILE_SIZE / 2 / 2));
-	m_tileset[tileValue].t_setImg = 1;
 	for (int i = 0; i < 20; i++)
 	{
 		OBJECTMANAGER->addTileDesObj(tagObjectType::HERO_START,

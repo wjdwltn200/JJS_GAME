@@ -41,10 +41,14 @@ void uiManager::update()
 
 void uiManager::render(HDC hdc)
 {
+	int tempIsAliveValue = 0;
+
 	for (m_ObjectsIter = m_vecUiObjects.begin(); m_ObjectsIter != m_vecUiObjects.end(); m_ObjectsIter++)
 	{
 		if (!(*m_ObjectsIter)->getisAlive()) continue;
+		if (tempIsAliveValue >= 5) break;
 
+		tempIsAliveValue++;
 		(*m_ObjectsIter)->render(hdc);
 	}
 
@@ -53,23 +57,24 @@ void uiManager::render(HDC hdc)
 		if (!(*m_PopupIter)->getIsAilve()) continue;
 		if ((*m_PopupIter)->getImg() == NULL) continue;
 
-
 		(*m_PopupIter)->render(hdc);
 	}
 }
 
-void uiManager::addHitTxt(float dam, float posX, float posY)
+void uiManager::addTxtBox(image * img, string txt, bool isMove, int txtCol)
 {
+	sort(m_vecUiObjects.begin(), m_vecUiObjects.end(), less<uiTxt*>());
+
 	for (m_ObjectsIter = m_vecUiObjects.begin(); m_ObjectsIter != m_vecUiObjects.end(); m_ObjectsIter++)
 	{
 		if ((*m_ObjectsIter)->getisAlive()) continue;
 
-		(*m_ObjectsIter)->init(dam, posX, posY);
+		(*m_ObjectsIter)->init(img, txt, isMove, txtCol);
 		return;
 	}
 
 	uiTxt * tempUiTxt = new uiTxt;
-	tempUiTxt->init(dam, posX, posY);
+	tempUiTxt->init(img, txt, isMove, txtCol);
 	m_vecUiObjects.push_back(tempUiTxt);
 }
 
