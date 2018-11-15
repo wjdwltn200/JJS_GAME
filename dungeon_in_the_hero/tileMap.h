@@ -19,7 +19,7 @@
 #define TILE_LV_2 6
 #define TILE_LV_3 9
 #define TILE_LV_4 12
-#define TILE_LV_5 15
+#define TILE_LV_5 17
 #define TILE_LV_6 20
 
 
@@ -56,13 +56,8 @@ private:
 	};
 	enum eTileLv
 	{
-		tGround, tWall, tBrick, tFloor, tNoEnemy, tSlime, tBug, tLizardman, tLili, tMamon, tDemon, tLady
+		tGround, tWall, tBrick, tFloor, tNoEnemy, tSlime, tBug, tLizardman, tLili, tMamon, tLady, tDemon
 	};
-	enum eHeroClass
-	{
-		hero_0, Warriors, Wizard, Alchemist, Theif, Bard
-	};
-
 
 	SYNTHESIZE(TileInfo, m_tileset[2048], tile);
 	SYNTHESIZE(int, m_tileSizeMaxX, tileMaxValueX);
@@ -109,7 +104,7 @@ public:
 	void keyInput();
 	void heroStartSys();
 	void heroListStart();
-	tagHeroData * heroSet(int heroClass);
+	tagHeroData * heroSet(int heroClass, int lv = 1);
 	void tileSetTxt(int tileType, int tileNum);
 	tagItemData dropItemSet(int itemType);
 	void monsSetDrop(float posX, float posY, int setTileNum, int tileX, int tileY);
@@ -140,7 +135,10 @@ public:
 
 	void heroStart(int tileValue);
 	void heroSetting(tagHeroData * heroData);
+	void gameTxtBox(image * img, string txt, int txtCol);
 	TileInfo * getTileSetPoint() { return m_tileset; }
+
+
 
 	tileMap();
 	~tileMap();

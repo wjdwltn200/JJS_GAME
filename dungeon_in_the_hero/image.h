@@ -83,8 +83,6 @@ public:
 
 	void release();
 
-	void screenRender(HDC hdc, int destX, int destY);
-
 	// ·»´õ
 	void render(HDC hdc, int destX, int destY);
 	void render(HDC hdc, int destX, int destY,

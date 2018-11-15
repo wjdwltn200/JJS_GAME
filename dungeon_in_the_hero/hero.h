@@ -1,13 +1,16 @@
 #pragma once
 #include "animation.h"
 
+#define HERO_DIE_DES 20
+
+
 #define IMG_TILE_SET_Y 5.0f
 #define HERO_MOVE_DALEY 30
 
 #define HERO_SKILL_ARROWMAGIC 10
 #define HERO_SKILL_ATTOWMAGIC_DAMAGE 10
 
-#define HERO_SKILL_FIREWALL 50
+#define HERO_SKILL_FIREWALL 20
 #define HERO_SKILL_FIREWALL_DAMAGE 100
 #define HERO_SKILL_FIREWALL_MOVE_DALEY 20
 
@@ -69,6 +72,7 @@ private:
 
 	bool m_isOverlordGet;
 
+
 	uiManager * m_pUiMag;
 	tileMap * m_pTileMapMag;
 	aStarNode * m_pAStartNode;
@@ -117,6 +121,8 @@ public:
 
 	void heroTxtBox(image * img, string txt, int txtCol);
 
+	void skillVoices();
+	void deadVoices();
 	void buffIcon(HDC hdc);
 	bool skill_ArrowMagic();
 	bool skill_Haling();

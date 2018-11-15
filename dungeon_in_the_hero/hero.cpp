@@ -16,8 +16,13 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * p
 	m_pBulletMag = pBulletMag;
 	m_pOverlord = pOverlord;
 
-
 	m_tHeroData = *heroInfo;
+
+	// 시작 위치
+	int tempStartTile = m_pTileMapMag->getStartTileX() * m_pTileMapMag->getTileSizeY() + m_pTileMapMag->getStartTileY();
+	m_tHeroData.t_posX = m_pTileMapMag->getTileSetPoint()[tempStartTile].t_rc.left + CAMERA->getCamPosX();
+	m_tHeroData.t_posY = m_pTileMapMag->getTileSetPoint()[tempStartTile].t_rc.top + CAMERA->getCamPosY();
+
 	m_tHeroData.t_img_state = IMAGEMANAGER->findImage("hero_state_00");
 
 	m_tHeroData.t_moveEndX = m_tHeroData.t_posX;
@@ -58,6 +63,9 @@ HRESULT hero::init(tagHeroData * heroInfo, tileMap * pTileMag, bulletManager * p
 		heroTxtBox(m_tHeroData.t_img_D, "들어갑니다~", eTxtBoxColor::Red);
 		break;
 	}
+
+
+
 
 	// 최초 마왕 위치 설정
 	m_aStarDaley = ASTAR_DALEY;
@@ -152,6 +160,16 @@ void hero::overlordGet()
 {
 	if (m_isDead) return;
 
+	if (m_isOverlordGet && m_pOverlord->gettOverlord().t_isGet && 
+		(m_pTileMapMag->getStartTileX() == m_tHeroData.t_tilePosX) &&
+		(m_pTileMapMag->getStartTileY() + 1) == m_tHeroData.t_tilePosY)
+	{
+
+		m_pTileMapMag->setGameState(eGameState::GameOver);
+
+	}
+
+
 	if (m_isOverlordGet && m_pOverlord->gettOverlord().t_isGet)
 		m_pOverlord->setTileXY(
 			m_tHeroData.t_tilePosX,
@@ -181,6 +199,25 @@ void hero::overlordGet()
 			break;
 		case 5:
 			heroTxtBox(m_tHeroData.t_img_S, "이몸이 용사라고!", eTxtBoxColor::Red);
+			break;
+		}
+
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord_1"), "정말 이게 최선이야?", eTxtBoxColor::Red);
+			break;
+		case 2:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord_1"), "그럴수가~!!", eTxtBoxColor::Red);
+			break;
+		case 3:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord_1"), "엥.. 실화.?", eTxtBoxColor::Red);
+			break;
+		case 4:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord_1"), "이, 이게 아닌데..", eTxtBoxColor::Red);
+			break;
+		case 5:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord_1"), "의외로 편할지도..?", eTxtBoxColor::Red);
 			break;
 		}
 
@@ -455,6 +492,7 @@ void hero::currHp()
 	}
 	else if (m_isDead && !m_ani.getIsPlaying())
 	{
+		deadVoices();
 		switch (RANDOM->getFromIntTo(1, 5))
 		{
 		case 1:
@@ -464,7 +502,7 @@ void hero::currHp()
 			heroTxtBox(m_tHeroData.t_img_Dead, "으갸갸갸갹!!", eTxtBoxColor::Red);
 			break;
 		case 3:
-			heroTxtBox(m_tHeroData.t_img_Dead, "인생역적의 꿈이..", eTxtBoxColor::Red);
+			heroTxtBox(m_tHeroData.t_img_Dead, "인생역전의 꿈이..", eTxtBoxColor::Red);
 			break;
 		case 4:
 			heroTxtBox(m_tHeroData.t_img_Dead, "연애도 못해보고..", eTxtBoxColor::Red);
@@ -474,14 +512,29 @@ void hero::currHp()
 			break;
 		}
 
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "한심해 한심해~", eTxtBoxColor::Green);
+			break;
+		case 2:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "용사 주제에 후후!", eTxtBoxColor::Green);
+			break;
+		case 3:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "대마왕님 성공이에요!", eTxtBoxColor::Green);
+			break;
+		case 4:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "잘가~ 이름 모를 용사!", eTxtBoxColor::Green);
+			break;
+		case 5:
+			heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "음~ 듣기 좋은 소리야!", eTxtBoxColor::Green);
+			break;
+		}
+
 		// 용사 사망 시 마왕 heroValue 감소하여 클리어 여부 체크
 		int tempXY = m_tHeroData.t_tilePosX * m_pTileMapMag->getTileSizeY() + m_tHeroData.t_tilePosY;
 		m_pOverlord->setHeroValue(m_pOverlord->getHeroValue() - 1);
-		m_pTileMapMag->setTileDesCurr(m_pTileMapMag->getTileDesCurr() + 25);
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	m_pTileMapMag->tileItemGet(tempXY, true);
-		//}
+		m_pTileMapMag->setTileDesCurr(m_pTileMapMag->getTileDesCurr() + HERO_DIE_DES);
 
 		if (m_pTileMapMag->HeroArrIsList(tempXY, &m_tHeroData))
 			m_pTileMapMag->HeroArrNullptrList(tempXY ,&m_tHeroData);
@@ -519,6 +572,25 @@ void hero::currHp()
 				m_tHeroData.t_tilePosY,
 				m_tHeroData.t_rc.left,
 				m_tHeroData.t_rc.top);
+
+			switch (RANDOM->getFromIntTo(1, 5))
+			{
+			case 1:
+				heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "후후, 이럴 줄 알았지!", eTxtBoxColor::Green);
+				break;
+			case 2:
+				heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "용사 주제에 건방져!", eTxtBoxColor::Green);
+				break;
+			case 3:
+				heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "역시 대마왕님!", eTxtBoxColor::Green);
+				break;
+			case 4:
+				heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "좋아 탈출 성공!", eTxtBoxColor::Green);
+				break;
+			case 5:
+				heroTxtBox(IMAGEMANAGER->findImage("Overlord"), "휴~ 별거 아니잖아?", eTxtBoxColor::Green);
+				break;
+			}
 		}
 		
 
@@ -949,6 +1021,9 @@ void hero::damge()
 		tempPoint = 1;
 
 	m_tHeroData.t_currHp -= tempPoint;
+	if (m_tHeroData.t_currHp <= 0)
+		m_tHeroData.t_currHp = 0;
+
 	m_tHeroData.t_damgePoint = 0;
 }
 
@@ -1147,6 +1222,40 @@ void hero::heroTxtBox(image * img, string txt, int txtCol)
 	m_pUiMag->addTxtBox(img, temp, true, txtCol);
 }
 
+void hero::skillVoices()
+{
+	if (RANDOM->getInt(100) <= 50) return;
+
+	switch (m_tHeroData.t_enumType)
+	{
+	case eHeroClass::Warriors:
+		SOUNDMANAGER->play("Sound/SE/Voices/Warriors_S.wav");
+		break;
+	case eHeroClass::Wizard:
+		SOUNDMANAGER->play("Sound/SE/Voices/Wizard_S.wav");
+		break;
+	case eHeroClass::Alchemist:
+		SOUNDMANAGER->play("Sound/SE/Voices/Alchemist_S.wav");
+		break;
+	}
+}
+
+void hero::deadVoices()
+{
+	switch (m_tHeroData.t_enumType)
+	{
+	case eHeroClass::Warriors:
+		SOUNDMANAGER->play("Sound/SE/Voices/Warriors_D.wav");
+		break;
+	case eHeroClass::Wizard:
+		SOUNDMANAGER->play("Sound/SE/Voices/Wizard_D.wav");
+		break;
+	case eHeroClass::Alchemist:
+		SOUNDMANAGER->play("Sound/SE/Voices/Alchemist_D.wav");
+		break;
+	}
+}
+
 void hero::buffIcon(HDC hdc)
 {
 #define SET_STATE_SIZE_Y 10.0f
@@ -1211,6 +1320,7 @@ bool hero::skill_Haling()
 
 	if (m_tHeroData.t_currHp <= m_tHeroData.t_MaxHp / 2)
 	{
+		skillVoices();
 		switch (RANDOM->getFromIntTo(1, 5))
 		{
 		case 1:
@@ -1257,6 +1367,8 @@ bool hero::skill_AtkBuff()
 	if (m_tHeroData.t_Skill.t_AtkCount <= 0 &&
 		!m_tHeroData.t_Skill.t_isAtkBuff)
 	{
+		skillVoices();
+
 		switch (RANDOM->getFromIntTo(1, 5))
 		{
 		case 1:
@@ -1307,6 +1419,8 @@ bool hero::skill_DefBuff()
 	if (m_tHeroData.t_Skill.t_DefCount <= 0 &&
 		!m_tHeroData.t_Skill.t_isDefBuff)
 	{
+		skillVoices();
+
 		switch (RANDOM->getFromIntTo(1, 5))
 		{
 		case 1:
@@ -1357,6 +1471,8 @@ bool hero::skill_Haste()
 	if (m_tHeroData.t_Skill.t_HasteCount <= 0 &&
 		!m_tHeroData.t_Skill.t_isHasteBuff)
 	{
+		skillVoices();
+
 		switch (RANDOM->getFromIntTo(1, 5))
 		{
 		case 1:
@@ -1402,9 +1518,11 @@ bool hero::skill_FireWall()
 		!m_tHeroData.t_Skill.t_fireWall ||
 		m_tHeroData.t_currMana < HERO_SKILL_FIREWALL ||
 		m_tHeroData.t_Skill.t_isFireWall ||
-		RANDOM->getInt(100) <= 90) return false;
+		RANDOM->getInt(100) <= 50) return false;
 
 	if (!enemyCheckRange()) return false;
+
+	skillVoices();
 
 	switch (RANDOM->getFromIntTo(1, 5))
 	{

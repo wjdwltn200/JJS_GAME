@@ -18,6 +18,8 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/BGM/BGM_GameWin.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/BGM/BGM_HeroStart.wav", true, true);
 	SOUNDMANAGER->addSound("Sound/BGM/BGM_OverlordGet.wav", true, true);
+	SOUNDMANAGER->addSound("Sound/BGM/BGM_GameOver.wav", false, false);
+
 
 	SOUNDMANAGER->addSound("Sound/SE/Impact1.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/getGam.wav", false, false);
@@ -55,12 +57,12 @@ HRESULT gameScene::init()
 	SOUNDMANAGER->addSound("Sound/SE/Voices/Wizard_S.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Voices/Wizard_D.wav", false, false);
 
-	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_D_A.wav", false, false);
-	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_D_S.wav", false, false);
-	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_D_D.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_A.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_S.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Alchemist_D.wav", false, false);
 
-	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_D.wav", false, false);
-	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_D.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_A.wav", false, false);
+	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_S.wav", false, false);
 	SOUNDMANAGER->addSound("Sound/SE/Voices/Warriors_D.wav", false, false);
 
 
@@ -121,6 +123,7 @@ HRESULT gameScene::init()
 	IMAGEMANAGER->addImage("TileSet_Terrain_DesSet_2", "image/inGameImg/EFF/TileSet_Terrain_DesSet2.bmp", 23, 22, 1, 1, true, RGB(255, 0, 255));
 
 	IMAGEMANAGER->addImage("Item_Jewel", "image/inGameImg/EFF/Item_JewelSet.bmp", 75, 105, 5, 7, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addImage("HeroPopup", "image/inGameImg/UI/HeroPopup.bmp", 170, 78, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("PickMePopup", "image/inGameImg/UI/PickMe.bmp", 179, 69, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("TilePopup", "image/inGameImg/UI/TilePopup.bmp", 170, 110, 1, 1, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addImage("EnemyPopup", "image/inGameImg/UI/EnemyPopup.bmp", 170, 110, 1, 1, true, RGB(255, 0, 255));
@@ -314,20 +317,22 @@ HRESULT gameScene::init()
 
 	//// 플레이어 셋팅
 	m_tPlayer = new PlayerInfo;
-	m_tPlayer->t_TileDesEne = 100;
+	m_tPlayer->t_TileDesEne = 30;
 	m_currTileDesEne = m_tPlayer->t_TileDesEne;
 	m_tileDesEneScale = TILE_DES_ENE_SET_SCALE;
 	m_EnemyPowerValueScale = ENEMY_POWER_VALUE;
 
 
 	m_MapTile->init(32, 42, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag, m_pOverlord);
-	m_pOverlord->init(m_MapTile);
+	m_pOverlord->init(m_MapTile, m_pUiMag);
 	CAMERA->setCamPosY(CAMERA_MAX_Y);
 
 	m_imgTopBg = IMAGEMANAGER->addImage("inGameTopBG", "image/inGameImg/BG/InGame_Top_Bg.bmp", m_MapTile->gettileMaxValueX(), TOP_IMG_SIZE_Y);
 
-	m_isScreenChange = true;
-	m_screenChangeValue = 255;
+	g_saveData.g_gameOver = false;
+	g_saveData.g_screenState = eScreenState::FadeOut;
+	g_saveData.g_isScreenChange = true;
+	g_saveData.g_screenChangeValue = 255;
 
 	m_imgScreenCam = new image;
 	m_imgScreenCam->init(WINSIZEX, WINSIZEY);
@@ -359,12 +364,24 @@ void gameScene::update()
 	OBJECTMANAGER->update();
 	EFFMANAGER->update();
 
-	if (m_isScreenChange && m_screenChangeValue >= 0)
+	if ((g_saveData.g_screenState == eScreenState::FadeOut) &&
+		g_saveData.g_isScreenChange && g_saveData.g_screenChangeValue >= 0)
 	{
-		m_screenChangeValue -= 5;
-		if (m_screenChangeValue <= 5)
-			m_isScreenChange = false;
+		g_saveData.g_screenChangeValue -= 5;
+		if (g_saveData.g_screenChangeValue <= 5)
+			g_saveData.g_isScreenChange = false;
 	}
+
+	if ((g_saveData.g_screenState == eScreenState::FadeIn) &&
+		g_saveData.g_isScreenChange && g_saveData.g_screenChangeValue <= 255)
+	{
+		g_saveData.g_screenChangeValue += 1;
+		if (g_saveData.g_screenChangeValue >= 255)
+			g_saveData.g_isScreenChange = false;
+	}
+
+	if (g_saveData.g_gameOver)
+		SCENEMANAGER->changeScene("title");
 }
 
 void gameScene::render(HDC hdc)
@@ -377,10 +394,9 @@ void gameScene::render(HDC hdc)
 	m_pOverlord->render(hdc);
 	EFFMANAGER->render(hdc);
 	OBJECTMANAGER->render(hdc);
+	m_pHeroMag->heroInfoRender(hdc);
 	m_pUiMag->render(hdc);
 	screenUi(hdc);
-
-	IMAGEMANAGER->findImage("CamScreen")->screenRender(hdc, 10, 500);
 
 	if (g_saveData.gisTest)
 	{
@@ -397,8 +413,12 @@ void gameScene::render(HDC hdc)
 		TextOut(hdc, WINSIZEX - 120, 70, szText, strlen(szText));
 	}
 
-	if (m_screenChangeValue)
-		IMAGEMANAGER->findImage("Title_Chang")->alphaRender(hdc, m_screenChangeValue);
+	if ((g_saveData.g_screenState == eScreenState::FadeOut) &&
+		g_saveData.g_screenChangeValue)
+		IMAGEMANAGER->findImage("Title_Chang")->alphaRender(hdc, g_saveData.g_screenChangeValue);
+	if ((g_saveData.g_screenState == eScreenState::FadeIn) &&
+		g_saveData.g_screenChangeValue)
+		IMAGEMANAGER->findImage("Title_Chang")->alphaRender(hdc, g_saveData.g_screenChangeValue);
 }
 
 void gameScene::screenUi(HDC hdc)
@@ -437,7 +457,11 @@ void gameScene::RD_UI(HDC hdc)
 {
 	// 채굴 파워
 	IMAGEMANAGER->findImage("TileDesEne")->render(hdc, WINSIZEX - 220.0f, WINSIZEY - 178.0f);
-	MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, 4, WINSIZEX - 150.0f, WINSIZEY - 120.0f, 2, m_tileDesEneScale);
+	int tempColr = 2;
+	if (m_tPlayer->t_TileDesEne <= 10)
+		tempColr = 1;
+
+	MY_UTIL::NumberPont(hdc, m_tPlayer->t_TileDesEne, 4, WINSIZEX - 150.0f, WINSIZEY - 120.0f, tempColr, m_tileDesEneScale);
 	if (m_tileDesEneScale > TILE_DES_ENE_SET_SCALE)
 		m_tileDesEneScale -= 0.1f;
 
@@ -446,7 +470,6 @@ void gameScene::RD_UI(HDC hdc)
 		m_currTileDesEne = m_tPlayer->t_TileDesEne;
 		m_tileDesEneScale = (TILE_DES_ENE_SET_SCALE + 1.0f);
 	}
-
 
 	// 군사력
 	IMAGEMANAGER->findImage("EnemyPower")->render(hdc, WINSIZEX - 300.0f, WINSIZEY - 120.0f);

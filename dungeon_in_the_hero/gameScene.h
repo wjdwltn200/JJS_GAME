@@ -40,10 +40,6 @@ private:
 	int m_currEnemyPowerValue;
 	float m_EnemyPowerValueScale;
 
-
-	bool m_isScreenChange;
-	int m_screenChangeValue;
-
 public:
 	virtual HRESULT init();
 	virtual void release();

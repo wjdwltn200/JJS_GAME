@@ -253,64 +253,6 @@ void image::release()
 	}
 }
 
-void image::screenRender(HDC hdc, int destX, int destY)
-{
-	m_blendFunc.SourceConstantAlpha = 255;
-
-	if (m_isTransparent)
-	{
-		// 1. 출력해야되는 DC에 그려져있는 내용을 blendImage에 복사
-		BitBlt(
-			// 목적지
-			m_pBlendImage->hMemDC,
-			0, 0,
-			m_pCamImage->nWidth, m_pCamImage->nHeight,
-
-			// 대상
-			hdc,
-			destX, destY,
-			SRCCOPY);
-
-		// 2. 출력할 이미지를 blendImage에 복사
-		GdiTransparentBlt(
-			// 목적지
-			m_pBlendImage->hMemDC,
-			destX, destY,
-			m_pCamImage->nWidth, m_pCamImage->nHeight,
-
-			// 대상
-			m_pCamImage->hMemDC,
-			0, 0,
-			m_pCamImage->nWidth, m_pCamImage->nHeight,
-			m_transColor);
-		// 3. blendDC를 출력해야되는 DC에 복사
-		AlphaBlend(
-			// 목적지
-			hdc,
-			destX, destY - 200,
-			m_pCamImage->nWidth, m_pCamImage->nHeight,
-
-			// 대상
-			m_pBlendImage->hMemDC,
-			0, 0,
-			m_pCamImage->nWidth, m_pCamImage->nHeight,
-			m_blendFunc);
-	}
-	else
-	{
-		AlphaBlend(
-			// 복사할 목표
-			hdc,
-			destX, destY,
-			m_pCamImage->nWidth, m_pCamImage->nHeight,
-			// 복사할 대상
-			m_pCamImage->hMemDC,
-			0, 0,
-			m_pCamImage->nWidth, m_pCamImage->nHeight,
-			m_blendFunc);
-	}
-}
-
 void image::render(HDC hdc, int destX, int destY)
 {
 	if (m_isTransparent)

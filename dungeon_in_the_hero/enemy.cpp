@@ -50,24 +50,23 @@ HRESULT enemy::init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * p
 	case tagEnemyType::Slime:
 		m_eMoveState = RANDOM->getFromIntTo(0, 3);
 		break;
-	//case tagEnemyType::Daemon:
-	//	for (int i = 0; i < 4; i++)
-	//	{
-	//		if (moveRectCheck(i))
-	//		{
-	//			m_eMoveState = i;
-	//			m_ani.start();
-	//			m_isMoveAct = true;
-	//			break;
-	//		}
-	//	}
-	//	break;
+	case tagEnemyType::Lady:
+		for (int i = 0; i < 4; i++)
+		{
+			if (moveRectCheck(i))
+			{
+				m_eMoveState = i;
+				m_ani.start();
+				m_isMoveAct = true;
+				break;
+			}
+		}
+		break;
 	default:
 		m_eMoveState = RANDOM->getFromIntTo(0, 3);
 		break;
 	}
 
-	//aStarFind(m_pAStartNode->Create(15, 4), m_pAStartNode->Create(m_tEnemyData.t_tilePosX, m_tEnemyData.t_tilePosY));
 	return S_OK;
 }
 
@@ -134,15 +133,17 @@ void enemy::render(HDC hdc)
 	}
 
 	int tempTileSize = 0;
+	int tempImgX = 0;
 	switch (m_tEnemyData.t_enumType)
 	{
 	case tagEnemyType::Demon:
 		m_tEnemyData.t_rc = RectMake(
 			m_tEnemyData.t_posX - CAMERA->getCamPosX(),
-			m_tEnemyData.t_posY - CAMERA->getCamPosY(),
+			m_tEnemyData.t_posY - CAMERA->getCamPosY() - TILE_SIZE,
 			TILE_SIZE * 2,
 			TILE_SIZE * 2);
-		tempTileSize = TILE_SIZE * 2;
+		tempTileSize = TILE_SIZE;
+		tempImgX = (tempTileSize);
 		break;
 	default:
 		m_tEnemyData.t_rc = RectMake(
@@ -151,7 +152,7 @@ void enemy::render(HDC hdc)
 			TILE_SIZE,
 			TILE_SIZE);
 		tempTileSize = TILE_SIZE;
-
+		tempImgX = (tempTileSize / 2);
 		break;
 	}
 
@@ -160,7 +161,7 @@ void enemy::render(HDC hdc)
 		!(m_tEnemyData.t_rc.top < -TILE_SIZE || m_tEnemyData.t_rc.top > WINSIZEY))
 	{
 		m_tEnemyData.t_img->aniRender(hdc,
-			(m_tEnemyData.t_posX + (tempTileSize / 2) - (m_tEnemyData.t_img->getFrameWidth() * m_tEnemyData.t_scale) / 2) - CAMERA->getCamPosX(),
+			(m_tEnemyData.t_posX + tempImgX - (m_tEnemyData.t_img->getFrameWidth() * m_tEnemyData.t_scale) / 2) - CAMERA->getCamPosX(),
 			((m_tEnemyData.t_posY + tempTileSize) - (m_tEnemyData.t_img->getFrameHeight() * m_tEnemyData.t_scale)) - CAMERA->getCamPosY(),
 			&m_ani, m_tEnemyData.t_scale, true, m_tEnemyData.t_alphaValue);
 	}
@@ -479,6 +480,9 @@ void enemy::damge()
 		tempPoint = 1;
 
 	m_tEnemyData.t_currHp -= tempPoint;
+	if (m_tEnemyData.t_currHp <= 0)
+		m_tEnemyData.t_currHp = 0;
+
 	m_tEnemyData.t_damgePoint = 0;
 }
 
@@ -634,14 +638,14 @@ bool enemy::moveRectCheckBig(int eMoveArrow)
 	switch (eMoveArrow)
 	{
 	case eMoveState::UP:
-		if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1)].t_isAlive ||
-			m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 1)].t_isAlive) return false;
+		if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 2)].t_isAlive ||
+			m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY - 2)].t_isAlive) return false;
 		m_tEnemyData.t_tilePosY -= 1;
 		m_tEnemyData.t_moveEndY = m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_rc.top + CAMERA->getCamPosY();
 		break;
 	case eMoveState::DOWN:
-		if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 2)].t_isAlive ||
-			m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 2)].t_isAlive) return false;
+		if (m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1)].t_isAlive ||
+			m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY() + (m_tEnemyData.t_tilePosY + 1)].t_isAlive) return false;
 		m_tEnemyData.t_tilePosY += 1;
 		m_tEnemyData.t_moveEndY = m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX) * m_pTileMapMag->getTileSizeY() + m_tEnemyData.t_tilePosY].t_rc.top + CAMERA->getCamPosY();
 		break;
@@ -787,6 +791,10 @@ void enemy::enemySetTxt(int enemyType)
 		setTxt.t_txtName = "볼레레";
 		setTxt.t_txtInfo = "액괴를 먹고 사는 볼레입니다 하얗고 귀엽죠?";
 		break;
+	case tagEnemyType::BugV2:
+		setTxt.t_txtName = "볼렐렐";
+		setTxt.t_txtInfo = "볼레레의 성충이군요.. 더욱 강력하다구요!";
+		break;
 	case tagEnemyType::Lili:
 		setTxt.t_txtName = "릴리";
 		setTxt.t_txtInfo = "멀리서 마력덩어리를 발사합니다!";
@@ -798,6 +806,22 @@ void enemy::enemySetTxt(int enemyType)
 	case tagEnemyType::FlowerV2:
 		setTxt.t_txtName = "변종 액라워";
 		setTxt.t_txtInfo = "이 녀석은 주변 마나를 흡수해서 살아남는 특이한 녀석입니다!";
+		break;
+	case tagEnemyType::Demon:
+		setTxt.t_txtName = "덩치";
+		setTxt.t_txtInfo = "거~대한 녀석이죠? 너무 거대해서 1칸짜리 길은 통과를 못합니다.";
+		break;
+	case tagEnemyType::Lizardman:
+		setTxt.t_txtName = "꼬복이";
+		setTxt.t_txtInfo = "어디서 주웠는지 방패를 들고다니는 거북전사 입니다.";
+		break;
+	case tagEnemyType::Mamon:
+		setTxt.t_txtName = "외눈박이";
+		setTxt.t_txtInfo = "강력한 핵꿀밤은 용사를 정신없게 만들기 충분하다고 들었어요!";
+		break;
+	case tagEnemyType::Lady:
+		setTxt.t_txtName = "부끄마마";
+		setTxt.t_txtInfo = "이름 그대로 부끄러움을 많이 타서 용사가 접근하면 숨어버린다고 들었어요!";
 		break;
 	}
 
@@ -1227,54 +1251,62 @@ bool enemy::isHero(int eMoveArrow)
 			switch (eMoveArrow)
 			{
 			case eMoveState::UP:
-				if (((i == tempAttRange) &&
-					(m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i) == nullptr) &&
-					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i) == nullptr)) ||
-					m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i].t_isAlive) return false;
+				// 2칸 확인
+				if ((i == tempAttRange) &&
+					((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (i - 1)) == nullptr) &&
+					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (i - 1)) == nullptr))) return false;
 
-				if (((m_pTileMapMag->HeroArrOutList(m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i) != nullptr))
-					tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i;
-				if (((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i) != nullptr))
-					tempMoveArrow = ((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - i;
+				// 1칸씩 확인
+				if (((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (i - 1)) != nullptr)))
+					tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (i - 1);
+
+				if (((m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (i - 1)) != nullptr)))
+					tempMoveArrow = ((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (i - 1);
 
 				tempAttArrow = eMoveState::UP;
 				break;
 			case eMoveState::RIGHT:
-				if (((i == tempAttRange) &&
-					(m_pTileMapMag->HeroArrOutList((((m_tEnemyData.t_tilePosX + 1) + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY) == nullptr) &&
-					(m_pTileMapMag->HeroArrOutList((((m_tEnemyData.t_tilePosX + 1) + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + 1) == nullptr)) ||
-					m_pTileMapMag->getTileSetPoint()[((m_tEnemyData.t_tilePosX + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY].t_isAlive) return false;
+				// 2칸 확인
+				if ((i == tempAttRange) &&
+					((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX + (i + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY)) == nullptr) &&
+					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + (i + 1)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (1)) == nullptr)) return false;
 
-				if ((m_pTileMapMag->HeroArrOutList((((m_tEnemyData.t_tilePosX + 1) + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY) != nullptr))
-					tempMoveArrow = (((m_tEnemyData.t_tilePosX + 1) + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
-				if ((m_pTileMapMag->HeroArrOutList((((m_tEnemyData.t_tilePosX + 1) + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + 1) != nullptr))
-					tempMoveArrow = (((m_tEnemyData.t_tilePosX + 1) + i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + 1;
+				// 1칸씩 확인
+				if (((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX + (i + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY)) != nullptr))
+					tempMoveArrow = (m_tEnemyData.t_tilePosX + (i + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
+
+				if (((m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + (i + 1)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (1)) != nullptr)))
+					tempMoveArrow = ((m_tEnemyData.t_tilePosX + (i + 1)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (1);
 
 				tempAttArrow = eMoveState::RIGHT;
 				break;
 			case eMoveState::DOWN:
-				if (((i == tempAttRange) &&
-					(m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + (m_tEnemyData.t_tilePosY + 1) + i) == nullptr) &&
-					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + (m_tEnemyData.t_tilePosY + 1) + i) == nullptr)) ||
-					m_pTileMapMag->getTileSetPoint()[(m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + i].t_isAlive) return false;
+				// 2칸 확인
+				if ((i == tempAttRange) &&
+					((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + (i)) == nullptr) &&
+					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + (i)) == nullptr))) return false;
 
-				if ((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + (m_tEnemyData.t_tilePosY + 1) + i) != nullptr))
-					tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + (m_tEnemyData.t_tilePosY + 1) + i;
-				if (((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + (m_tEnemyData.t_tilePosY + 1) + i) != nullptr))
-					tempMoveArrow = ((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + (m_tEnemyData.t_tilePosY + 1) + i;
+				// 1칸씩 확인
+				if (((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + (i)) != nullptr)))
+					tempMoveArrow = (m_tEnemyData.t_tilePosX * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + (i);
+
+				if (((m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + (i)) != nullptr)))
+					tempMoveArrow = ((m_tEnemyData.t_tilePosX + 1) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + (i);
 
 				tempAttArrow = eMoveState::DOWN;
 				break;
 			case eMoveState::LEFT:
-				if (((i == tempAttRange) &&
-					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY) == nullptr) &&
-					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + 1) == nullptr)) ||
-					m_pTileMapMag->getTileSetPoint()[((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY].t_isAlive) return false;
+				// 2칸 확인
+				if ((i == tempAttRange) &&
+					((m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX - (i)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY)) == nullptr) &&
+					(m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX - (i)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (1)) == nullptr)) return false;
 
-				if (((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY) != nullptr))
-					tempMoveArrow = ((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
-				if (((m_pTileMapMag->HeroArrOutList((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + 1) != nullptr))
-					tempMoveArrow = ((m_tEnemyData.t_tilePosX - i) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY + 1;
+				// 1칸씩 확인
+				if (((m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX - (i)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY)) != nullptr))
+					tempMoveArrow = ((m_tEnemyData.t_tilePosX - (i)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY;
+
+				if (((m_pTileMapMag->HeroArrOutList(((m_tEnemyData.t_tilePosX - (i)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (1)) != nullptr)))
+					tempMoveArrow = ((m_tEnemyData.t_tilePosX - (i)) * m_pTileMapMag->getTileSizeY()) + m_tEnemyData.t_tilePosY - (1);
 
 				tempAttArrow = eMoveState::LEFT;
 				break;

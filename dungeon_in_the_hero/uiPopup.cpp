@@ -99,6 +99,18 @@ void uiPopup::render(HDC hdc)
 		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 70.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
 		MY_UTIL::FontDelete(hdc);
 	}
+	else if (m_tTxtInfo.t_TileMana == -1)
+	{
+		MY_UTIL::FontOption(hdc, 14, 1000);
+		sprintf_s(temp, "-");
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 25.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
+		MY_UTIL::FontDelete(hdc);
+
+		MY_UTIL::FontOption(hdc, 14, 1000);
+		sprintf_s(temp, "-");
+		TextOut(hdc, m_fPosX - CAMERA->getCamPosX() + POPUP_TXT_SET_X + 70.0f, m_fPosY - CAMERA->getCamPosY() + ENEMY_INFO_SET_Y, temp, strlen(temp));
+		MY_UTIL::FontDelete(hdc);
+	}
 }
 
 void uiPopup::setXY(float posX, float posY)

@@ -55,8 +55,8 @@ private:
 	tagEnemyData tempEnemy;
 
 	////2*2 enemy 타일 검사용 배열
-	int enemySizeX[2] = { 0,1 };
-	int enemySizeY[2] = { 0,1 };
+	int enemySizeX[2] = { 0, 1 };
+	int enemySizeY[2] = { 0,-1 };
 
 public:
 	HRESULT init(tagEnemyData* enemyInfo, tileMap* pTileMag, enemyManager * pEnemyMag, bulletManager * pBulletMag);

@@ -176,7 +176,6 @@ HRESULT tileMap::init(int tileX, int tileY,
 
 	//// 카메라 최초 위치 셋팅
 	CAMERA->setCamPosX((m_tileSizeMaxX - WINSIZEX - WINSTARTX) / 2);
-
 	return S_OK;
 }
 
@@ -187,6 +186,8 @@ void tileMap::release()
 
 void tileMap::update()
 {
+	if (m_gameState == eGameState::GameOver) return;
+
 	tileDesEneChag();
 	heroStartSys();
 	keyInput();
@@ -228,6 +229,25 @@ void tileMap::update()
 				(IntersectRect(&tempRc, &m_tileset[x * m_tileSizeY + y].t_rc, &g_MouseRc) &&
 				(tileCheck(x, y))))
 			{
+				switch (RANDOM->getFromIntTo(1, 5))
+				{
+				case 1:
+					gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "이곳의 제 자리군요?", eTxtBoxColor::Green);
+					break;
+				case 2:
+					gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "그럼 차나 한잔?", eTxtBoxColor::Green);
+					break;
+				case 3:
+					gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "후후 멍청한 용사들!", eTxtBoxColor::Green);
+					break;
+				case 4:
+					gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "아늑한 곳이에요~", eTxtBoxColor::Green);
+					break;
+				case 5:
+					gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "그럼 기다려볼까요?", eTxtBoxColor::Green);
+					break;
+				}
+
 				m_pOverlord->setTileXY(
 					x,
 					y,
@@ -310,7 +330,7 @@ void tileMap::render(HDC hdc)
 			if (m_isHeroStart && (m_tileset[x * m_tileSizeY + y].t_enumType == tagTileType::START))
 				heroStart(x * m_tileSizeY + y);
 
-			//if (MY_UTIL::screenRender(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top)) continue;
+			if (MY_UTIL::screenRender(m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top)) continue;
 
 			if (m_tileset[x * m_tileSizeY + y].t_enumType == tagTileType::START)
 			{
@@ -383,10 +403,10 @@ void tileMap::render(HDC hdc)
 				);
 
 				//// 타일정보 디버깅 정보
-				sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
-				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
-				//sprintf_s(szText, "%d", (m_tileset[x * m_tileSizeY + y].t_enemyInfo[1]));
+				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
+				sprintf_s(szText, "%d", (m_tileset[x * m_tileSizeY + y].t_enemyInfo[0]));
+				TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				//sprintf_s(szText, "%d", TestTileNum);
 				//TextOut(hdc, m_tileset[x * m_tileSizeY + y].t_rc.left, m_tileset[x * m_tileSizeY + y].t_rc.top, szText, strlen(szText));
 				//sprintf_s(szText, "%d,%d", m_tileset[x * m_tileSizeY + y].t_setX, m_tileset[x * m_tileSizeY + y].t_setY);
@@ -434,6 +454,28 @@ void tileMap::heroStartSys()
 
 	if (m_stageTimer <= 0 && (m_gameState == eGameState::GameReady))
 	{
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "꺅, 놀랬잖아!", eTxtBoxColor::Red);
+			break;
+		case 2:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "저 문이 얼마짜린데!", eTxtBoxColor::Red);
+			break;
+		case 3:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "용사가 나타났어요!!", eTxtBoxColor::Red);
+			break;
+		case 4:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "기다릴 줄 모르는구나?", eTxtBoxColor::Red);
+			break;
+		case 5:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "대마왕니이이이님!!", eTxtBoxColor::Red);
+			break;
+		}
+
+		CAMERA->setCamPosY(CAMERA_MAX_Y);
+		CAMERA->setCamPosX((m_tileSizeMaxX - WINSIZEX - WINSTARTX) / 2);
+
 		m_gameState = eGameState::GameGetSet;
 		m_isHeroStart = true;
 		m_HeroStartDaley = 1;
@@ -445,22 +487,25 @@ void tileMap::heroStartSys()
 		switch (m_stageValue)
 		{
 		case 1:
-			heroSetting(heroSet(eHeroClass::Alchemist));
+			heroSetting(heroSet(eHeroClass::Warriors));
 			break;
 		case 2:
-			heroSetting(heroSet(eHeroClass::Warriors));
+			heroSetting(heroSet(eHeroClass::Alchemist,2));
 			break;
 		case 3:
-			heroSetting(heroSet(eHeroClass::Wizard));
+			heroSetting(heroSet(eHeroClass::Wizard,2));
 			break;
 		case 4:
-			heroSetting(heroSet(eHeroClass::Alchemist));
-			heroSetting(heroSet(eHeroClass::Warriors));
+			heroSetting(heroSet(eHeroClass::Alchemist, 2));
+			heroSetting(heroSet(eHeroClass::Warriors, 3));
 			break;
 		case 5:
-			heroSetting(heroSet(eHeroClass::Alchemist));
-			heroSetting(heroSet(eHeroClass::Warriors));
-			heroSetting(heroSet(eHeroClass::Wizard));
+			heroSetting(heroSet(eHeroClass::Alchemist, 3));
+			heroSetting(heroSet(eHeroClass::Warriors, 4));
+			heroSetting(heroSet(eHeroClass::Wizard, 2));
+			break;
+		case 6:
+			heroSetting(heroSet(eHeroClass::hero_0, 3));
 			break;
 		}
 	}
@@ -493,7 +538,7 @@ void tileMap::heroListStart()
 }
 
 
-tagHeroData * tileMap::heroSet(int heroClass)
+tagHeroData * tileMap::heroSet(int heroClass, int lv)
 {
 	// 용사 개수만큼 마왕 heroValue 충전
 	m_pOverlord->setHeroValue(m_pOverlord->getHeroValue() + 1);
@@ -525,12 +570,12 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("hero_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("hero_Dead");
 
-		tempHero->t_currHp = BaseHp + 200;
-		tempHero->t_currMana = BaseMana + 300;
-		tempHero->t_moveSpeed = BaseMoveSpeed + 1.0f;
+		tempHero->t_currHp = BaseHp + (lv * 50);
+		tempHero->t_currMana = BaseMana + (lv * 50);
+		tempHero->t_moveSpeed = BaseMoveSpeed + (lv * 0.5f);
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint + 5;
-		tempHero->t_defPoint = BaseDefPoint + 3;
+		tempHero->t_atkPoint = BaseAtkPoint + (lv * 2);
+		tempHero->t_defPoint = BaseDefPoint + (lv * 1);
 
 		tempHero->t_Skill.t_fireWall = true;
 		tempHero->t_Skill.t_ArrowMagic = true;
@@ -552,12 +597,12 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Alchemist_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Alchemist_Dead");
 
-		tempHero->t_currHp = BaseHp + 50;
-		tempHero->t_currMana = BaseMana + 100;
-		tempHero->t_moveSpeed = BaseMoveSpeed + 0.5f;
+		tempHero->t_currHp = BaseHp + (lv * 20);
+		tempHero->t_currMana = BaseMana + (lv * 30);
+		tempHero->t_moveSpeed = BaseMoveSpeed + (lv * 0.2f);
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint - 2;
-		tempHero->t_defPoint = BaseDefPoint + 1;
+		tempHero->t_atkPoint = BaseAtkPoint + (lv * 1);
+		tempHero->t_defPoint = BaseDefPoint + (lv * 0);
 
 		tempHero->t_Skill.t_fireWall = true;
 		tempHero->t_Skill.t_ArrowMagic = true;
@@ -579,12 +624,12 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Bard_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Bard_Dead");
 
-		tempHero->t_currHp = BaseHp;
-		tempHero->t_currMana = BaseMana;
-		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_currHp = BaseHp + (lv * 50);
+		tempHero->t_currMana = BaseMana + (lv * 50);
+		tempHero->t_moveSpeed = BaseMoveSpeed + (lv * 0.5f);
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint;
-		tempHero->t_defPoint = BaseDefPoint;
+		tempHero->t_atkPoint = BaseAtkPoint + (lv * 2);
+		tempHero->t_defPoint = BaseDefPoint + (lv * 1);
 
 		//tempHero->t_Skill.t_fireWall = true;
 		//tempHero->t_Skill.t_ArrowMagic = true;
@@ -605,12 +650,12 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Theif_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Theif_Dead");
 
-		tempHero->t_currHp = BaseHp;
-		tempHero->t_currMana = BaseMana;
-		tempHero->t_moveSpeed = BaseMoveSpeed;
+		tempHero->t_currHp = BaseHp + (lv * 50);
+		tempHero->t_currMana = BaseMana + (lv * 50);
+		tempHero->t_moveSpeed = BaseMoveSpeed + (lv * 0.5f);
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint;
-		tempHero->t_defPoint = BaseDefPoint;
+		tempHero->t_atkPoint = BaseAtkPoint + (lv * 2);
+		tempHero->t_defPoint = BaseDefPoint + (lv * 1);
 
 		//tempHero->t_Skill.t_fireWall = true;
 		//tempHero->t_Skill.t_ArrowMagic = true;
@@ -631,12 +676,12 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Warriors_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Warriors_Dead");
 
-		tempHero->t_currHp = BaseHp + 150;
-		tempHero->t_currMana = BaseMana + 50;
-		tempHero->t_moveSpeed = BaseMoveSpeed + 0.3f;
+		tempHero->t_currHp = BaseHp + (lv * 30);
+		tempHero->t_currMana = BaseMana + (lv * 10);
+		tempHero->t_moveSpeed = BaseMoveSpeed + (lv * 0.2f);
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint + 3;
-		tempHero->t_defPoint = BaseDefPoint + 2;
+		tempHero->t_atkPoint = BaseAtkPoint + (lv * 1);
+		tempHero->t_defPoint = BaseDefPoint + (lv * 1);
 
 		//tempHero->t_Skill.t_fireWall = true;
 		//tempHero->t_Skill.t_ArrowMagic = true;
@@ -657,12 +702,12 @@ tagHeroData * tileMap::heroSet(int heroClass)
 		tempHero->t_img_S = IMAGEMANAGER->findImage("Wizard_S");
 		tempHero->t_img_Dead = IMAGEMANAGER->findImage("Wizard_Dead");
 
-		tempHero->t_currHp = BaseHp + 50;
-		tempHero->t_currMana = BaseMana + 200;
-		tempHero->t_moveSpeed = BaseMoveSpeed + 0.2f;
+		tempHero->t_currHp = BaseHp + (lv * 10);
+		tempHero->t_currMana = BaseMana + (lv * 40);
+		tempHero->t_moveSpeed = BaseMoveSpeed + (lv * 0.1f);
 		tempHero->t_attType = tagHeroAttType::Near;
-		tempHero->t_atkPoint = BaseAtkPoint - 2;
-		tempHero->t_defPoint = BaseDefPoint;
+		tempHero->t_atkPoint = BaseAtkPoint + (lv * 1);
+		tempHero->t_defPoint = BaseDefPoint + (lv * 0);
 
 		tempHero->t_Skill.t_fireWall = true;
 		tempHero->t_Skill.t_ArrowMagic = true;
@@ -687,9 +732,13 @@ void tileMap::tileSetTxt(int tileType, int tileNum)
 
 	switch (tileType)
 	{
+	case tagTileType::GROUND:
+		setTxt.t_txtName = "저세상 바닥";
+		setTxt.t_txtInfo = "던전 밖의 무서운 흙더미 입니다!";
+		break;
 	case tagTileType::START:
 		setTxt.t_txtName = "던전 입구";
-		setTxt.t_txtInfo = "건방진 용사는 이쪽에서 등장합니다!";
+		setTxt.t_txtInfo = "용사가 나타나는 입구 입니다!";
 		break;
 	case tagTileType::TOP:
 		setTxt.t_txtName = "던전 외벽";
@@ -881,7 +930,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Mamon_00_LA");
 		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Mamon_00_Dead");
 
-		tempEnemy.t_currHp = 200;
+		tempEnemy.t_currHp = 100;
 		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 		tempEnemy.t_scale = 2.0f;
 		tempEnemy.t_moveSpeed = 0.5f;
@@ -901,7 +950,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Lady_00_LA");
 		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Lady_00_Dead");
 
-		tempEnemy.t_currHp = 200;
+		tempEnemy.t_currHp = 110;
 		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 		tempEnemy.t_scale = 2.0f;
 		tempEnemy.t_moveSpeed = 0.5f;
@@ -921,7 +970,7 @@ void tileMap::monsSetDrop(float posX, float posY, int setTileNum, int tileX, int
 		tempEnemy.t_img_LA = IMAGEMANAGER->findImage("Demon_00_LA");
 		tempEnemy.t_img_Dead = IMAGEMANAGER->findImage("Demon_00_Dead");
 
-		tempEnemy.t_currHp = 200;
+		tempEnemy.t_currHp = 150;
 		tempEnemy.t_MaxHp = tempEnemy.t_currHp;
 		tempEnemy.t_scale = 2.0f;
 		tempEnemy.t_moveSpeed = 0.5f;
@@ -973,13 +1022,13 @@ void tileMap::tileImgSet(int posX, int posY, HDC hdc, bool isShaking)
 	{
 		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, eTileLv::tMamon, TILE_SCALE, false);
 	}
-	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Demon)
-	{
-		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, eTileLv::tDemon, TILE_SCALE, false);
-	}
 	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Lady)
 	{
 		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, eTileLv::tLady, TILE_SCALE, false);
+	}
+	else if (m_tileset[tempTileXY].t_tierValue == eTileEnemy::Demon)
+	{
+		m_tileset[tempTileXY].t_img->frameRender(hdc, m_tileset[tempTileXY].t_rc.left + tempX, m_tileset[tempTileXY].t_rc.top, m_tileset[posX * m_tileSizeY + posY].t_setImg, eTileLv::tDemon, TILE_SCALE, false);
 	}
 
 	return;
@@ -1238,6 +1287,8 @@ void tileMap::HeroSkillAtk(int tileMapValue, tagHeroData * pHeroData)
 
 bool tileMap::tileCheck(int tileX, int tileY)
 {
+	if (tileX == 0 || tileY == 0 || tileX == m_tileSizeX || tileY == m_tileSizeY) return false;
+
 	int tempX[2] = { -1, +1 };
 	int tempY[2] = { -1, +1 };
 
@@ -1324,6 +1375,12 @@ void tileMap::heroSetting(tagHeroData * heroData)
 		(*m_iterHeroList) = heroData;
 		break;
 	}
+}
+
+void tileMap::gameTxtBox(image * img, string txt, int txtCol)
+{
+	string temp = txt;
+	m_pUiMag->addTxtBox(img, temp, true, txtCol);
 }
 
 

@@ -17,6 +17,8 @@ private:
 	overlord * m_pOverlord;
 	uiManager * m_pUiMag;
 
+	char szText[256];
+
 public:
 	HRESULT init(tileMap * pTileMag, bulletManager * pBulletMag, overlord * pOverlord, uiManager * pUiMag);
 	void release();
@@ -24,6 +26,8 @@ public:
 	void render(HDC hdc);
 
 	void heroDrop(tagHeroData* enemyInfo);
+
+	void heroInfoRender(HDC hdc);
 
 	vector<hero*> getVecHero() { return m_vecHero; }
 

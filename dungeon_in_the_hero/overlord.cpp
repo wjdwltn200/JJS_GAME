@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "overlord.h"
 #include "tileMap.h"
+#include "uiManager.h"
 
-HRESULT overlord::init(tileMap * pTileMap)
+HRESULT overlord::init(tileMap * pTileMap, uiManager * pUiMag)
 {
 	m_pTileMap = pTileMap;
+	m_pUiMag = pUiMag;
 	m_tOverlord.t_alphaValue = 255;
 	m_tOverlord.t_img = IMAGEMANAGER->findImage("Overlord");
 	m_ani.init(	m_tOverlord.t_img->getWidth(), m_tOverlord.t_img->getHeight(), m_tOverlord.t_img->getFrameWidth(), m_tOverlord.t_img->getFrameHeight());
@@ -14,9 +16,12 @@ HRESULT overlord::init(tileMap * pTileMap)
 
 	m_tOverlord.t_isAlive = true;
 	m_tOverlord.t_isGet = false;
+	m_isGameOver = false;
 
-	m_tOverlord.t_posX = pTileMap->getTileSetPoint()[15 * pTileMap->getTileSizeY() + 4].t_rc.left;
-	m_tOverlord.t_posY = pTileMap->getTileSetPoint()[15 * pTileMap->getTileSizeY() + 4].t_rc.top;
+	int tempXY = (m_pTileMap->getStartTileX() * m_pTileMap->getTileSizeY() + (m_pTileMap->getStartTileY() + 4));
+
+	m_tOverlord.t_posX = m_pTileMap->getTileSetPoint()[tempXY].t_rc.left;
+	m_tOverlord.t_posY = m_pTileMap->getTileSetPoint()[tempXY].t_rc.top;
 	m_tOverlord.t_moveEndX = m_tOverlord.t_posX;
 	m_tOverlord.t_moveEndY = m_tOverlord.t_posY;
 
@@ -40,6 +45,50 @@ void overlord::release()
 
 void overlord::update()
 {
+	if (m_pTileMap->getGameState() == eGameState::GameOver &&
+		!m_isGameOver)
+	{
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "이, 이게 아닌데..", eTxtBoxColor::Red);
+			break;
+		case 2:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "대마왕 바보멍충아!!", eTxtBoxColor::Red);
+			break;
+		case 3:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "어랏, 어라라..?", eTxtBoxColor::Red);
+			break;
+		case 4:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "엥?! 진짜로?!", eTxtBoxColor::Red);
+			break;
+		case 5:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "호에에에..", eTxtBoxColor::Red);
+			break;
+		}
+
+		if (!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_GameOver.wav"))
+			SOUNDMANAGER->play("Sound/BGM/BGM_GameOver.wav");
+
+		if (SOUNDMANAGER->isPlaying("Sound/BGM/BGM_OverlordGet.wav"))
+			SOUNDMANAGER->stop("Sound/BGM/BGM_OverlordGet.wav");
+
+		if (SOUNDMANAGER->isPlaying("Sound/BGM/BGM_HeroStart.wav"))
+			SOUNDMANAGER->stop("Sound/BGM/BGM_HeroStart.wav");
+
+		m_isGameOver = true;
+		g_saveData.g_isScreenChange = true;
+		g_saveData.g_screenChangeValue = 0;
+		g_saveData.g_screenState = eScreenState::FadeIn;
+	}
+
+	if (m_pTileMap->getGameState() == eGameState::GameOver &&
+		m_isGameOver &&
+		!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_GameOver.wav"))
+	{
+		g_saveData.g_gameOver = true;
+	}
+
 	if (m_tOverlord.t_isGet)
 		m_tOverlord.t_img = IMAGEMANAGER->findImage("Overlord_1");
 	else
@@ -48,7 +97,27 @@ void overlord::update()
 	if (!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_GameStart.wav") &&
 		(m_pTileMap->getGameState() == eGameState::GameGetSet) &&
 		!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_UnStart.wav"))
+	{
 		SOUNDMANAGER->play("Sound/BGM/BGM_UnStart.wav", 0.5f);
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "베스트 포지션으로!", eTxtBoxColor::Green);
+			break;
+		case 2:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "절 옮겨주세요!", eTxtBoxColor::Green);
+			break;
+		case 3:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "어디로 가면 되죠?", eTxtBoxColor::Green);
+			break;
+		case 4:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "꽁꽁 숨겨주세요!", eTxtBoxColor::Green);
+			break;
+		case 5:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "대마왕님 여기에요!!!", eTxtBoxColor::Green);
+			break;
+		}
+	}
 
 	// 잡힌 상태라면 노래를 켜준다
 	if ((m_pTileMap->getGameState() == eGameState::OverlordGet) &&
@@ -86,10 +155,30 @@ void overlord::update()
 		m_pTileMap->setGameState(eGameState::GameReady);
 		m_pTileMap->setStageValue(m_pTileMap->getStageValue() + 1);
 		m_pTileMap->setStageTimer(18000);
-		m_pTileMap->setTileDesCurr(m_pTileMap->getTileDesCurr() + 50);
+		m_pTileMap->setTileDesCurr(m_pTileMap->getTileDesCurr() + STAGE_CLEAR);
 
 		if (!SOUNDMANAGER->isPlaying("Sound/BGM/BGM_GameReady.wav"))
 			SOUNDMANAGER->play("Sound/BGM/BGM_GameReady.wav");
+
+		switch (RANDOM->getFromIntTo(1, 5))
+		{
+		case 1:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "다음 전투를 준비하죠!", eTxtBoxColor::Green);
+			break;
+		case 2:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "용사도 별거 없군요?", eTxtBoxColor::Green);
+			break;
+		case 3:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "대마왕님 최고!", eTxtBoxColor::Green);
+			break;
+		case 4:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "후후, 나약한 용사들!", eTxtBoxColor::Green);
+			break;
+		case 5:
+			gameTxtBox(IMAGEMANAGER->findImage("Overlord"), "반전은 없었군요 후훗!", eTxtBoxColor::Green);
+			break;
+		}
+
 	}
 
 	RECT tempRc;
@@ -176,6 +265,12 @@ void overlord::render(HDC hdc)
 	}
 }
 
+void overlord::gameTxtBox(image * img, string txt, int txtCol)
+{
+	string temp = txt;
+	m_pUiMag->addTxtBox(img, temp, true, txtCol);
+}
+
 void overlord::setTileXY(int tileX, int tileY, float posX, float posY)
 {
 	m_tOverlord.t_tilePosX = tileX;
@@ -186,6 +281,8 @@ void overlord::setTileXY(int tileX, int tileY, float posX, float posY)
 	m_isSetting = false;
 	return;
 }
+
+
 
 overlord::overlord()
 {

@@ -29,18 +29,6 @@ void titleScene::release()
 
 void titleScene::update()
 {
-	if (m_isScreenChange && m_screenChangeValue <= 5)
-		SCENEMANAGER->changeScene("inGame");
-
-	if (m_isScreenChange && m_screenChangeValue > 1)
-	{
-		m_screenChangeValue -= 5;
-		if (m_screenChangeValue <= 1)
-			m_screenChangeValue = 5;
-	}
-
-	if (m_isScreenChange) return;
-
 	if (KEYMANAGER->isOnceKeyDown(VK_RETURN))
 	{
 		switch (m_ImgChangValue)
@@ -51,9 +39,14 @@ void titleScene::update()
 			m_isScreenChange = true;
 			m_screenChangeValue = 255;
 			break;
-		case tagTITLE_BUTTON::T_BUTTON_CUSTOM:
-			break;
+		//case tagTITLE_BUTTON::T_BUTTON_CUSTOM:
+		//	if (g_saveData.g_isOption)
+		//		g_saveData.g_isOption = false;
+		//	if (!g_saveData.g_isOption)
+		//		g_saveData.g_isOption = true;
+		//	break;
 		case tagTITLE_BUTTON::T_BUTTON_EXIT:
+			PostQuitMessage(0);
 			break;
 		}
 	}
@@ -69,13 +62,24 @@ void titleScene::update()
 		m_ImgChangValue++;
 		SOUNDMANAGER->play("Sound/SE/Button_0.wav");
 	}
+
+	if (m_isScreenChange && m_screenChangeValue <= 5)
+		SCENEMANAGER->changeScene("inGame");
+
+	if (m_isScreenChange && m_screenChangeValue > 1)
+	{
+		m_screenChangeValue -= 5;
+		if (m_screenChangeValue <= 1)
+			m_screenChangeValue = 5;
+	}
 }
 
 void titleScene::render(HDC hdc)
 {
 	m_ImgTitle->render(hdc, 0, 0);
-
 	m_imgOverlord->aniRender(hdc, 290.0f, 495.0f, &m_ani, 2.5f);
+
+
 
 	char temp[256] = "";
 
@@ -89,15 +93,15 @@ void titleScene::render(HDC hdc)
 		TextOut(hdc, WINSIZEX / 2 + 50.0f, WINSIZEY / 2 + WINSIZEY / 4, temp, strlen(temp));
 		MY_UTIL::FontDelete(hdc);
 	}
-	else if (m_ImgChangValue == tagTITLE_BUTTON::T_BUTTON_CUSTOM)
-	{
-		SetBkMode(hdc, TRANSPARENT);
-		SetTextColor(hdc, RGB(255, 255, 255));
-		MY_UTIL::FontOption(hdc, 72, 1000);
-		sprintf_s(temp, "⒏ 澜樊 可记 ⒑");
-		TextOut(hdc, WINSIZEX / 2 - 25.0f , WINSIZEY / 2 + WINSIZEY / 4, temp, strlen(temp));
-		MY_UTIL::FontDelete(hdc);
-	}
+	//else if (m_ImgChangValue == tagTITLE_BUTTON::T_BUTTON_CUSTOM)
+	//{
+	//	SetBkMode(hdc, TRANSPARENT);
+	//	SetTextColor(hdc, RGB(255, 255, 255));
+	//	MY_UTIL::FontOption(hdc, 72, 1000);
+	//	sprintf_s(temp, "⒏ 澜樊 可记 ⒑");
+	//	TextOut(hdc, WINSIZEX / 2 - 25.0f , WINSIZEY / 2 + WINSIZEY / 4, temp, strlen(temp));
+	//	MY_UTIL::FontDelete(hdc);
+	//}
 	else if (m_ImgChangValue == tagTITLE_BUTTON::T_BUTTON_EXIT)
 	{
 		SetBkMode(hdc, TRANSPARENT);
@@ -111,6 +115,10 @@ void titleScene::render(HDC hdc)
 	if (m_screenChangeValue)
 		IMAGEMANAGER->findImage("Title_Chang")->alphaRender(hdc, (-m_screenChangeValue));
 
+	if (g_saveData.g_isOption)
+	{
+		IMAGEMANAGER->findImage("Title_Chang")->alphaRender(hdc, 155);
+	}
 
 	m_ani.frameUpdate();
 }

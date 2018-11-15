@@ -7,7 +7,7 @@
 void mainGame::setBackBuffer()
 {
 	m_pBackBuffer = new image;
-	m_pBackBuffer->init(WINSIZEX * 2, WINSIZEY * 2);
+	m_pBackBuffer->init(WINSIZEX, WINSIZEY);
 }
 
 HRESULT mainGame::init()
@@ -38,7 +38,7 @@ HRESULT mainGame::init()
 	m_pinGameScene = new gameScene;
 	SCENEMANAGER->addScene("inGame", m_pinGameScene);
 	
-	SCENEMANAGER->changeScene("inGame");
+	SCENEMANAGER->changeScene("title");
 
 	return S_OK;
 }
@@ -155,7 +155,8 @@ void mainGame::render()
 
 	m_pBackBuffer->render(hdc, 0, 0);
 
-	TIMEMANAGER->render(hdc);
+	if (g_saveData.gisTest)
+		TIMEMANAGER->render(hdc);
 }
 
 mainGame::mainGame()

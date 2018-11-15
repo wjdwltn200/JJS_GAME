@@ -7,7 +7,7 @@ class titleScene : public scene
 private:
 	enum tagTITLE_BUTTON
 	{
-		T_BUTTON_GAMESTART, T_BUTTON_CUSTOM, T_BUTTON_EXIT, T_BUTTON_NUM
+		T_BUTTON_GAMESTART, T_BUTTON_EXIT, T_BUTTON_NUM
 	};
 
 	image * m_ImgTitle;
