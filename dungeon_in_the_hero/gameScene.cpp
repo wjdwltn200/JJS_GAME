@@ -323,6 +323,7 @@ HRESULT gameScene::init()
 	m_EnemyPowerValueScale = ENEMY_POWER_VALUE;
 
 
+
 	m_MapTile->init(32, 42, m_tPlayer, m_pUiMag, m_pEnemyMag, m_pHeroMag, m_pOverlord);
 	m_pOverlord->init(m_MapTile, m_pUiMag);
 	CAMERA->setCamPosY(CAMERA_MAX_Y);
